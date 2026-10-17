@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cambium — Samples as Projects (concept)</title>
+<style>
+  :root{
+    --ink:#20261A; --ink2:#55604a; --muted:#8b917f; --line:#E6EADF; --line2:#eef1e9;
+    --bg:#F6F8F2; --card:#FFFFFF; --green:#245C43; --green2:#2f7555; --greenwash:#EAF3EE;
+    --amber:#B7791F; --amberwash:#FBF3E3; --amberline:#EAD9B4; --blue:#2C5A7A;
+    --shadow:0 1px 2px rgba(32,38,26,.05),0 6px 18px rgba(32,38,26,.06);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;font-size:14px;line-height:1.45}
+  .wrap{max-width:1120px;margin:0 auto;padding:22px 24px 60px}
+  a{color:inherit}
+
+  /* top bar */
+  .top{display:flex;align-items:center;gap:14px;margin-bottom:6px}
+  .seed{width:30px;height:30px;border-radius:50%;background:var(--greenwash);
+    display:flex;align-items:center;justify-content:center;font-size:17px}
+  .brand{font-weight:700;letter-spacing:.2px}
+  .brand .sub{color:var(--muted);font-weight:500;margin-left:8px;font-size:12.5px}
+  .concept{margin-left:auto;font-size:11px;color:var(--amber);background:var(--amberwash);
+    border:1px solid var(--amberline);padding:3px 9px;border-radius:999px;font-weight:600}
+
+  h1{font-size:21px;margin:14px 0 2px;letter-spacing:-.2px}
+  .lead{color:var(--ink2);margin:0 0 16px;max-width:720px}
+
+  /* lens toggle */
+  .lens{display:inline-flex;background:#fff;border:1px solid var(--line);border-radius:10px;padding:3px;gap:2px;box-shadow:var(--shadow)}
+  .lens button{border:0;background:transparent;padding:7px 14px;border-radius:7px;font-size:13px;font-weight:600;color:var(--ink2);cursor:pointer}
+  .lens button.on{background:var(--green);color:#fff}
+  .toolrow{display:flex;align-items:center;gap:12px;margin:0 0 18px;flex-wrap:wrap}
+  .search{flex:1;min-width:200px;max-width:320px;display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:9px;padding:8px 12px;color:var(--muted)}
+  .newbtn{margin-left:auto;background:var(--green);color:#fff;border:0;border-radius:9px;padding:9px 15px;font-weight:600;font-size:13px;cursor:pointer}
+
+  /* KPI strip */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 15px;box-shadow:var(--shadow)}
+  .kpi .k{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .kpi .v{font-size:23px;font-weight:700;margin-top:4px;letter-spacing:-.3px}
+  .kpi .v small{font-size:12px;color:var(--muted);font-weight:500}
+  .kpi.alert{background:var(--amberwash);border-color:var(--amberline)}
+  .kpi.alert .v{color:var(--amber)}
+  .kpi .note{font-size:11px;color:var(--muted);margin-top:3px}
+
+  /* attention banner */
+  .banner{display:flex;align-items:center;gap:12px;background:var(--amberwash);border:1px solid var(--amberline);
+    border-radius:12px;padding:12px 15px;margin-bottom:22px}
+  .banner .dot{width:8px;height:8px;border-radius:50%;background:var(--amber);flex:none}
+  .banner b{color:var(--amber)}
+  .banner .act{margin-left:auto;background:#fff;border:1px solid var(--amberline);color:var(--amber);
+    border-radius:8px;padding:7px 12px;font-weight:600;font-size:12.5px;cursor:pointer;white-space:nowrap}
+
+  /* section label */
+  .seclbl{display:flex;align-items:baseline;gap:9px;margin:4px 2px 11px}
+  .seclbl h2{font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink2);margin:0}
+  .seclbl .cnt{color:var(--muted);font-size:12px}
+
+  /* project grid */
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:26px}
+  .pc{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:15px 16px;box-shadow:var(--shadow);cursor:pointer;transition:transform .08s,box-shadow .12s;display:flex;flex-direction:column;min-height:168px}
+  .pc:hover{transform:translateY(-1px);box-shadow:0 2px 4px rgba(32,38,26,.06),0 12px 26px rgba(32,38,26,.09)}
+  .pc .nm{font-size:15.5px;font-weight:700;letter-spacing:-.2px;line-height:1.25}
+  .pc .cust{color:var(--ink2);font-size:12.5px;margin-top:2px}
+  .pc .meta{display:flex;flex-wrap:wrap;gap:6px 14px;margin:11px 0 12px;font-size:12px;color:var(--ink2)}
+  .pc .meta .lab{color:var(--muted)}
+  .pc .meta .empty{color:#b9beae;font-style:italic}
+  .pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:2px 9px;border-radius:999px}
+  .pill.open{background:var(--greenwash);color:var(--green2)}
+  .pill.won{background:#E7F0FA;color:var(--blue)}
+  .pill.auto{background:var(--amberwash);color:var(--amber);border:1px solid var(--amberline)}
+  .pc .foot{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:11px;border-top:1px solid var(--line2)}
+  .scount{font-weight:700;font-size:13px}
+  .scount small{color:var(--muted);font-weight:500;font-size:11.5px}
+  /* mini status bar */
+  .bar{display:flex;height:7px;border-radius:999px;overflow:hidden;background:var(--line2);flex:1;max-width:150px}
+  .bar i{display:block;height:100%}
+  .b-sent{background:var(--green2)} .b-pend{background:#E2B64D} .b-conv{background:var(--blue)}
+  .legend{display:flex;gap:11px;font-size:10.5px;color:var(--muted);margin-top:7px}
+  .legend span{display:inline-flex;align-items:center;gap:4px}
+  .sw{width:8px;height:8px;border-radius:2px;display:inline-block}
+
+  /* auto-named card accent */
+  .pc.autoc{border-color:var(--amberline);background:linear-gradient(0deg,#fffdf8,#fff)}
+  .pc.autoc .nm{color:#6f5a2a;font-style:italic;font-weight:600}
+  .autohint{font-size:11px;color:var(--amber);margin-top:6px;display:flex;align-items:center;gap:6px}
+  .autohint .rename{color:var(--green2);font-weight:600;cursor:pointer;border-bottom:1px dashed var(--green2)}
+
+  /* unassigned bucket */
+  .bucket{grid-column:1/-1;background:#fff;border:1px dashed var(--amberline);border-radius:13px;
+    padding:16px 18px;display:flex;align-items:center;gap:16px;background:var(--amberwash)}
+  .bucket .big{font-size:26px;font-weight:800;color:var(--amber);letter-spacing:-.5px}
+  .bucket .txt{flex:1}
+  .bucket .txt b{color:var(--ink)}
+  .bucket .txt div{color:var(--ink2);font-size:12.5px;margin-top:2px}
+  .bucket .cta{background:var(--amber);color:#fff;border:0;border-radius:9px;padding:10px 16px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap}
+
+  .footnote{color:var(--muted);font-size:11.5px;margin-top:26px;border-top:1px solid var(--line);padding-top:12px}
+  @media(max-width:880px){.kpis{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr 1fr}}
+  @media(max-width:620px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div class="seed">&#127793;</div>
+    <div class="brand">Cambium <span class="sub">Samples</span></div>
+    <div class="concept">CONCEPT &middot; for review</div>
+  </div>
+
+  <h1>Projects</h1>
+  <p class="lead">The first screen is a <b>dashboard of projects</b>, not a flat list of samples. A project is the opportunity;
+  samples live inside it. Open a project to update it directly &mdash; no digging through samples to get there.</p>
+
+  <div class="toolrow">
+    <div class="lens">
+      <button class="on">Projects</button>
+      <button>All samples</button>
+    </div>
+    <div class="search">&#9906;&nbsp; Search projects, customers, items&hellip;</div>
+    <button class="newbtn">+ New project</button>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="k">Active projects</div><div class="v">303</div><div class="note">274 open &middot; 29 closed</div></div>
+    <div class="kpi"><div class="k">Est. pipeline</div><div class="v">$150K</div><div class="note">302 projects need an estimate</div></div>
+    <div class="kpi"><div class="k">Samples in projects</div><div class="v">1,296</div><div class="note">across 303 projects</div></div>
+    <div class="kpi alert"><div class="k">Unassigned samples</div><div class="v">11,877</div><div class="note">not in any project yet</div></div>
+  </div>
+
+  <div class="banner">
+    <span class="dot"></span>
+    <div>Two things to tidy as projects become the front door: <b>11,877 samples</b> aren&rsquo;t in a project yet, and every project
+      will need a <b>name</b>. New projects auto-title themselves <b>Customer &middot; Item(s) &middot; Date</b> so none is ever blank &mdash; rename anytime.</div>
+    <button class="act">Organize samples &rarr;</button>
+  </div>
+
+  <div class="seclbl"><h2>Named projects</h2><span class="cnt">showing 6 of 303 &middot; most active</span></div>
+  <div class="grid">
+
+    <!-- real projects -->
+    <div class="pc">
+      <div class="nm">OG Liquid 101</div>
+      <div class="cust">General Mills ITQ Center</div>
+      <div class="meta">
+        <span><span class="pill open">&#9679; Open</span></span>
+        <span class="empty">+ owner</span><span class="empty">+ launch</span><span class="empty">+ est. $</span>
+      </div>
+      <div class="foot">
+        <div class="scount">90 <small>samples</small></div>
+        <div class="bar"><i class="b-sent" style="width:100%"></i></div>
+      </div>
+      <div class="legend"><span><i class="sw b-sent"></i>Sent 90</span></div>
+    </div>
+
+    <div class="pc">
+      <div class="nm">Military MRE 50 &ndash; Snacks</div>
+      <div class="cust">OFD Foods</div>
+      <div class="meta">
+        <span><span class="pill open">&#9679; Open</span></span>
+        <span><span class="lab">Owner</span> Edward</span><span class="empty">+ launch</span>
+      </div>
+      <div class="foot">
+        <div class="scount">35 <small>samples</small></div>
+        <div class="bar"><i class="b-sent" style="width:86%"></i><i class="b-pend" style="width:14%"></i></div>
+      </div>
+      <div class="legend"><span><i class="sw b-sent"></i>Sent 30</span><span><i class="sw b-pend"></i>Pending 5</span></div>
+    </div>
+
+    <div class="pc">
+      <div class="nm">Empanadas</div>
+      <div class="cust">ConAgra Foods</div>
+      <div class="meta">
+        <span><span class="pill won">&#9679; Won</span></span>
+        <span><span class="lab">Launch</span> Q1 2027</span><span><span class="lab">Est.</span> $150K</span>
+      </div>
+      <div class="foot">
+        <div class="scount">31 <small>samples</small></div>
+        <div class="bar"><i class="b-sent" style="width:71%"></i><i class="b-conv" style="width:16%"></i><i class="b-pend" style="width:13%"></i></div>
+      </div>
+      <div class="legend"><span><i class="sw b-sent"></i>Sent 22</span><span><i class="sw b-conv"></i>Converted 5</span><span><i class="sw b-pend"></i>Pending 4</span></div>
+    </div>
+
+    <div class="pc">
+      <div class="nm">Omaha Trip</div>
+      <div class="cust">ConAgra Foods</div>
+      <div class="meta"><span><span class="pill open">&#9679; Open</span></span><span class="empty">+ owner</span><span class="empty">+ est. $</span></div>
+      <div class="foot"><div class="scount">43 <small>samples</small></div><div class="bar"><i class="b-sent" style="width:100%"></i></div></div>
+      <div class="legend"><span><i class="sw b-sent"></i>Sent 43</span></div>
+    </div>
+
+    <div class="pc">
+      <div class="nm">Chicago ICFF Presentation</div>
+      <div class="cust">ConAgra Foods</div>
+      <div class="meta"><span><span class="pill open">&#9679; Open</span></span><span><span class="lab">Owner</span> Edward</span></div>
+      <div class="foot"><div class="scount">42 <small>samples</small></div><div class="bar"><i class="b-sent" style="width:100%"></i></div></div>
+      <div class="legend"><span><i class="sw b-sent"></i>Sent 42</span></div>
+    </div>
+
+    <div class="pc">
+      <div class="nm">Smoothie Bowls</div>
+      <div class="cust">ConAgra Foods</div>
+      <div class="meta"><span><span class="pill open">&#9679; Open</span></span><span class="empty">+ launch</span><span class="empty">+ est. $</span></div>
+      <div class="foot"><div class="scount">24 <small>samples</small></div><div class="bar"><i class="b-sent" style="width:100%"></i></div></div>
+      <div class="legend"><span><i class="sw b-sent"></i>Sent 24</span></div>
+    </div>
+
+  </div>
+
+  <div class="seclbl"><h2>Needs a name</h2><span class="cnt">auto-titled until renamed &middot; proposed behavior</span></div>
+  <div class="grid">
+
+    <div class="pc autoc">
+      <div class="nm">ConAgra Foods &middot; Walnut Pieces +2 &middot; Oct 2026</div>
+      <div class="cust">ConAgra Foods</div>
+      <div class="autohint">&#9998; Auto-named from customer &middot; items &middot; date &nbsp;<span class="rename">Rename</span></div>
+      <div class="meta"><span><span class="pill auto">Needs a name</span></span></div>
+      <div class="foot"><div class="scount">6 <small>samples</small></div><div class="bar"><i class="b-pend" style="width:100%"></i></div></div>
+      <div class="legend"><span><i class="sw b-pend"></i>Pending 6</span></div>
+    </div>
+
+    <div class="pc autoc">
+      <div class="nm">OFD Foods &middot; FD Strawberry &middot; Oct 2026</div>
+      <div class="cust">OFD Foods</div>
+      <div class="autohint">&#9998; Auto-named from customer &middot; items &middot; date &nbsp;<span class="rename">Rename</span></div>
+      <div class="meta"><span><span class="pill auto">Needs a name</span></span></div>
+      <div class="foot"><div class="scount">3 <small>samples</small></div><div class="bar"><i class="b-sent" style="width:67%"></i><i class="b-pend" style="width:33%"></i></div></div>
+      <div class="legend"><span><i class="sw b-sent"></i>Sent 2</span><span><i class="sw b-pend"></i>Pending 1</span></div>
+    </div>
+
+    <div class="pc autoc">
+      <div class="nm">General Mills &middot; Oat Flour &middot; Oct 2026</div>
+      <div class="cust">General Mills ITQ Center</div>
+      <div class="autohint">&#9998; Auto-named from customer &middot; items &middot; date &nbsp;<span class="rename">Rename</span></div>
+      <div class="meta"><span><span class="pill auto">Needs a name</span></span></div>
+      <div class="foot"><div class="scount">2 <small>samples</small></div><div class="bar"><i class="b-sent" style="width:100%"></i></div></div>
+      <div class="legend"><span><i class="sw b-sent"></i>Sent 2</span></div>
+    </div>
+
+  </div>
+
+  <div class="seclbl"><h2>Not in a project</h2><span class="cnt">the backlog to organize</span></div>
+  <div class="grid">
+    <div class="bucket">
+      <div class="big">11,877</div>
+      <div class="txt">
+        <b>samples aren&rsquo;t in a project yet</b>
+        <div>Group them into projects (or let Cambium suggest groupings by customer + item + timeframe). 11 already carry an old project label and can be promoted in one click.</div>
+      </div>
+      <button class="cta">Organize into projects</button>
+    </div>
+  </div>
+
+  <div class="footnote">
+    Concept mockup for discussion &mdash; populated with live project data (counts as of today), not a working screen.
+    Clicking a card would open that project to edit its name, customer, application, launch timing, estimate, status, owner, and its samples.
+  </div>
+
+</div>
+</body>
+</html>
