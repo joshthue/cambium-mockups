@@ -393,7 +393,9 @@
   function fillBulkVals(){
     const c=$("#bulkcol").value;
     const list = c==="cat"?CATS : c==="app"?APPS : PROJECTS;
-    $("#bulkval").innerHTML = list.map(v=>`<option>${v}</option>`).join("");
+    let html = list.map(v=>`<option value="${v.replace(/"/g,'&quot;')}">${v}</option>`).join("");
+    if(c==="proj") html += `<option value="__new__">➕ New project…</option>`;
+    $("#bulkval").innerHTML = html;
   }
 
   function setDirty(r){r._dirty=true;stickyOK=true;refreshDirty();}
@@ -463,10 +465,17 @@
   });
   $("#bulkcol").addEventListener("change",fillBulkVals);
   $("#bulkapply").addEventListener("click",()=>{
-    const col=$("#bulkcol").value,val=$("#bulkval").value;
+    const col=$("#bulkcol").value; let val=$("#bulkval").value;
     const field=col==="cat"?"cat":col==="app"?"app":"proj";
+    if(col==="proj" && val==="__new__"){
+      const name=prompt("Name the new project — the selected samples will all be linked to it:");
+      if(!name) return;
+      if(!PROJECTS.includes(name)) PROJECTS.push(name);
+      val=name;
+    }
     let n=0;[...SEL].forEach(i=>{DATA[i][field]=val;DATA[i]._dirty=true;n++;});
-    refreshDirty();render();toast(`Set ${field} on ${n} rows`);
+    stickyOK=true; refreshDirty(); render();
+    toast(col==="proj"?`Linked ${n} samples to “${val}”`:`Set ${field} on ${n} rows`);
   });
   $("#clearsel").addEventListener("click",()=>{SEL.clear();render();});
   $("#groupbtn").addEventListener("click",()=>{
