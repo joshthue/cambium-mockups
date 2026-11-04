@@ -16,11 +16,11 @@
   body{margin:0;background:var(--bg);color:var(--ink);
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     font-size:13.5px;line-height:1.45}
-  .wrap{max-width:1280px;margin:0 auto;padding:0 20px 56px}
+  .wrap{max-width:1500px;margin:0 auto;padding:0 24px 56px}
 
   /* top app bar */
   .topbar{background:var(--moss);color:#f4f1e9;}
-  .topbar .inner{max-width:1280px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:14px}
+  .topbar .inner{max-width:1500px;margin:0 auto;padding:10px 24px;display:flex;align-items:center;gap:14px}
   .brand{font-weight:800;letter-spacing:.3px;font-size:15px}
   .brand span{opacity:.6;font-weight:600}
   .topnav{display:flex;gap:4px;margin-left:10px}
@@ -64,7 +64,10 @@
     border-radius:11px;padding:9px 12px;margin:10px 0 0}
   .bulk.show{display:flex}
   .bulk .lead{font-weight:800;color:var(--moss-2);font-size:13px}
-  .bulk select,.bulk input{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 9px;font-size:12.5px}
+  .bulk .bf{display:inline-flex;flex-direction:column;gap:3px;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:800}
+  .bulk .bf select{min-width:150px;max-width:230px}
+  .bulk select,.bulk input{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 9px;font-size:12.5px;text-transform:none;letter-spacing:0;color:var(--ink);font-weight:400}
+  .bulk .bf select.set{border-color:var(--moss-2);background:#f3f8ef}
   .bulk .mini{font-size:12px;color:var(--muted)}
   .link{background:none;border:none;color:var(--moss-2);font-weight:700;cursor:pointer;font-size:12.5px;padding:0}
 
@@ -156,15 +159,11 @@
 
     <div class="bulk" id="bulk">
       <span class="lead"><span id="seln">0</span> selected</span>
-      <span class="mini">Set</span>
-      <select id="bulkcol">
-        <option value="cat">Category</option>
-        <option value="app">Application</option>
-        <option value="proj">Project</option>
-      </select>
-      <span class="mini">to</span>
-      <select id="bulkval"></select>
-      <button class="btn" id="bulkapply">Apply to selected</button>
+      <label class="bf">Category <select id="bcat"></select></label>
+      <label class="bf">Application <select id="bapp"></select></label>
+      <label class="bf">Project <select id="bproj"></select></label>
+      <button class="btn primary" id="bulkapply">Apply</button>
+      <span class="mini" id="bulkhint">pick any field — leave the rest</span>
       <span class="spacer"></span>
       <button class="link" id="clearsel">Clear selection</button>
     </div>
@@ -390,13 +389,22 @@
     $("#all").checked = visible().length>0 && visible().every(r=>SEL.has(r._i));
     fillBulkVals();
   }
-  function fillBulkVals(){
-    const c=$("#bulkcol").value;
-    const list = c==="cat"?CATS : c==="app"?APPS : PROJECTS;
-    let html = list.map(v=>`<option value="${v.replace(/"/g,'&quot;')}">${v}</option>`).join("");
-    if(c==="proj") html += `<option value="__new__">➕ New project…</option>`;
-    $("#bulkval").innerHTML = html;
+  function optList(list, sel, extra){
+    let h = `<option value="">— leave as is —</option>`;
+    h += list.map(v=>`<option value="${v.replace(/"/g,'&quot;')}"${v===sel?' selected':''}>${v}</option>`).join("");
+    return h + (extra||"");
   }
+  function sharedVal(field){
+    const sel=[...SEL].map(i=>DATA[i]); if(!sel.length) return "";
+    return sel.every(r=>r[field]===sel[0][field]) ? (sel[0][field]||"") : "";
+  }
+  function fillBulkVals(){
+    $("#bcat").innerHTML  = optList(CATS, sharedVal("cat"));
+    $("#bapp").innerHTML  = optList(APPS, sharedVal("app"));
+    $("#bproj").innerHTML = optList(PROJECTS, sharedVal("proj"), `<option value="__new__">➕ New project…</option>`);
+    markSet();
+  }
+  function markSet(){["#bcat","#bapp","#bproj"].forEach(id=>{const el=$(id);el.classList.toggle("set",!!el.value && el.value!=="__new__");});}
 
   function setDirty(r){r._dirty=true;stickyOK=true;refreshDirty();}
   function isComplete(r){return r.cat && r.app && r.custState==="linked" && r.contact && r.proj;}
@@ -463,19 +471,25 @@
     $("#sortarrow").textContent = SORT===1?"↑ oldest":"↓ newest";
     $("#sortarrow").style.opacity="1"; render();
   });
-  $("#bulkcol").addEventListener("change",fillBulkVals);
+  ["#bcat","#bapp","#bproj"].forEach(id=>$(id).addEventListener("change",markSet));
   $("#bulkapply").addEventListener("click",()=>{
-    const col=$("#bulkcol").value; let val=$("#bulkval").value;
-    const field=col==="cat"?"cat":col==="app"?"app":"proj";
-    if(col==="proj" && val==="__new__"){
+    if(!SEL.size) return;
+    const cat=$("#bcat").value, app=$("#bapp").value; let proj=$("#bproj").value;
+    if(proj==="__new__"){
       const name=prompt("Name the new project — the selected samples will all be linked to it:");
-      if(!name) return;
+      if(!name){ $("#bproj").value=""; markSet(); return; }
       if(!PROJECTS.includes(name)) PROJECTS.push(name);
-      val=name;
+      proj=name;
     }
-    let n=0;[...SEL].forEach(i=>{DATA[i][field]=val;DATA[i]._dirty=true;n++;});
+    if(!cat && !app && !proj){ toast("Pick a field to set"); return; }
+    let n=0;[...SEL].forEach(i=>{
+      const r=DATA[i]; let t=false;
+      if(cat){r.cat=cat;t=true;} if(app){r.app=app;t=true;} if(proj){r.proj=proj;t=true;}
+      if(t){r._dirty=true;n++;}
+    });
     stickyOK=true; refreshDirty(); render();
-    toast(col==="proj"?`Linked ${n} samples to “${val}”`:`Set ${field} on ${n} rows`);
+    const parts=[cat&&"category",app&&"application",proj&&"project"].filter(Boolean).join(" + ");
+    toast(`Set ${parts} on ${n} sample${n!==1?'s':''}`);
   });
   $("#clearsel").addEventListener("click",()=>{SEL.clear();render();});
   $("#groupbtn").addEventListener("click",()=>{
