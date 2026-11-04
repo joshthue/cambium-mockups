@@ -337,9 +337,8 @@
   function custCell(r){
     const dot = r.custState==="linked"?"linked":r.custState==="text"?"text":"none";
     const label = r.cust || "";
-    const add = r.custState!=="linked" && r.cust
-      ? `<span class="addnew" data-add="${r._i}">+ link</span>`
-      : (r.custState!=="linked" ? `<span class="addnew" data-add="${r._i}">+ add</span>` : "");
+    const add = r.custState!=="linked"
+      ? `<span class="addnew" data-add="${r._i}">+ add new</span>` : "";
     return `<div class="cust"><span class="d ${dot}" title="${dot==='linked'?'Linked to a WOS company':dot==='text'?'Text only — not linked':'No customer'}"></span>
       <span class="custlabel"><input value="${label}" data-field="cust" data-i="${r._i}" list="custlist" placeholder="search customer…"/></span>
       ${add}</div>`;
@@ -441,13 +440,8 @@
     const add=e.target.dataset.add;
     if(add!=null){
       const r=DATA[+add];
-      const match=KNOWN.find(k=>k.toLowerCase().startsWith((r.cust||"").toLowerCase().slice(0,3)) && r.cust);
-      if(match && match.toLowerCase()!==r.cust.toLowerCase()){
-        if(confirm(`Link "${r.cust}" to existing WOS customer "${match}"?`)){r.cust=match;r.custState="linked";setDirty(r);render();toast("Linked to "+match);}
-      }else{
-        const name=prompt("Add as a new customer in WOS:", r.cust||"");
-        if(name){r.cust=name;r.custState="linked";setDirty(r);render();toast("Created "+name+" (app-origin)");}
-      }
+      const name=prompt("Create a new WOS customer:", r.cust||"");
+      if(name){r.cust=name;r.custState="linked";setDirty(r);render();toast("Created "+name+" (app-origin)");}
     }
   });
 
