@@ -168,6 +168,8 @@
       <button class="link" id="clearsel">Clear selection</button>
     </div>
 
+    <datalist id="custlist"></datalist>
+
     <div class="tablewrap">
       <table>
         <thead>
@@ -207,8 +209,12 @@
   // Brad's real projects (subset)
   const PROJECTS = ["Bob's Red Mill – Savory","Rikki Foods 1/8\" IQF Ginger 2027","Glanbia – Bar Project (Aaron Tulie)",
     "Tree Top – Fruit powders","Chelan Fresh – Dried apple","Nutraceutical – Collagen blends"];
-  // known WOS customers for the typeahead match
-  const KNOWN=["Tree Top","Glanbia Nutritionals","Bob's Red Mill","Chelan Fresh","Rikki Foods","Nutraceutical","SunOpta","Milne"];
+  // known WOS customers for the typeahead match (the broker's book)
+  const KNOWN=["Tree Top","Glanbia Nutritionals","Bob's Red Mill","Chelan Fresh","Rikki Foods",
+    "Nutraceutical","SunOpta","Milne","Milne MicroDried","General Mills","Post Consumer Brands",
+    "Clif Bar & Company","KIND Snacks","Nature's Path Foods","Simple Mills","Quaker Oats",
+    "Blue Diamond Growers","Chobani","Kodiak Cakes","Vital Proteins","Oregon Freeze Dry",
+    "Van Drunen Farms","FutureCeuticals","Graceland Fruit","Northwest Naturals"].sort();
 
   // Real backlog rows (ids + item text are real; gaps mirror the live state)
   const DATA = [
@@ -334,7 +340,7 @@
       ? `<span class="addnew" data-add="${r._i}">+ link</span>`
       : (r.custState!=="linked" ? `<span class="addnew" data-add="${r._i}">+ add</span>` : "");
     return `<div class="cust"><span class="d ${dot}" title="${dot==='linked'?'Linked to a WOS company':dot==='text'?'Text only — not linked':'No customer'}"></span>
-      <span class="custlabel"><input value="${label}" data-field="cust" data-i="${r._i}" placeholder="customer…"/></span>
+      <span class="custlabel"><input value="${label}" data-field="cust" data-i="${r._i}" list="custlist" placeholder="search customer…"/></span>
       ${add}</div>`;
   }
 
@@ -517,6 +523,7 @@
 
   let tT;function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(tT);tT=setTimeout(()=>t.classList.remove("show"),1600);}
 
+  $("#custlist").innerHTML = KNOWN.map(v=>`<option value="${v.replace(/"/g,'&quot;')}">`).join("");
   fillBulkVals();render();
 </script>
 </body>
