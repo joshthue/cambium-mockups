@@ -43,6 +43,10 @@
   .chip.on{background:var(--moss);border-color:var(--moss);color:#f4f1e9}
   .chip.on .n{background:rgba(255,255,255,.2);color:#fff}
   .chip.warn.on{background:var(--amber-ink);border-color:var(--amber-ink)}
+  .chip.done{color:var(--ok-ink);border-color:#cfe2c4}
+  .chip.done .n{background:var(--ok-bg);color:var(--ok-ink)}
+  .chip.done.on{background:var(--ok-ink);border-color:var(--ok-ink);color:#fff}
+  .chip.done.on .n{background:rgba(255,255,255,.22);color:#fff}
 
   /* sticky action bar */
   .bar{position:sticky;top:0;z-index:30;background:var(--bg);padding:10px 0 8px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line)}
@@ -72,6 +76,12 @@
   tbody td{padding:4px 8px;border-bottom:1px solid #f0eee4;vertical-align:middle}
   tbody tr:hover{background:#faf9f3}
   tr.sel{background:#eef3e8 !important}
+  tr.grp td{background:#eef1e8;border-bottom:1px solid #d7ddc9;border-top:1px solid #d7ddc9;padding:7px 10px;cursor:pointer}
+  tr.grp b{font-size:13px;color:var(--moss-2)}
+  tr.grp .caret{color:var(--moss-2);font-size:11px;margin-right:4px}
+  tr.grp .gn{font-size:11px;color:var(--muted);margin-left:8px;font-weight:600}
+  tr.grp .ggap{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;background:var(--amber-bg);color:var(--amber-ink);border-radius:5px;padding:1px 7px;margin-left:8px}
+  tr.grp .gok{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;background:var(--ok-bg);color:var(--ok-ink);border-radius:5px;padding:1px 7px;margin-left:8px}
   .cb{width:30px;text-align:center}
   .sid{color:var(--muted);font-variant-numeric:tabular-nums;font-weight:600}
   .item{font-weight:600;min-width:220px}
@@ -126,16 +136,18 @@
     </div>
 
     <div class="chips" id="chips">
-      <span class="chip warn on" data-f="nocat">Needs category <span class="n">738</span></span>
-      <span class="chip warn" data-f="noapp">Needs application <span class="n">744</span></span>
-      <span class="chip warn" data-f="nocust">No customer linked <span class="n">333</span></span>
-      <span class="chip warn" data-f="nocontact">No contact <span class="n">725</span></span>
-      <span class="chip warn" data-f="noproj">No project <span class="n">444</span></span>
-      <span class="chip" data-f="all">Everything <span class="n">752</span></span>
+      <span class="chip warn on" data-f="nocat">Needs category <span class="n">0</span></span>
+      <span class="chip warn" data-f="noapp">Needs application <span class="n">0</span></span>
+      <span class="chip warn" data-f="nocust">No customer linked <span class="n">0</span></span>
+      <span class="chip warn" data-f="nocontact">No contact <span class="n">0</span></span>
+      <span class="chip warn" data-f="noproj">No project <span class="n">0</span></span>
+      <span class="chip done" data-f="complete">Complete <span class="n">0</span></span>
+      <span class="chip" data-f="all">Everything <span class="n">0</span></span>
     </div>
 
     <div class="bar">
       <input class="search" id="search" placeholder="Search item, customer, project…" />
+      <button class="btn" id="groupbtn">⊟ Group by project</button>
       <div class="spacer"></div>
       <span class="dirty" id="dirty"><span class="dot"></span><span id="dirtyn">0</span> unsaved</span>
       <button class="btn" id="revert" disabled>Revert</button>
@@ -274,22 +286,42 @@
     return days>=365?`${(days/365).toFixed(1)} yr ago`:`${days} days ago`;}
 
   let FILTER="nocat", SEARCH="", lastClicked=null, SORT=0; // 0 none, 1 oldest first, 2 newest first
+  let stickyOK=true; // keep just-edited rows in view until the view is re-settled
+  let GROUP=false; const COLLAPSED=new Set();
   const $=s=>document.querySelector(s), rowsEl=$("#rows");
 
   function opts(list,sel){return ['<option value="">—</option>'].concat(
     list.map(v=>`<option${v===sel?' selected':''}>${v}</option>`)).join("");}
 
+  function matchesFilter(r){
+    switch(FILTER){
+      case"nocat":return !r.cat;
+      case"noapp":return !r.app;
+      case"nocust":return r.custState!=="linked";
+      case"nocontact":return !r.contact;
+      case"noproj":return !r.proj;
+      case"complete":return isComplete(r);
+      default:return true;
+    }
+  }
+  function recountChips(){
+    const c={nocat:0,noapp:0,nocust:0,nocontact:0,noproj:0,complete:0,all:DATA.length};
+    DATA.forEach(r=>{
+      if(!r.cat)c.nocat++; if(!r.app)c.noapp++; if(r.custState!=="linked")c.nocust++;
+      if(!r.contact)c.nocontact++; if(!r.proj)c.noproj++; if(isComplete(r))c.complete++;
+    });
+    document.querySelectorAll("#chips .chip").forEach(ch=>{
+      const f=ch.dataset.f; if(c[f]!=null) ch.querySelector(".n").textContent=c[f];
+    });
+  }
   function visible(){
     const out = DATA.filter(r=>{
       if(SEARCH){const h=(r.item+" "+r.cust+" "+r.proj).toLowerCase();if(!h.includes(SEARCH))return false;}
-      switch(FILTER){
-        case"nocat":return !r.cat;
-        case"noapp":return !r.app;
-        case"nocust":return r.custState!=="linked";
-        case"nocontact":return !r.contact;
-        case"noproj":return !r.proj;
-        default:return true;
-      }
+      // a row stays in view if it still matches the gap filter OR it was edited
+      // this session — so filling a category doesn't yank the row away before
+      // you've set its application/contact. Saving (or re-clicking the filter)
+      // drops the rows that are now complete.
+      return matchesFilter(r) || (stickyOK && r._dirty);
     });
     if(SORT===1) out.sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:0);
     if(SORT===2) out.sort((a,b)=>a.date>b.date?-1:a.date<b.date?1:0);
@@ -307,23 +339,46 @@
       ${add}</div>`;
   }
 
+  function rowHtml(r){
+    const selcls = SEL.has(r._i)?" class=\"sel\"":"";
+    return `<tr${selcls} data-row="${r._i}">
+      <td class="cb"><input type="checkbox" data-sel="${r._i}" ${SEL.has(r._i)?"checked":""}/></td>
+      <td class="sid">#${r.id}</td>
+      <td class="sid" style="white-space:nowrap" title="${fmtAge(r.date)}">${fmtDate(r.date)}</td>
+      <td class="item">${r.item||'<span style="color:#b89a53">(no item text)</span>'}</td>
+      <td class="celled ${r.cat?'filled':'empty'}"><select data-field="cat" data-i="${r._i}">${opts(CATS,r.cat)}</select></td>
+      <td class="celled ${r.app?'filled':'empty'}"><select data-field="app" data-i="${r._i}">${opts(APPS,r.app)}</select></td>
+      <td class="celled ${r.custState==='linked'?'filled':'empty'}">${custCell(r)}</td>
+      <td class="celled ${r.contact?'filled':'empty'}"><input data-field="contact" data-i="${r._i}" value="${r.contact||''}" placeholder="contact…"/></td>
+      <td class="celled ${r.proj?'filled':'empty'}"><select data-field="proj" data-i="${r._i}">${opts(PROJECTS,r.proj)}</select></td>
+    </tr>`;
+  }
+  const NOPROJ="— No project —";
   function render(){
     const vis=visible();
-    rowsEl.innerHTML = vis.map(r=>{
-      const selcls = SEL.has(r._i)?" class=\"sel\"":"";
-      return `<tr${selcls} data-row="${r._i}">
-        <td class="cb"><input type="checkbox" data-sel="${r._i}" ${SEL.has(r._i)?"checked":""}/></td>
-        <td class="sid">#${r.id}</td>
-        <td class="sid" style="white-space:nowrap" title="${fmtAge(r.date)}">${fmtDate(r.date)}</td>
-        <td class="item">${r.item||'<span style="color:#b89a53">(no item text)</span>'}</td>
-        <td class="celled ${r.cat?'filled':'empty'}"><select data-field="cat" data-i="${r._i}">${opts(CATS,r.cat)}</select></td>
-        <td class="celled ${r.app?'filled':'empty'}"><select data-field="app" data-i="${r._i}">${opts(APPS,r.app)}</select></td>
-        <td class="celled ${r.custState==='linked'?'filled':'empty'}">${custCell(r)}</td>
-        <td class="celled ${r.contact?'filled':'empty'}"><input data-field="contact" data-i="${r._i}" value="${r.contact||''}" placeholder="contact…"/></td>
-        <td class="celled ${r.proj?'filled':'empty'}"><select data-field="proj" data-i="${r._i}">${opts(PROJECTS,r.proj)}</select></td>
-      </tr>`;
-    }).join("");
-    if(!vis.length) rowsEl.innerHTML=`<tr><td colspan="8" style="padding:26px;text-align:center;color:var(--muted)">Nothing matches — this gap is cleared. 🎉</td></tr>`;
+    if(!GROUP){
+      rowsEl.innerHTML = vis.map(rowHtml).join("");
+    } else {
+      const groups={};
+      vis.forEach(r=>{const k=r.proj||NOPROJ;(groups[k]=groups[k]||[]).push(r);});
+      const keys=Object.keys(groups).sort((a,b)=>
+        a===NOPROJ?-1:b===NOPROJ?1:a.localeCompare(b));
+      rowsEl.innerHTML = keys.map(k=>{
+        const g=groups[k], key=encodeURIComponent(k), collapsed=COLLAPSED.has(k);
+        const allSel=g.every(r=>SEL.has(r._i));
+        const gaps=g.filter(r=>!isComplete(r)).length;
+        const head=`<tr class="grp" data-grp="${key}">
+          <td class="cb"><input type="checkbox" data-grpsel="${key}" ${allSel?"checked":""}/></td>
+          <td colspan="8"><span class="caret">${collapsed?"▸":"▾"}</span>
+            <b>${k===NOPROJ?'<span style="color:#b89a53">'+k+'</span>':k}</b>
+            <span class="gn">${g.length} sample${g.length!==1?'s':''}</span>
+            ${gaps?`<span class="ggap">${gaps} with gaps</span>`:`<span class="gok">all complete</span>`}</td>
+        </tr>`;
+        return head + (collapsed?"":g.map(rowHtml).join(""));
+      }).join("");
+    }
+    if(!vis.length) rowsEl.innerHTML=`<tr><td colspan="9" style="padding:26px;text-align:center;color:var(--muted)">Nothing matches — this gap is cleared. 🎉</td></tr>`;
+    recountChips();
     syncBulk();
   }
 
@@ -341,7 +396,8 @@
     $("#bulkval").innerHTML = list.map(v=>`<option>${v}</option>`).join("");
   }
 
-  function setDirty(r){r._dirty=true;refreshDirty();}
+  function setDirty(r){r._dirty=true;stickyOK=true;refreshDirty();}
+  function isComplete(r){return r.cat && r.app && r.custState==="linked" && r.contact && r.proj;}
   function refreshDirty(){
     const n=DATA.filter(r=>r._dirty).length;
     $("#dirtyn").textContent=n;
@@ -395,13 +451,13 @@
   });
   $("#chips").addEventListener("click",e=>{
     const c=e.target.closest(".chip"); if(!c)return;
-    FILTER=c.dataset.f;
+    FILTER=c.dataset.f; stickyOK=false;
     document.querySelectorAll(".chip").forEach(x=>x.classList.toggle("on",x===c));
     render();
   });
-  $("#search").addEventListener("input",e=>{SEARCH=e.target.value.toLowerCase().trim();render();});
+  $("#search").addEventListener("input",e=>{SEARCH=e.target.value.toLowerCase().trim();stickyOK=false;render();});
   $("#sortdate").addEventListener("click",()=>{
-    SORT = SORT===1?2:1;
+    SORT = SORT===1?2:1; stickyOK=false;
     $("#sortarrow").textContent = SORT===1?"↑ oldest":"↓ newest";
     $("#sortarrow").style.opacity="1"; render();
   });
@@ -413,6 +469,23 @@
     refreshDirty();render();toast(`Set ${field} on ${n} rows`);
   });
   $("#clearsel").addEventListener("click",()=>{SEL.clear();render();});
+  $("#groupbtn").addEventListener("click",()=>{
+    GROUP=!GROUP; $("#groupbtn").classList.toggle("primary",GROUP);
+    $("#groupbtn").textContent = GROUP?"⊟ Grouped by project":"⊟ Group by project";
+    render();
+  });
+  function groupRows(k){const key=k===NOPROJ?"":k;return visible().filter(r=>(r.proj||"")===key);}
+  rowsEl.addEventListener("change",e=>{
+    const key=e.target.dataset.grpsel; if(key==null)return;
+    const k=decodeURIComponent(key), rows=groupRows(k), on=e.target.checked;
+    rows.forEach(r=>on?SEL.add(r._i):SEL.delete(r._i)); render();
+  });
+  rowsEl.addEventListener("click",e=>{
+    const grp=e.target.closest("tr.grp"); if(!grp)return;
+    if(e.target.closest("input"))return; // checkbox handled above
+    const k=decodeURIComponent(grp.dataset.grp);
+    COLLAPSED.has(k)?COLLAPSED.delete(k):COLLAPSED.add(k); render();
+  });
   $("#save").addEventListener("click",()=>{
     const n=DATA.filter(r=>r._dirty).length; DATA.forEach(r=>r._dirty=false);
     refreshDirty();render();toast(`Saved ${n} samples ✓`);
