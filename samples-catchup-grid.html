@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cambium — Samples catch-up grid (mockup)</title>
+<style>
+  :root{
+    --bg:#f4f1e9; --panel:#ffffff; --ink:#20261a; --muted:#8b917f;
+    --line:#e7e4d8; --moss:#3b4a2a; --moss-2:#4e6137; --gold:#b08a3e;
+    --clay:#b4472a; --sky:#3f6f82; --soft:#faf8f2;
+    --amber-bg:#fdf6e6; --amber-line:#ecd9ad; --amber-ink:#8a6a1f;
+    --ok-bg:#e4efe0; --ok-ink:#3b6b2e;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-size:13.5px;line-height:1.45}
+  .wrap{max-width:1280px;margin:0 auto;padding:0 20px 56px}
+
+  /* top app bar */
+  .topbar{background:var(--moss);color:#f4f1e9;}
+  .topbar .inner{max-width:1280px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:14px}
+  .brand{font-weight:800;letter-spacing:.3px;font-size:15px}
+  .brand span{opacity:.6;font-weight:600}
+  .topnav{display:flex;gap:4px;margin-left:10px}
+  .topnav a{padding:5px 10px;border-radius:7px;font-size:12.5px;opacity:.85;text-decoration:none}
+  .topnav a.on{background:rgba(255,255,255,.15);opacity:1;font-weight:600}
+  .who{margin-left:auto;font-size:12.5px;opacity:.9;display:flex;align-items:center;gap:8px}
+  .av{width:24px;height:24px;border-radius:50%;background:#caa75d;color:#3b2f12;display:grid;place-items:center;font-weight:700;font-size:11px}
+
+  .crumbs{font-size:12.5px;color:var(--muted);margin:16px 0 8px}
+  .crumbs a{color:var(--moss-2);text-decoration:none;font-weight:600}
+  .headrow{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap}
+  h1{font-size:21px;margin:0 0 3px;font-weight:800;letter-spacing:-.2px}
+  .sub{color:var(--muted);font-size:13px}
+
+  /* filter chips */
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 4px}
+  .chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 13px;font-size:12.5px;
+    font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:7px;color:var(--ink)}
+  .chip .n{background:#eef1e8;color:#5c6b45;border-radius:999px;padding:0 7px;font-size:11px;font-weight:800}
+  .chip.on{background:var(--moss);border-color:var(--moss);color:#f4f1e9}
+  .chip.on .n{background:rgba(255,255,255,.2);color:#fff}
+  .chip.warn.on{background:var(--amber-ink);border-color:var(--amber-ink)}
+
+  /* sticky action bar */
+  .bar{position:sticky;top:0;z-index:30;background:var(--bg);padding:10px 0 8px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+  .search{border:1px solid var(--line);background:#fff;border-radius:9px;padding:7px 11px;font-size:13px;min-width:230px}
+  .spacer{flex:1}
+  .dirty{font-size:12.5px;color:var(--amber-ink);font-weight:700;display:none;align-items:center;gap:6px}
+  .dirty.show{display:inline-flex}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--gold)}
+  .btn{border:1px solid var(--line);background:#fff;border-radius:9px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:7px;color:var(--ink)}
+  .btn.primary{background:var(--moss);border-color:var(--moss);color:#f4f1e9}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+
+  /* bulk apply strip (shows on selection) */
+  .bulk{display:none;align-items:center;gap:10px;flex-wrap:wrap;background:#eef1e8;border:1px solid #d7ddc9;
+    border-radius:11px;padding:9px 12px;margin:10px 0 0}
+  .bulk.show{display:flex}
+  .bulk .lead{font-weight:800;color:var(--moss-2);font-size:13px}
+  .bulk select,.bulk input{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 9px;font-size:12.5px}
+  .bulk .mini{font-size:12px;color:var(--muted)}
+  .link{background:none;border:none;color:var(--moss-2);font-weight:700;cursor:pointer;font-size:12.5px;padding:0}
+
+  /* grid */
+  .tablewrap{margin-top:12px;border:1px solid var(--line);border-radius:12px;overflow:visible;background:#fff}
+  table{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+  thead th{position:sticky;top:50px;background:var(--soft);text-align:left;font-size:10.5px;letter-spacing:.05em;
+    text-transform:uppercase;color:var(--muted);font-weight:800;padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+  tbody td{padding:4px 8px;border-bottom:1px solid #f0eee4;vertical-align:middle}
+  tbody tr:hover{background:#faf9f3}
+  tr.sel{background:#eef3e8 !important}
+  .cb{width:30px;text-align:center}
+  .sid{color:var(--muted);font-variant-numeric:tabular-nums;font-weight:600}
+  .item{font-weight:600;min-width:220px}
+  .celled select,.celled input{width:100%;border:1px solid transparent;background:transparent;border-radius:7px;
+    padding:6px 8px;font-size:12.5px;font-family:inherit;color:var(--ink);cursor:pointer}
+  .celled select:hover,.celled input:hover{border-color:var(--line);background:#fff}
+  .celled select:focus,.celled input:focus{border-color:var(--moss-2);background:#fff;outline:none}
+  /* empty cell cue */
+  td.empty{background:var(--amber-bg)}
+  td.empty select,td.empty input{color:#b89a53}
+  td.filled{background:#f3f8ef}
+  /* customer status dot */
+  .cust{display:flex;align-items:center;gap:7px}
+  .cust .d{width:8px;height:8px;border-radius:50%;flex:none}
+  .d.linked{background:var(--ok-ink)}
+  .d.text{background:var(--gold)}
+  .d.none{background:#cdbf9a}
+  .custlabel{flex:1;min-width:110px}
+  .custlabel input{width:100%}
+  .addnew{font-size:10.5px;color:var(--moss-2);font-weight:700;cursor:pointer;white-space:nowrap;flex:none}
+
+  .foot{font-size:11.5px;color:var(--muted);margin-top:12px;display:flex;gap:18px;flex-wrap:wrap}
+  .kbd{background:#fff;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 5px;font-size:11px;font-weight:700;color:#5c6b45}
+  .ribbon{background:#fff4df;border:1px dashed #e3c892;color:#8a6a1f;border-radius:10px;padding:9px 13px;font-size:12px;font-weight:600;margin:16px 0 0;text-align:center}
+  .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--moss);color:#f4f1e9;
+    padding:11px 18px;border-radius:10px;font-weight:700;font-size:13px;opacity:0;transition:.25s;pointer-events:none;z-index:50}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="inner">
+      <div class="brand">Cambium <span>· Gehrke</span></div>
+      <nav class="topnav">
+        <a href="#">Orders</a>
+        <a href="#" class="on">Samples</a>
+        <a href="#">Projects</a>
+        <a href="#">Reports</a>
+        <a href="#">Setup</a>
+      </nav>
+      <div class="who"><span>Brad Nelson</span><div class="av">BN</div></div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="crumbs"><a href="#">Samples</a> › <a href="#">Tracker</a> › Catch-up grid</div>
+    <div class="headrow">
+      <div>
+        <h1>Catch-up grid</h1>
+        <div class="sub">Fill the gaps on your backlog, spreadsheet-style — edit in place, fill down a column, or apply one value to many rows at once.</div>
+      </div>
+    </div>
+
+    <div class="chips" id="chips">
+      <span class="chip warn on" data-f="nocat">Needs category <span class="n">738</span></span>
+      <span class="chip warn" data-f="noapp">Needs application <span class="n">744</span></span>
+      <span class="chip warn" data-f="nocust">No customer linked <span class="n">333</span></span>
+      <span class="chip warn" data-f="nocontact">No contact <span class="n">725</span></span>
+      <span class="chip warn" data-f="noproj">No project <span class="n">444</span></span>
+      <span class="chip" data-f="all">Everything <span class="n">752</span></span>
+    </div>
+
+    <div class="bar">
+      <input class="search" id="search" placeholder="Search item, customer, project…" />
+      <div class="spacer"></div>
+      <span class="dirty" id="dirty"><span class="dot"></span><span id="dirtyn">0</span> unsaved</span>
+      <button class="btn" id="revert" disabled>Revert</button>
+      <button class="btn primary" id="save" disabled>Save all</button>
+    </div>
+
+    <div class="bulk" id="bulk">
+      <span class="lead"><span id="seln">0</span> selected</span>
+      <span class="mini">Set</span>
+      <select id="bulkcol">
+        <option value="cat">Category</option>
+        <option value="app">Application</option>
+        <option value="proj">Project</option>
+      </select>
+      <span class="mini">to</span>
+      <select id="bulkval"></select>
+      <button class="btn" id="bulkapply">Apply to selected</button>
+      <span class="mini">·</span>
+      <button class="link" id="filldown">⬇ Fill down from first selected</button>
+      <span class="spacer"></span>
+      <button class="link" id="clearsel">Clear selection</button>
+    </div>
+
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr>
+            <th class="cb"><input type="checkbox" id="all" /></th>
+            <th>Sample</th>
+            <th id="sortdate" style="cursor:pointer;user-select:none">Initiated <span id="sortarrow" style="opacity:.5">↕</span></th>
+            <th>Item</th>
+            <th>Category</th>
+            <th>Application</th>
+            <th>Customer</th>
+            <th>Contact</th>
+            <th>Project</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+
+    <div class="foot">
+      <span><span class="kbd">Tab</span> / <span class="kbd">Enter</span> move cell</span>
+      <span><span class="kbd">Shift</span>+click a row to select a range</span>
+      <span>🟡 amber cell = empty &nbsp; 🟢 green = filled this session</span>
+    </div>
+
+    <div class="ribbon">Mockup — nothing here saves. Real version writes straight to each sample, with the same tenant guard as the Tracker.</div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+<script>
+  const CATS = ["Baking Mixes","Bakery & Bread","Beverages","Cereals & Granola","Bars","Snacks",
+    "Dairy & Alternatives","Confectionery & Chocolate","Sauces, Dressings & Condiments","Soups & Broths",
+    "Meat, Poultry & Seafood","Seasonings & Blends","Nutrition & Supplements","Meals & Entrées","Pet Food"];
+  const APPS = ["Bakery","Snack / bar","Beverage","Cereal / granola","Dairy","Confection","Sauce / dressing",
+    "Seasoning blend","Nutrition / supplement","Prepared meal","Pet"];
+  // Brad's real projects (subset)
+  const PROJECTS = ["Bob's Red Mill – Savory","Rikki Foods 1/8\" IQF Ginger 2027","Glanbia – Bar Project (Aaron Tulie)",
+    "Tree Top – Fruit powders","Chelan Fresh – Dried apple","Nutraceutical – Collagen blends"];
+  // known WOS customers for the typeahead match
+  const KNOWN=["Tree Top","Glanbia Nutritionals","Bob's Red Mill","Chelan Fresh","Rikki Foods","Nutraceutical","SunOpta","Milne"];
+
+  // Real backlog rows (ids + item text are real; gaps mirror the live state)
+  const DATA = [
+    {id:13277, item:"Whey Protein Isolate 90", cat:"", app:"", cust:"Glanbia", custState:"text", contact:"", proj:"Glanbia – Bar Project (Aaron Tulie)"},
+    {id:13278, item:"Milk Protein Concentrate 85", cat:"", app:"", cust:"Glanbia", custState:"text", contact:"", proj:"Glanbia – Bar Project (Aaron Tulie)"},
+    {id:13276, item:"Micellar Casein", cat:"", app:"", cust:"Glanbia", custState:"text", contact:"", proj:"Glanbia – Bar Project (Aaron Tulie)"},
+    {id:13215, item:"FG10122 – Banana Powder", cat:"", app:"", cust:"Tree Top", custState:"linked", contact:"", proj:"Tree Top – Fruit powders"},
+    {id:13153, item:"FG10127 – Sweet Potato Powder", cat:"", app:"", cust:"Tree Top", custState:"linked", contact:"", proj:"Tree Top – Fruit powders"},
+    {id:762,   item:"SR69200 Apple Powder", cat:"", app:"", cust:"Tree Top", custState:"linked", contact:"Dana Welles", proj:"Tree Top – Fruit powders"},
+    {id:761,   item:"SR70165 – Apple Fragments w/ fines", cat:"", app:"", cust:"Tree Top", custState:"linked", contact:"Dana Welles", proj:"Tree Top – Fruit powders"},
+    {id:763,   item:"SR70002 – Blueberry Fragments w/ fines", cat:"", app:"", cust:"", custState:"none", contact:"", proj:""},
+    {id:13146, item:"16712 Garlic Roasted Puree", cat:"", app:"", cust:"", custState:"none", contact:"", proj:""},
+    {id:13144, item:"16356 Garlic Roasted Cloves", cat:"", app:"", cust:"", custState:"none", contact:"", proj:""},
+    {id:742,   item:"1224 – Apple Pie Spice", cat:"Seasonings & Blends", app:"Seasoning blend", cust:"Milne", custState:"linked", contact:"", proj:""},
+    {id:743,   item:"1187 – Pumpkin Pie Spice", cat:"", app:"", cust:"Milne", custState:"text", contact:"", proj:""},
+    {id:436,   item:"Yogurt Bites", cat:"", app:"", cust:"", custState:"none", contact:"", proj:""},
+    {id:437,   item:"Cheesecake Bites", cat:"", app:"", cust:"", custState:"none", contact:"", proj:""},
+    {id:590,   item:"Red Chili Dried Beets", cat:"", app:"", cust:"Chelan Fresh", custState:"text", contact:"", proj:""},
+    {id:591,   item:"Teriyaki Dried Beets", cat:"", app:"", cust:"Chelan Fresh", custState:"text", contact:"", proj:""},
+    {id:596,   item:"Precision Diced Cranberries", cat:"", app:"", cust:"", custState:"none", contact:"", proj:""},
+    {id:610,   item:"Desiccated Coconut – Macaroon, unsweetened", cat:"", app:"", cust:"SunOpta", custState:"text", contact:"", proj:""},
+    {id:611,   item:"Coconut Milk Powder Gold", cat:"", app:"", cust:"SunOpta", custState:"text", contact:"", proj:""},
+    {id:13149, item:"01196 – Dried Cherries, Polish fruit", cat:"", app:"", cust:"", custState:"none", contact:"", proj:""},
+    {id:592,   item:"Cardamom Dried Beets", cat:"", app:"", cust:"Chelan Fresh", custState:"text", contact:"", proj:""},
+    {id:593,   item:"Dried Infused Apples", cat:"", app:"", cust:"", custState:"none", contact:"", proj:""},
+    {id:594,   item:"Dried Cranberry Bits", cat:"", app:"", cust:"", custState:"none", contact:"", proj:""},
+    {id:595,   item:"Dried Cranberry Bits with Rice Flour", cat:"", app:"", cust:"", custState:"none", contact:"", proj:""},
+    {id:597,   item:"Precision Diced Cranberries w/ Rice Flour", cat:"", app:"", cust:"", custState:"none", contact:"", proj:""},
+    {id:598,   item:"Precision Diced Blueberries", cat:"", app:"", cust:"", custState:"none", contact:"", proj:""},
+    {id:599,   item:"Sweet Potato", cat:"", app:"", cust:"", custState:"none", contact:"", proj:""},
+    {id:608,   item:"Desiccated Coconut – Medium, unsweetened", cat:"", app:"", cust:"SunOpta", custState:"text", contact:"", proj:""},
+    {id:609,   item:"Desiccated Coconut – Fancy Shred, unsweetened", cat:"", app:"", cust:"SunOpta", custState:"text", contact:"", proj:""},
+    {id:764,   item:"SR70011 – Blueberry Powder", cat:"", app:"", cust:"", custState:"none", contact:"", proj:""},
+    {id:13147, item:"16990 Garlic Puree", cat:"", app:"", cust:"", custState:"none", contact:"", proj:""},
+    {id:13145, item:"16564 Garlic Roasted Minced", cat:"", app:"", cust:"", custState:"none", contact:"", proj:""},
+    {id:13133, item:"SR10147-4 Strawberry Sliced, LM", cat:"", app:"", cust:"", custState:"none", contact:"", proj:""},
+    {id:744,   item:"1310 – Cinnamon Ground, Korintje", cat:"", app:"", cust:"Milne", custState:"text", contact:"", proj:""},
+    {id:745,   item:"1402 – Nutmeg Ground", cat:"", app:"", cust:"Milne", custState:"text", contact:"", proj:""},
+    {id:746,   item:"1518 – Ginger Ground", cat:"", app:"", cust:"Rikki Foods", custState:"text", contact:"", proj:"Rikki Foods 1/8\" IQF Ginger 2027"},
+    {id:13201, item:"IQF Ginger 1/8\" Diced", cat:"", app:"", cust:"Rikki Foods", custState:"text", contact:"", proj:"Rikki Foods 1/8\" IQF Ginger 2027"},
+    {id:13202, item:"IQF Ginger Puree", cat:"", app:"", cust:"Rikki Foods", custState:"text", contact:"", proj:"Rikki Foods 1/8\" IQF Ginger 2027"},
+    {id:881,   item:"Oat Flour, Whole Grain", cat:"", app:"", cust:"Bob's Red Mill", custState:"linked", contact:"Marcy Hahn", proj:"Bob's Red Mill – Savory"},
+    {id:882,   item:"Garbanzo Bean Flour", cat:"", app:"", cust:"Bob's Red Mill", custState:"linked", contact:"Marcy Hahn", proj:"Bob's Red Mill – Savory"},
+    {id:883,   item:"Nutritional Yeast, Large Flake", cat:"", app:"", cust:"Bob's Red Mill", custState:"linked", contact:"Marcy Hahn", proj:"Bob's Red Mill – Savory"},
+    {id:884,   item:"Potato Starch", cat:"", app:"", cust:"Bob's Red Mill", custState:"linked", contact:"", proj:"Bob's Red Mill – Savory"},
+    {id:1021,  item:"Collagen Peptides, Bovine", cat:"", app:"", cust:"Nutraceutical", custState:"text", contact:"", proj:"Nutraceutical – Collagen blends"},
+    {id:1022,  item:"Marine Collagen Powder", cat:"", app:"", cust:"Nutraceutical", custState:"text", contact:"", proj:"Nutraceutical – Collagen blends"},
+    {id:1023,  item:"Whey Protein Concentrate 80", cat:"", app:"", cust:"", custState:"none", contact:"", proj:""},
+    {id:1024,  item:"Pea Protein Isolate 85", cat:"", app:"", cust:"", custState:"none", contact:"", proj:""},
+    {id:1301,  item:"Freeze-Dried Strawberry Slices", cat:"", app:"", cust:"Chelan Fresh", custState:"text", contact:"", proj:""},
+    {id:1302,  item:"Freeze-Dried Raspberry Whole", cat:"", app:"", cust:"Chelan Fresh", custState:"text", contact:"", proj:""},
+    {id:1303,  item:"Apple Juice Concentrate 70 Brix", cat:"", app:"", cust:"Tree Top", custState:"linked", contact:"Dana Welles", proj:"Tree Top – Fruit powders"},
+    {id:1304,  item:"Pear Juice Concentrate", cat:"", app:"", cust:"Tree Top", custState:"linked", contact:"", proj:""},
+    {id:1510,  item:"Tomato Powder, Cold Break", cat:"", app:"", cust:"", custState:"none", contact:"", proj:""},
+    {id:1511,  item:"Onion Powder, Toasted", cat:"", app:"", cust:"", custState:"none", contact:"", proj:""},
+    {id:1512,  item:"Roasted Garlic Granules", cat:"", app:"", cust:"", custState:"none", contact:"", proj:""},
+    {id:1620,  item:"Maple Sugar, Granulated", cat:"", app:"", cust:"", custState:"none", contact:"", proj:""},
+    {id:1621,  item:"Date Paste", cat:"", app:"", cust:"", custState:"none", contact:"", proj:""},
+    {id:1622,  item:"Coconut Sugar, Organic", cat:"", app:"", cust:"SunOpta", custState:"text", contact:"", proj:""}
+  ];
+  // sample initiated (sent) date — lower ids are older imports, 13xxx are recent
+  function initDate(id){
+    if(id>=13270) return "2026-10-29"; if(id>=13200) return "2026-10-14";
+    if(id>=13140) return "2026-09-22"; if(id>=13120) return "2026-08-18";
+    if(id>=1600)  return "2025-11-03"; if(id>=1500)  return "2025-09-12";
+    if(id>=1300)  return "2025-07-08"; if(id>=1000)  return "2025-05-20";
+    if(id>=870)   return "2025-03-14"; if(id>=740)   return "2024-11-22";
+    if(id>=590)   return "2024-09-05"; return "2024-06-18";
+  }
+  DATA.forEach((r,i)=>{r._i=i; r._dirty=false; r.date=initDate(r.id);});
+  const MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  function fmtDate(d){const [y,m,day]=d.split("-");return `${MON[+m-1]} ${+day}, ${y}`;}
+  function fmtAge(d){const days=Math.round((Date.now()-new Date(d))/864e5);
+    return days>=365?`${(days/365).toFixed(1)} yr ago`:`${days} days ago`;}
+
+  let FILTER="nocat", SEARCH="", lastClicked=null, SORT=0; // 0 none, 1 oldest first, 2 newest first
+  const $=s=>document.querySelector(s), rowsEl=$("#rows");
+
+  function opts(list,sel){return ['<option value="">—</option>'].concat(
+    list.map(v=>`<option${v===sel?' selected':''}>${v}</option>`)).join("");}
+
+  function visible(){
+    const out = DATA.filter(r=>{
+      if(SEARCH){const h=(r.item+" "+r.cust+" "+r.proj).toLowerCase();if(!h.includes(SEARCH))return false;}
+      switch(FILTER){
+        case"nocat":return !r.cat;
+        case"noapp":return !r.app;
+        case"nocust":return r.custState!=="linked";
+        case"nocontact":return !r.contact;
+        case"noproj":return !r.proj;
+        default:return true;
+      }
+    });
+    if(SORT===1) out.sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:0);
+    if(SORT===2) out.sort((a,b)=>a.date>b.date?-1:a.date<b.date?1:0);
+    return out;
+  }
+
+  function custCell(r){
+    const dot = r.custState==="linked"?"linked":r.custState==="text"?"text":"none";
+    const label = r.cust || "";
+    const add = r.custState!=="linked" && r.cust
+      ? `<span class="addnew" data-add="${r._i}">+ link</span>`
+      : (r.custState!=="linked" ? `<span class="addnew" data-add="${r._i}">+ add</span>` : "");
+    return `<div class="cust"><span class="d ${dot}" title="${dot==='linked'?'Linked to a WOS company':dot==='text'?'Text only — not linked':'No customer'}"></span>
+      <span class="custlabel"><input value="${label}" data-field="cust" data-i="${r._i}" placeholder="customer…"/></span>
+      ${add}</div>`;
+  }
+
+  function render(){
+    const vis=visible();
+    rowsEl.innerHTML = vis.map(r=>{
+      const selcls = SEL.has(r._i)?" class=\"sel\"":"";
+      return `<tr${selcls} data-row="${r._i}">
+        <td class="cb"><input type="checkbox" data-sel="${r._i}" ${SEL.has(r._i)?"checked":""}/></td>
+        <td class="sid">#${r.id}</td>
+        <td class="sid" style="white-space:nowrap" title="${fmtAge(r.date)}">${fmtDate(r.date)}</td>
+        <td class="item">${r.item||'<span style="color:#b89a53">(no item text)</span>'}</td>
+        <td class="celled ${r.cat?'filled':'empty'}"><select data-field="cat" data-i="${r._i}">${opts(CATS,r.cat)}</select></td>
+        <td class="celled ${r.app?'filled':'empty'}"><select data-field="app" data-i="${r._i}">${opts(APPS,r.app)}</select></td>
+        <td class="celled ${r.custState==='linked'?'filled':'empty'}">${custCell(r)}</td>
+        <td class="celled ${r.contact?'filled':'empty'}"><input data-field="contact" data-i="${r._i}" value="${r.contact||''}" placeholder="contact…"/></td>
+        <td class="celled ${r.proj?'filled':'empty'}"><select data-field="proj" data-i="${r._i}">${opts(PROJECTS,r.proj)}</select></td>
+      </tr>`;
+    }).join("");
+    if(!vis.length) rowsEl.innerHTML=`<tr><td colspan="8" style="padding:26px;text-align:center;color:var(--muted)">Nothing matches — this gap is cleared. 🎉</td></tr>`;
+    syncBulk();
+  }
+
+  // selection
+  const SEL=new Set();
+  function syncBulk(){
+    $("#seln").textContent=SEL.size;
+    $("#bulk").classList.toggle("show",SEL.size>0);
+    $("#all").checked = visible().length>0 && visible().every(r=>SEL.has(r._i));
+    fillBulkVals();
+  }
+  function fillBulkVals(){
+    const c=$("#bulkcol").value;
+    const list = c==="cat"?CATS : c==="app"?APPS : PROJECTS;
+    $("#bulkval").innerHTML = list.map(v=>`<option>${v}</option>`).join("");
+  }
+
+  function setDirty(r){r._dirty=true;refreshDirty();}
+  function refreshDirty(){
+    const n=DATA.filter(r=>r._dirty).length;
+    $("#dirtyn").textContent=n;
+    $("#dirty").classList.toggle("show",n>0);
+    $("#save").disabled=n===0; $("#revert").disabled=n===0;
+  }
+
+  // events
+  rowsEl.addEventListener("change",e=>{
+    const t=e.target;
+    if(t.dataset.sel!=null){
+      const i=+t.dataset.sel; t.checked?SEL.add(i):SEL.delete(i);
+      t.closest("tr").classList.toggle("sel",t.checked); syncBulk(); return;
+    }
+    if(t.dataset.field){
+      const r=DATA[+t.dataset.i], f=t.dataset.field, v=t.value;
+      r[f]=v;
+      if(f==="cust") r.custState = KNOWN.some(k=>k.toLowerCase()===v.trim().toLowerCase())?"linked":(v?"text":"none");
+      setDirty(r); render();
+    }
+  });
+  rowsEl.addEventListener("click",e=>{
+    const add=e.target.dataset.add;
+    if(add!=null){
+      const r=DATA[+add];
+      const match=KNOWN.find(k=>k.toLowerCase().startsWith((r.cust||"").toLowerCase().slice(0,3)) && r.cust);
+      if(match && match.toLowerCase()!==r.cust.toLowerCase()){
+        if(confirm(`Link "${r.cust}" to existing WOS customer "${match}"?`)){r.cust=match;r.custState="linked";setDirty(r);render();toast("Linked to "+match);}
+      }else{
+        const name=prompt("Add as a new customer in WOS:", r.cust||"");
+        if(name){r.cust=name;r.custState="linked";setDirty(r);render();toast("Created "+name+" (app-origin)");}
+      }
+    }
+  });
+
+  // shift-range select on sample # / item click
+  rowsEl.addEventListener("mousedown",e=>{
+    const tr=e.target.closest("tr"); if(!tr||!tr.dataset.row)return;
+    if(e.target.closest(".celled")||e.target.closest(".cb"))return;
+    const i=+tr.dataset.row;
+    if(e.shiftKey && lastClicked!=null){
+      const vis=visible().map(r=>r._i);
+      const a=vis.indexOf(lastClicked),b=vis.indexOf(i);
+      if(a>-1&&b>-1){for(let k=Math.min(a,b);k<=Math.max(a,b);k++)SEL.add(vis[k]);}
+    }else{SEL.has(i)?SEL.delete(i):SEL.add(i);lastClicked=i;}
+    render();
+  });
+
+  $("#all").addEventListener("change",e=>{
+    visible().forEach(r=>e.target.checked?SEL.add(r._i):SEL.delete(r._i));render();
+  });
+  $("#chips").addEventListener("click",e=>{
+    const c=e.target.closest(".chip"); if(!c)return;
+    FILTER=c.dataset.f;
+    document.querySelectorAll(".chip").forEach(x=>x.classList.toggle("on",x===c));
+    render();
+  });
+  $("#search").addEventListener("input",e=>{SEARCH=e.target.value.toLowerCase().trim();render();});
+  $("#sortdate").addEventListener("click",()=>{
+    SORT = SORT===1?2:1;
+    $("#sortarrow").textContent = SORT===1?"↑ oldest":"↓ newest";
+    $("#sortarrow").style.opacity="1"; render();
+  });
+  $("#bulkcol").addEventListener("change",fillBulkVals);
+  $("#bulkapply").addEventListener("click",()=>{
+    const col=$("#bulkcol").value,val=$("#bulkval").value;
+    const field=col==="cat"?"cat":col==="app"?"app":"proj";
+    let n=0;[...SEL].forEach(i=>{DATA[i][field]=val;DATA[i]._dirty=true;n++;});
+    refreshDirty();render();toast(`Set ${field} on ${n} rows`);
+  });
+  $("#filldown").addEventListener("click",()=>{
+    const vis=visible().filter(r=>SEL.has(r._i)); if(vis.length<2){toast("Select 2+ rows");return;}
+    const col=$("#bulkcol").value,field=col==="cat"?"cat":col==="app"?"app":"proj";
+    const src=vis[0][field]; vis.forEach(r=>{r[field]=src;r._dirty=true;});
+    refreshDirty();render();toast(`Filled ${field} down ${vis.length} rows`);
+  });
+  $("#clearsel").addEventListener("click",()=>{SEL.clear();render();});
+  $("#save").addEventListener("click",()=>{
+    const n=DATA.filter(r=>r._dirty).length; DATA.forEach(r=>r._dirty=false);
+    refreshDirty();render();toast(`Saved ${n} samples ✓`);
+  });
+  $("#revert").addEventListener("click",()=>{toast("(mock) would reload from DB");});
+
+  let tT;function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(tT);tT=setTimeout(()=>t.classList.remove("show"),1600);}
+
+  fillBulkVals();render();
+</script>
+</body>
+</html>
