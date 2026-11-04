@@ -153,8 +153,6 @@
       <span class="mini">to</span>
       <select id="bulkval"></select>
       <button class="btn" id="bulkapply">Apply to selected</button>
-      <span class="mini">·</span>
-      <button class="link" id="filldown">⬇ Fill down from first selected</button>
       <span class="spacer"></span>
       <button class="link" id="clearsel">Clear selection</button>
     </div>
@@ -413,12 +411,6 @@
     const field=col==="cat"?"cat":col==="app"?"app":"proj";
     let n=0;[...SEL].forEach(i=>{DATA[i][field]=val;DATA[i]._dirty=true;n++;});
     refreshDirty();render();toast(`Set ${field} on ${n} rows`);
-  });
-  $("#filldown").addEventListener("click",()=>{
-    const vis=visible().filter(r=>SEL.has(r._i)); if(vis.length<2){toast("Select 2+ rows");return;}
-    const col=$("#bulkcol").value,field=col==="cat"?"cat":col==="app"?"app":"proj";
-    const src=vis[0][field]; vis.forEach(r=>{r[field]=src;r._dirty=true;});
-    refreshDirty();render();toast(`Filled ${field} down ${vis.length} rows`);
   });
   $("#clearsel").addEventListener("click",()=>{SEL.clear();render();});
   $("#save").addEventListener("click",()=>{
