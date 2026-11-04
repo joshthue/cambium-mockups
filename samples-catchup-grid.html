@@ -65,7 +65,7 @@
   .bulk.show{display:flex}
   .bulk .lead{font-weight:800;color:var(--moss-2);font-size:13px}
   .bulk .bf{display:inline-flex;flex-direction:column;gap:3px;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:800}
-  .bulk .bf select{min-width:150px;max-width:230px}
+  .bulk .bf select,.bulk .bf input{min-width:150px;max-width:230px}
   .bulk select,.bulk input{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 9px;font-size:12.5px;text-transform:none;letter-spacing:0;color:var(--ink);font-weight:400}
   .bulk .bf select.set{border-color:var(--moss-2);background:#f3f8ef}
   .bulk .mini{font-size:12px;color:var(--muted)}
@@ -161,6 +161,7 @@
       <span class="lead"><span id="seln">0</span> selected</span>
       <label class="bf">Category <select id="bcat"></select></label>
       <label class="bf">Application <select id="bapp"></select></label>
+      <label class="bf">Customer <input id="bcust" list="custlist" placeholder="— leave as is —" autocomplete="off"/></label>
       <label class="bf">Project <select id="bproj"></select></label>
       <button class="btn primary" id="bulkapply">Apply</button>
       <span class="mini" id="bulkhint">pick any field — leave the rest</span>
@@ -408,9 +409,10 @@
     $("#bcat").innerHTML  = optList(CATS, sharedVal("cat"));
     $("#bapp").innerHTML  = optList(APPS, sharedVal("app"));
     $("#bproj").innerHTML = optList(PROJECTS, sharedVal("proj"), `<option value="__new__">➕ New project…</option>`);
+    const sc=sharedVal("cust"); $("#bcust").value = (SEL.size && [...SEL].every(i=>DATA[i].custState==="linked")) ? sc : "";
     markSet();
   }
-  function markSet(){["#bcat","#bapp","#bproj"].forEach(id=>{const el=$(id);el.classList.toggle("set",!!el.value && el.value!=="__new__");});}
+  function markSet(){["#bcat","#bapp","#bproj","#bcust"].forEach(id=>{const el=$(id);el.classList.toggle("set",!!el.value && el.value!=="__new__");});}
 
   function setDirty(r){r._dirty=true;stickyOK=true;refreshDirty();}
   function isComplete(r){return r.cat && r.app && r.custState==="linked" && r.contact && r.proj;}
@@ -477,24 +479,26 @@
     $("#sortarrow").textContent = SORT===1?"↑ oldest":"↓ newest";
     $("#sortarrow").style.opacity="1"; render();
   });
-  ["#bcat","#bapp","#bproj"].forEach(id=>$(id).addEventListener("change",markSet));
+  ["#bcat","#bapp","#bproj","#bcust"].forEach(id=>$(id).addEventListener("input",markSet));
   $("#bulkapply").addEventListener("click",()=>{
     if(!SEL.size) return;
-    const cat=$("#bcat").value, app=$("#bapp").value; let proj=$("#bproj").value;
+    const cat=$("#bcat").value, app=$("#bapp").value, cust=$("#bcust").value.trim(); let proj=$("#bproj").value;
     if(proj==="__new__"){
       const name=prompt("Name the new project — the selected samples will all be linked to it:");
       if(!name){ $("#bproj").value=""; markSet(); return; }
       if(!PROJECTS.includes(name)) PROJECTS.push(name);
       proj=name;
     }
-    if(!cat && !app && !proj){ toast("Pick a field to set"); return; }
+    if(!cat && !app && !proj && !cust){ toast("Pick a field to set"); return; }
+    const custLinked = cust && KNOWN.some(k=>k.toLowerCase()===cust.toLowerCase());
     let n=0;[...SEL].forEach(i=>{
       const r=DATA[i]; let t=false;
       if(cat){r.cat=cat;t=true;} if(app){r.app=app;t=true;} if(proj){r.proj=proj;t=true;}
+      if(cust){r.cust=cust; r.custState=custLinked?"linked":"text"; t=true;}
       if(t){r._dirty=true;n++;}
     });
     stickyOK=true; refreshDirty(); render();
-    const parts=[cat&&"category",app&&"application",proj&&"project"].filter(Boolean).join(" + ");
+    const parts=[cat&&"category",app&&"application",cust&&"customer",proj&&"project"].filter(Boolean).join(" + ");
     toast(`Set ${parts} on ${n} sample${n!==1?'s':''}`);
   });
   $("#clearsel").addEventListener("click",()=>{SEL.clear();render();});
