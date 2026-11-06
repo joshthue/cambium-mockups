@@ -82,9 +82,17 @@
   .mocknav .inner{max-width:1180px;margin:0 auto;padding:7px 20px;display:flex;align-items:center;gap:10px;font-size:12.5px;flex-wrap:wrap}
   .mocknav a{color:var(--moss-2);text-decoration:none;font-weight:600;padding:3px 9px;border-radius:7px}
   .mocknav a.on{background:var(--moss);color:#f4f1e9}
+  .mocknav a:hover{background:#e0dccd;text-decoration:underline}
+  .mocknav a.on:hover{background:var(--moss);text-decoration:none}
   .mocknav a.home{color:var(--muted)}
   .mocknav .lbl{color:var(--muted);font-weight:700;margin-left:4px}
   .mocknav .tag{margin-left:auto;color:var(--muted);font-size:11px}
+  .toggle{cursor:pointer;user-select:none}
+  .sw{transition:background .15s}
+  .sw.off{background:#cdd2c0}
+  .sw.off::after{right:auto;left:2px}
+  .grp{cursor:pointer}
+  .grp:hover td{background:#f1ede1}
 </style>
 </head>
 <body>
@@ -118,7 +126,7 @@
         <div class="ctl"><span class="lab">Confidence</span>
           <div class="seg"><button class="on">All</button><button>High ≥70%</button><button>Med 40–69%</button><button>Low &lt;40%</button></div></div>
         <div class="spacer"></div>
-        <div class="toggle"><span class="sw"></span> My pipeline</div>
+        <div class="toggle" id="mineToggle" title="Off = Everyone (opens the manager view)"><span class="sw" id="mineSw"></span> <span id="mineLbl">My pipeline</span></div>
       </div>
     </div>
 
@@ -206,5 +214,29 @@
       filled in.
     </div>
   </div>
+
+<script>
+(function(){
+  // "My pipeline" toggle: this is the rep's own view, so switching it OFF
+  // (= Everyone) jumps to the manager/everyone mock.
+  var t = document.getElementById('mineToggle');
+  if(t){ t.addEventListener('click', function(){
+    var sw = document.getElementById('mineSw');
+    sw.classList.add('off');
+    document.getElementById('mineLbl').textContent = 'Everyone →';
+    setTimeout(function(){ window.location.href = 'pipeline-projections-manager.html'; }, 260);
+  }); }
+  // Group rows collapse/expand their opportunity rows.
+  var rows = [].slice.call(document.querySelectorAll('tbody tr'));
+  [].forEach.call(document.querySelectorAll('tr.grp'), function(gr){
+    gr.addEventListener('click', function(){
+      var chev = gr.querySelector('.chev'); var open = chev.textContent.trim()==='▾';
+      chev.textContent = open ? '▸' : '▾';
+      var i = rows.indexOf(gr) + 1;
+      for(; i<rows.length && !rows[i].classList.contains('grp'); i++){ rows[i].style.display = open ? 'none' : ''; }
+    });
+  });
+})();
+</script>
 </body>
 </html>
