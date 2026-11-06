@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Cambium — Pipeline Projections (v2 mockup)</title>
+<title>Cambium — Pipeline Projections</title>
 <style>
   :root{
     --bg:#f4f1e9; --panel:#ffffff; --ink:#20261a; --muted:#8b917f;
@@ -25,20 +25,38 @@
   .topnav a.on{background:rgba(255,255,255,.15);opacity:1;font-weight:600}
   .who{margin-left:auto;font-size:12.5px;opacity:.9}
 
+  .mocknav{background:#ece7db;border-bottom:1px solid var(--line)}
+  .mocknav .inner{max-width:1180px;margin:0 auto;padding:7px 20px;display:flex;align-items:center;gap:10px;font-size:12.5px;flex-wrap:wrap}
+  .mocknav a{color:var(--muted);text-decoration:none;font-weight:600;padding:3px 9px;border-radius:7px}
+  .mocknav a:hover{background:#e0dccd;text-decoration:underline}
+  .mocknav .lbl{color:var(--ink);font-weight:800;margin-left:2px}
+  .mocknav .hint{margin-left:auto;color:var(--gold);font-size:11.5px;font-weight:700;display:inline-flex;align-items:center;gap:6px}
+  .mocknav .hint .dot{width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 0 rgba(176,138,62,.5);animation:pulse 1.8s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(176,138,62,.5)}70%{box-shadow:0 0 0 7px rgba(176,138,62,0)}100%{box-shadow:0 0 0 0 rgba(176,138,62,0)}}
+
   h1{font-size:22px;margin:16px 0 2px;font-weight:800;letter-spacing:-.2px}
-  .sub{color:var(--muted);font-size:13px;margin-bottom:14px;max-width:760px}
+  .sub{color:var(--muted);font-size:13px;margin-bottom:14px;max-width:820px}
 
   .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:14px}
-  .row{display:flex;flex-wrap:wrap;align-items:center;gap:18px}
+  .row{display:flex;flex-wrap:wrap;align-items:flex-end;gap:18px}
   .ctl{display:flex;flex-direction:column;gap:5px}
   .ctl .lab{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700}
   .seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
-  .seg button{border:0;background:#fff;padding:6px 12px;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer}
+  .seg button{border:0;background:#fff;padding:6px 12px;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer;transition:background .1s,color .1s}
+  .seg button:hover{background:#f1ede1;color:var(--ink)}
   .seg button.on{background:var(--moss);color:#f4f1e9}
-  .toggle{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted);font-weight:600}
-  .sw{width:34px;height:20px;border-radius:999px;background:var(--moss);position:relative}
-  .sw::after{content:"";position:absolute;top:2px;right:2px;width:16px;height:16px;border-radius:50%;background:#fff}
+  .seg button.on:hover{background:var(--moss-2);color:#fff}
+  .seg.scope{box-shadow:0 0 0 2px #e4efe0;border-color:var(--moss-2)}
+  select.dd{appearance:none;-webkit-appearance:none;border:1px solid var(--line);border-radius:9px;background:#fff;
+    padding:6px 28px 6px 10px;font-size:12.5px;font-weight:600;color:var(--ink);cursor:pointer;
+    background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);
+    background-position:calc(100% - 15px) 52%,calc(100% - 10px) 52%;background-size:5px 5px,5px 5px;background-repeat:no-repeat}
+  select.dd.hot{border-color:var(--moss-2);box-shadow:0 0 0 2px #e4efe0}
+  select.dd:disabled{opacity:.45;cursor:not-allowed;box-shadow:none;border-color:var(--line)}
   .spacer{flex:1}
+
+  .ctx{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--moss-2);background:#eef2e6;border:1px solid #cfe0c3;border-radius:10px;padding:8px 12px;margin-bottom:14px;font-weight:600}
+  .ctx .pill{background:#fff;border:1px solid #cfe0c3;border-radius:999px;padding:1px 9px;font-size:11.5px}
 
   .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
   .kpi{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
@@ -49,13 +67,15 @@
   .kpi .n{font-size:11.5px;color:var(--muted);margin-top:2px}
   .kpi.hero .n{color:#b9c6a7}
   .bar{height:7px;border-radius:999px;background:#d9e3cf;margin-top:9px;overflow:hidden}
-  .bar>i{display:block;height:100%;background:var(--gold)}
+  .bar>i{display:block;height:100%;background:var(--gold);transition:width .35s ease}
 
   table{width:100%;border-collapse:collapse}
   thead th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700;text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
   thead th.r{text-align:right}
   .grp td{background:var(--soft);font-weight:700;padding:9px 12px;border-top:1px solid var(--line)}
-  .grp .chev{color:var(--muted);margin-right:6px}
+  .grp{cursor:pointer}
+  .grp:hover td{background:#f1ede1}
+  .grp .chev{color:var(--moss-2);margin-right:6px;display:inline-block;width:10px}
   td{padding:9px 12px;border-top:1px solid var(--line);vertical-align:top}
   td.r{text-align:right;font-variant-numeric:tabular-nums}
   .oppt{font-weight:600}
@@ -63,8 +83,8 @@
   .supp{font-size:12.5px}
   .chip{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:2px 9px;font-size:11.5px;font-weight:700}
   .chip.hi{background:var(--hi-bg);color:var(--hi)} .chip.med{background:var(--med-bg);color:var(--med)} .chip.lo{background:var(--lo-bg);color:var(--lo)}
+  .rep{display:inline-block;margin-top:4px;font-size:11px;font-weight:700;color:var(--sky);background:#e7eff2;border:1px solid #cfe0e6;border-radius:999px;padding:1px 8px}
   .wt{font-weight:700}
-  .sub-row td{background:#fbfaf5;font-weight:700;border-top:1px dashed var(--line)}
   tfoot td{background:#eef2e6;font-weight:800;border-top:2px solid var(--moss-2);padding:11px 12px}
   .fore{color:var(--moss-2);font-weight:800}
   .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:10px 2px 0}
@@ -78,21 +98,6 @@
   .flow .st.paid{background:#eef2e6;border-color:#cfe0c3}
   .flow .st .man{display:inline-block;margin-top:5px;font-size:10px;font-weight:700;color:var(--gold);border:1px solid #e3cd9a;border-radius:999px;padding:1px 7px}
   .flow .arr{align-self:center;color:var(--muted);font-weight:800;font-size:16px}
-  .mocknav{background:#ece7db;border-bottom:1px solid var(--line)}
-  .mocknav .inner{max-width:1180px;margin:0 auto;padding:7px 20px;display:flex;align-items:center;gap:10px;font-size:12.5px;flex-wrap:wrap}
-  .mocknav a{color:var(--moss-2);text-decoration:none;font-weight:600;padding:3px 9px;border-radius:7px}
-  .mocknav a.on{background:var(--moss);color:#f4f1e9}
-  .mocknav a:hover{background:#e0dccd;text-decoration:underline}
-  .mocknav a.on:hover{background:var(--moss);text-decoration:none}
-  .mocknav a.home{color:var(--muted)}
-  .mocknav .lbl{color:var(--muted);font-weight:700;margin-left:4px}
-  .mocknav .tag{margin-left:auto;color:var(--muted);font-size:11px}
-  .toggle{cursor:pointer;user-select:none}
-  .sw{transition:background .15s}
-  .sw.off{background:#cdd2c0}
-  .sw.off::after{right:auto;left:2px}
-  .grp{cursor:pointer}
-  .grp:hover td{background:#f1ede1}
 </style>
 </head>
 <body>
@@ -104,138 +109,285 @@
 
   <div class="mocknav"><div class="inner">
     <a href="index.html" class="home">‹ All mockups</a>
-    <span class="lbl">Pipeline Projections:</span>
-    <a href="pipeline-projections.html" class="on">Rep view</a>
-    <a href="pipeline-projections-manager.html">Manager / Everyone</a>
-    <span class="tag">mockup · illustrative data</span>
+    <span class="lbl">Pipeline Projections</span>
+    <span class="hint"><span class="dot"></span>interactive — try Scope (My pipeline ↔ Everyone), the Rep dropdown &amp; the group rows</span>
   </div></div>
 
   <div class="wrap">
     <h1>Pipeline Projections</h1>
     <div class="sub">Weight every opportunity by your confidence, subtotal by customer or supplier, and combine it with
-      what you've actually sold to forecast the year. Built on the same query panel as Item Sales — this is the
-      forward number, not the rear‑view.</div>
+      what you've actually sold to forecast the year — the forward number, not the rear‑view. Flip <b>Scope</b> to
+      <b>Everyone</b> (managers / principals) for the whole Gehrke pipeline, then narrow with the <b>Rep</b> dropdown.</div>
 
-    <!-- Query / selection panel (mirrors Item Sales) -->
     <div class="panel">
       <div class="row">
         <div class="ctl"><span class="lab">Period</span>
-          <div class="seg"><button>MTD</button><button>QTD</button><button class="on">FY 2026</button><button>Custom</button></div></div>
+          <div class="seg" data-group="period"><button>MTD</button><button>QTD</button><button class="on">FY 2026</button><button>Custom</button></div></div>
         <div class="ctl"><span class="lab">Group by</span>
-          <div class="seg"><button class="on">By Customer</button><button>By Supplier</button><button>By Item</button></div></div>
+          <div class="seg" data-group="groupby"><button class="on">By Customer</button><button>By Supplier</button><button>By Rep</button><button>By Item</button></div></div>
         <div class="ctl"><span class="lab">Confidence</span>
-          <div class="seg"><button class="on">All</button><button>High ≥70%</button><button>Med 40–69%</button><button>Low &lt;40%</button></div></div>
+          <div class="seg" data-group="conf"><button class="on">All</button><button>High ≥70%</button><button>Med 40–69%</button><button>Low &lt;40%</button></div></div>
         <div class="spacer"></div>
-        <div class="toggle" id="mineToggle" title="Off = Everyone (opens the manager view)"><span class="sw" id="mineSw"></span> <span id="mineLbl">My pipeline</span></div>
+        <div class="ctl"><span class="lab">Scope</span>
+          <div class="seg scope" id="scope"><button data-scope="my" class="on">My pipeline</button><button data-scope="all">Everyone</button></div></div>
+        <div class="ctl"><span class="lab">Rep</span>
+          <select class="dd" id="repsel" disabled>
+            <option value="all">All reps</option>
+            <option value="Brad Nelson">Brad Nelson</option>
+            <option value="Patty Mertz">Patty Mertz</option>
+            <option value="Julie Tufte">Julie Tufte</option>
+          </select></div>
       </div>
     </div>
 
-    <!-- KPI strip -->
+    <div class="ctx" id="ctx" style="display:none">
+      Viewing <span class="pill" id="ctxScope">Everyone</span> <span class="pill" id="ctxRep">Rep: All reps</span>
+      <span style="color:var(--muted);font-weight:500">— the Rep dropdown is live only in Everyone mode; pick a name to narrow to that person's pipeline.</span>
+    </div>
+
     <div class="kpis">
-      <div class="kpi"><div class="k">Actual sold · FY26</div><div class="v">$3.41M</div><div class="n">invoiced &amp; paid · samples excluded</div></div>
-      <div class="kpi"><div class="k">Weighted pipeline</div><div class="v">$1.86M</div><div class="n">Σ potential × confidence</div></div>
-      <div class="kpi hero"><div class="k">Combined forecast</div><div class="v">$5.27M</div><div class="n">actual + weighted pipeline</div></div>
-      <div class="kpi"><div class="k">Goal · FY26</div><div class="v">$6.0M</div><div class="n">88% of goal projected</div>
-        <div class="bar"><i style="width:88%"></i></div></div>
+      <div class="kpi"><div class="k">Actual sold · FY26</div><div class="v" id="kActual"></div><div class="n" id="kActualN"></div></div>
+      <div class="kpi"><div class="k">Weighted pipeline</div><div class="v" id="kWt"></div><div class="n">Σ potential × confidence</div></div>
+      <div class="kpi hero"><div class="k">Combined forecast</div><div class="v" id="kFore"></div><div class="n">actual + weighted pipeline</div></div>
+      <div class="kpi"><div class="k" id="kGoalK"></div><div class="v" id="kGoal"></div><div class="n" id="kGoalN"></div>
+        <div class="bar"><i id="kGoalBar"></i></div></div>
     </div>
 
-    <!-- Revenue lifecycle: forward pipeline → realized (what Brad "bird-dogs") -->
     <div class="flow">
-      <div class="st"><div class="t">Pipeline</div><div class="a">$1.86M</div><div class="d">opportunities, weighted by confidence</div></div>
+      <div class="st"><div class="t">Pipeline</div><div class="a" id="fPipe"></div><div class="d">opportunities, weighted by confidence</div></div>
       <div class="arr">›</div>
-      <div class="st"><div class="t">Open order</div><div class="a">$0.74M</div><div class="d">placed · awaiting supplier invoice</div></div>
+      <div class="st"><div class="t">Open order</div><div class="a" id="fOpen"></div><div class="d">placed · awaiting supplier invoice</div></div>
       <div class="arr">›</div>
-      <div class="st"><div class="t">Invoiced</div><div class="a">$0.52M</div><div class="d">supplier invoiced · chasing payment</div><span class="man">manual flag</span></div>
+      <div class="st"><div class="t">Invoiced</div><div class="a" id="fInv"></div><div class="d">supplier invoiced · chasing payment</div><span class="man">manual flag</span></div>
       <div class="arr">›</div>
-      <div class="st paid"><div class="t">Paid</div><div class="a">$3.41M</div><div class="d">commission collected · counts as Actual</div></div>
+      <div class="st paid"><div class="t">Paid</div><div class="a" id="fPaid"></div><div class="d">commission collected · counts as Actual</div></div>
     </div>
 
-    <!-- Grouped projection table -->
     <div class="panel" style="padding:0;overflow:hidden">
       <table>
         <thead>
           <tr>
-            <th>Customer / Opportunity</th>
-            <th>Supplier</th>
-            <th class="r">Potential $</th>
-            <th class="r">Confidence</th>
-            <th class="r">Weighted $</th>
-            <th class="r">Actual YTD</th>
-            <th class="r">Forecast</th>
+            <th>Customer / Opportunity</th><th>Supplier</th>
+            <th class="r">Potential $</th><th class="r">Confidence</th>
+            <th class="r">Weighted $</th><th class="r">Actual YTD</th><th class="r">Forecast</th>
           </tr>
         </thead>
-        <tbody>
-          <!-- Customer group 1 -->
-          <tr class="grp"><td colspan="2"><span class="chev">▾</span>General Mills Operations SARL <span class="meta">· 3 opportunities</span></td>
-            <td class="r">$1,350,000</td><td class="r"></td><td class="r wt">$905,000</td><td class="r">$1,210,400</td><td class="r fore">$2,115,400</td></tr>
-          <tr><td><div class="oppt">PB#11 reformulation — peanut flour</div><div class="meta">Pre‑purchase · launch Q1‑2027</div></td>
-            <td class="supp">Galdisa USA</td><td class="r">$720,000</td><td class="r"><span class="chip hi">High · 80%</span></td><td class="r wt">$576,000</td><td class="r">$612,500</td><td class="r fore">$1,188,500</td></tr>
-          <tr><td><div class="oppt">Banana fragments — bar line</div><div class="meta">Samples sent · evaluating</div></td>
-            <td class="supp">MicroDried</td><td class="r">$430,000</td><td class="r"><span class="chip med">Med · 55%</span></td><td class="r wt">$236,500</td><td class="r">$597,900</td><td class="r fore">$834,400</td></tr>
-          <tr><td><div class="oppt">Pear puree — new SKU</div><div class="meta">Qualified lead</div></td>
-            <td class="supp">Principal Distribution</td><td class="r">$200,000</td><td class="r"><span class="chip lo">Low · 30%</span></td><td class="r wt">$60,000</td><td class="r">—</td><td class="r fore">$60,000</td></tr>
-
-          <!-- Customer group 2 -->
-          <tr class="grp"><td colspan="2"><span class="chev">▾</span>Conagra <span class="meta">· 2 opportunities</span></td>
-            <td class="r">$640,000</td><td class="r"></td><td class="r wt">$472,000</td><td class="r">$486,300</td><td class="r fore">$958,300</td></tr>
-          <tr><td><div class="oppt">Cinnamon apple inclusion</div><div class="meta">Pre‑purchase · trial run approved</div></td>
-            <td class="supp">Creative Food Ingredients</td><td class="r">$440,000</td><td class="r"><span class="chip hi">High · 85%</span></td><td class="r wt">$374,000</td><td class="r">$486,300</td><td class="r fore">$860,300</td></tr>
-          <tr><td><div class="oppt">Maple syrup solids</div><div class="meta">Samples sent</div></td>
-            <td class="supp">Creative Food Ingredients</td><td class="r">$200,000</td><td class="r"><span class="chip med">Med · 49%</span></td><td class="r wt">$98,000</td><td class="r">—</td><td class="r fore">$98,000</td></tr>
-
-          <!-- Customer group 3 -->
-          <tr class="grp"><td colspan="2"><span class="chev">▸</span>Bob's Red Mill Natural Foods <span class="meta">· 4 opportunities</span></td>
-            <td class="r">$905,000</td><td class="r"></td><td class="r wt">$483,000</td><td class="r">$1,003,100</td><td class="r fore">$1,486,100</td></tr>
-        </tbody>
+        <tbody id="tbody"></tbody>
         <tfoot>
-          <tr><td colspan="2">Total — Brad's pipeline</td>
-            <td class="r">$2,895,000</td><td class="r"></td><td class="r">$1,860,000</td><td class="r">$2,699,800</td><td class="r fore">$4,559,800</td></tr>
+          <tr><td colspan="2" id="footLbl"></td>
+            <td class="r" id="footPot"></td><td class="r"></td><td class="r" id="footWt"></td>
+            <td class="r" id="footAct"></td><td class="r fore" id="footFore"></td></tr>
         </tfoot>
       </table>
     </div>
 
     <div class="legend">
-      <span><span class="chip hi">High ≥70%</span> near‑certain — counts fully toward the forecast</span>
+      <span><span class="chip hi">High ≥70%</span> near‑certain — counts fully</span>
       <span><span class="chip med">Med 40–69%</span> likely</span>
       <span><span class="chip lo">Low &lt;40%</span> early / long shot</span>
-      <span>· <b>Weighted $</b> = Potential × Confidence</span>
+      <span>· click a <b>group row</b> to collapse it · <span class="rep">Rep</span> tag = owner (Everyone mode)</span>
     </div>
 
     <div class="note">
-      <b>Where the numbers come from.</b> &nbsp;<b>Pipeline</b> = open opportunities in your Projects, each with a potential
-      revenue and a confidence %. <b>Actual (Paid)</b> = orders where the <b>commission has been collected</b> — our one
+      <b>Where the numbers come from.</b> &nbsp;<b>Pipeline</b> = open opportunities in Projects, each with a potential
+      revenue and a confidence %. <b>Actual (Paid)</b> = orders where the <b>commission has been collected</b> — the one
       fully reliable realized signal; zero‑commission orders are samples and are excluded. <b>Forecast</b> = Actual +
       Weighted pipeline; mark a project Won and it moves from pipeline into Actual.
       <br><br>
-      <b>The Invoiced step is manual — on purpose.</b> &nbsp;Nothing auto‑tells us a supplier has invoiced, and that's the
-      event Brad cares about: it starts the clock toward the supplier being paid and Gehrke collecting commission — the
-      process the team "bird‑dogs." So "Invoiced" is a milestone a rep flags on the order (with a date), giving everyone a
-      live <b>awaiting‑payment</b> list to chase, instead of guessing from a legacy invoice date the old system never
-      filled in.
+      <b>Scope</b> is the me/everyone control used across Cambium (the samples "Just me" pattern). <b>My pipeline</b> =
+      your projects; <b>Everyone</b> = the whole Gehrke pipeline, with the <b>Rep</b> dropdown to narrow to one person.
+      <b>Open build decision:</b> is Everyone / the Rep dropdown open to all users, or gated to managers &amp; operators
+      (like the brokerage switcher)?
+      <br><br>
+      <b>The Invoiced step is manual — on purpose.</b> Nothing auto‑tells us a supplier has invoiced, and that's the event
+      the team cares about: it starts the clock toward the supplier being paid and Gehrke collecting commission — the
+      process the team "bird‑dogs." So "Invoiced" is a milestone a rep flags (with a date), giving everyone a live
+      <b>awaiting‑payment</b> list to chase. &nbsp;Numbers here are illustrative — this is a clickable mock.
     </div>
   </div>
 
 <script>
 (function(){
-  // "My pipeline" toggle: this is the rep's own view, so switching it OFF
-  // (= Everyone) jumps to the manager/everyone mock.
-  var t = document.getElementById('mineToggle');
-  if(t){ t.addEventListener('click', function(){
-    var sw = document.getElementById('mineSw');
-    sw.classList.add('off');
-    document.getElementById('mineLbl').textContent = 'Everyone →';
-    setTimeout(function(){ window.location.href = 'pipeline-projections-manager.html'; }, 260);
-  }); }
-  // Group rows collapse/expand their opportunity rows.
-  var rows = [].slice.call(document.querySelectorAll('tbody tr'));
-  [].forEach.call(document.querySelectorAll('tr.grp'), function(gr){
-    gr.addEventListener('click', function(){
-      var chev = gr.querySelector('.chev'); var open = chev.textContent.trim()==='▾';
-      chev.textContent = open ? '▸' : '▾';
-      var i = rows.indexOf(gr) + 1;
-      for(; i<rows.length && !rows[i].classList.contains('grp'); i++){ rows[i].style.display = open ? 'none' : ''; }
+  var money = function(n){ return '$' + n.toLocaleString('en-US'); };
+  var DATA = {
+    all: {
+      kpi:{actual:'$12.40M', actualN:'all reps · samples excluded', wt:'$6.28M', fore:'$18.68M',
+           goalK:'Company goal · FY26', goal:'$22.0M', goalN:'85% of goal projected', goalPct:85},
+      flow:{pipe:'$6.28M', open:'$2.55M', inv:'$1.88M', paid:'$12.40M'},
+      footLbl:'Total — Gehrke pipeline (all reps)',
+      foot:{pot:9860000, wt:6280000, act:12400000, fore:18680000},
+      groups:[
+        {name:'General Mills Operations SARL', items:[
+          {oppt:'PB#11 reformulation — peanut flour', meta:'Pre‑purchase · launch Q1‑2027', rep:'Brad Nelson', supp:'Galdisa USA', pot:720000, conf:['hi','High · 80%'], wt:576000, act:612500, fore:1188500},
+          {oppt:'Banana fragments — bar line', meta:'Samples sent · evaluating', rep:'Brad Nelson', supp:'MicroDried', pot:430000, conf:['med','Med · 55%'], wt:236500, act:597900, fore:834400},
+          {oppt:'Oat protein — cereal reformulation', meta:'Qualified lead', rep:'Patty Mertz', supp:'Richardson Intl', pot:200000, conf:['lo','Low · 46%'], wt:92500, act:0, fore:92500}
+        ]},
+        {name:'Conagra', items:[
+          {oppt:'Cinnamon apple inclusion', meta:'Pre‑purchase · trial run approved', rep:'Brad Nelson', supp:'Creative Food Ingredients', pot:440000, conf:['hi','High · 85%'], wt:374000, act:486300, fore:860300},
+          {oppt:'Maple syrup solids', meta:'Samples sent', rep:'Julie Tufte', supp:'Creative Food Ingredients', pot:200000, conf:['med','Med · 49%'], wt:98000, act:0, fore:98000}
+        ]},
+        {name:'Bob’s Red Mill Natural Foods', collapsed:true, items:[
+          {oppt:'Fruit powder blend — oatmeal line', meta:'Pre‑purchase', rep:'Patty Mertz', supp:'MicroDried', pot:505000, conf:['hi','High · 72%'], wt:363600, act:1003100, fore:1366700},
+          {oppt:'Date paste — bar', meta:'Qualified lead', rep:'Brad Nelson', supp:'Principal Distribution', pot:400000, conf:['lo','Low · 30%'], wt:119400, act:0, fore:119400}
+        ]},
+        {name:'Danone North America', collapsed:true, items:[
+          {oppt:'Vanilla extract — yogurt', meta:'Pre‑purchase · contract pending', rep:'Julie Tufte', supp:'Creative Food Ingredients', pot:880000, conf:['hi','High · 78%'], wt:686400, act:2040900, fore:2727300},
+          {oppt:'Strawberry pieces — parfait', meta:'Samples sent', rep:'Brad Nelson', supp:'MicroDried', pot:600000, conf:['med','Med · 38%'], wt:225600, act:0, fore:225600}
+        ]}
+      ]
+    },
+    my: {
+      kpi:{actual:'$3.41M', actualN:'invoiced & paid · samples excluded', wt:'$1.86M', fore:'$5.27M',
+           goalK:'My goal · FY26', goal:'$6.0M', goalN:'88% of goal projected', goalPct:88},
+      flow:{pipe:'$1.86M', open:'$0.74M', inv:'$0.52M', paid:'$3.41M'},
+      footLbl:"Total — Brad's pipeline",
+      foot:{pot:1990000, wt:1305400, act:1696700, fore:3002100},
+      groups:[
+        {name:'General Mills Operations SARL', items:[
+          {oppt:'PB#11 reformulation — peanut flour', meta:'Pre‑purchase · launch Q1‑2027', rep:'Brad Nelson', supp:'Galdisa USA', pot:720000, conf:['hi','High · 80%'], wt:576000, act:612500, fore:1188500},
+          {oppt:'Banana fragments — bar line', meta:'Samples sent · evaluating', rep:'Brad Nelson', supp:'MicroDried', pot:430000, conf:['med','Med · 55%'], wt:236500, act:597900, fore:834400}
+        ]},
+        {name:'Conagra', items:[
+          {oppt:'Cinnamon apple inclusion', meta:'Pre‑purchase · trial run approved', rep:'Brad Nelson', supp:'Creative Food Ingredients', pot:440000, conf:['hi','High · 85%'], wt:374000, act:486300, fore:860300}
+        ]},
+        {name:'Bob’s Red Mill Natural Foods', collapsed:true, items:[
+          {oppt:'Date paste — bar', meta:'Qualified lead', rep:'Brad Nelson', supp:'Principal Distribution', pot:400000, conf:['lo','Low · 30%'], wt:119400, act:0, fore:119400}
+        ]}
+      ]
+    }
+  };
+
+  var scope = 'my', repFilter = 'all', groupBy = 'customer', confBand = 'all';
+  var $ = function(id){ return document.getElementById(id); };
+  var cell = function(v){ return v ? money(v) : '—'; };
+  var chipCls = { high:'hi', med:'med', low:'lo' };
+  var confNum = function(it){ var m=/(\d+)%/.exec(it.conf[1]); return m ? +m[1] : 0; };
+  var bandOf = function(n){ return n>=70 ? 'high' : n>=40 ? 'med' : 'low'; };
+  var bandLbl = { high:'High', med:'Med', low:'Low' };
+
+  // Flatten the dataset's opportunities, carrying their customer + derived confidence band.
+  function flat(d){
+    var out = [];
+    d.groups.forEach(function(g){ g.items.forEach(function(it){
+      var band = bandOf(confNum(it));
+      out.push({ customer:g.name, oppt:it.oppt, meta:it.meta, rep:it.rep, supp:it.supp,
+        pot:it.pot, wt:it.wt, act:it.act, fore:it.fore, confTxt:it.conf[1], band:band });
+    }); });
+    return out;
+  }
+  function keyField(it){
+    return groupBy==='supplier' ? it.supp : groupBy==='rep' ? it.rep
+         : groupBy==='item' ? it.oppt : it.customer;
+  }
+  function rowHtml(it, gi){
+    var repTag = (scope==='all' && groupBy!=='rep') ? '<span class="rep">'+it.rep+'</span>' : '';
+    var metaLine = (groupBy==='customer') ? it.meta : (it.customer+' · '+it.meta);
+    var attr = gi==null ? '' : ' class="it" data-g="'+gi+'"';
+    return '<tr'+attr+'><td><div class="oppt">'+it.oppt+'</div><div class="meta">'+metaLine+'</div>'+repTag+'</td>'+
+      '<td class="supp">'+it.supp+'</td><td class="r">'+money(it.pot)+'</td>'+
+      '<td class="r"><span class="chip '+chipCls[it.band]+'">'+it.confTxt+'</span></td>'+
+      '<td class="r wt">'+money(it.wt)+'</td><td class="r">'+cell(it.act)+'</td>'+
+      '<td class="r fore">'+money(it.fore)+'</td></tr>';
+  }
+  function setFoot(d, pot, wt, act, fore, n){
+    var filtered = (confBand!=='all') || (scope==='all' && repFilter!=='all');
+    if(filtered){
+      var bits = [];
+      if(scope==='all' && repFilter!=='all') bits.push(repFilter);
+      if(confBand!=='all') bits.push(bandLbl[confBand]+' confidence');
+      $('footLbl').textContent = 'Total — '+bits.join(' · ')+' ('+n+' opportunit'+(n===1?'y':'ies')+')';
+      $('footPot').textContent=money(pot); $('footWt').textContent=money(wt);
+      $('footAct').textContent=money(act); $('footFore').textContent=money(fore);
+    } else {
+      $('footLbl').textContent = d.footLbl;
+      $('footPot').textContent=money(d.foot.pot); $('footWt').textContent=money(d.foot.wt);
+      $('footAct').textContent=money(d.foot.act); $('footFore').textContent=money(d.foot.fore);
+    }
+  }
+
+  function renderTable(d){
+    var tb = $('tbody'); tb.innerHTML = '';
+    var items = flat(d).filter(function(it){
+      if(scope==='all' && repFilter!=='all' && it.rep!==repFilter) return false;
+      if(confBand!=='all' && it.band!==confBand) return false;
+      return true;
+    });
+    var T={pot:0,wt:0,act:0,fore:0};
+    items.forEach(function(it){ T.pot+=it.pot; T.wt+=it.wt; T.act+=it.act; T.fore+=it.fore; });
+
+    // "By Item" = flat ranked list, no group headers.
+    if(groupBy==='item'){
+      items.sort(function(a,b){ return b.fore-a.fore; });
+      items.forEach(function(it){ tb.insertAdjacentHTML('beforeend', rowHtml(it, null)); });
+      setFoot(d, T.pot,T.wt,T.act,T.fore, items.length);
+      return;
+    }
+
+    // Grouped by the chosen dimension.
+    var order=[], map={};
+    items.forEach(function(it){ var k=keyField(it); if(!map[k]){ map[k]={items:[]}; order.push(k); } map[k].items.push(it); });
+    order.forEach(function(k, gi){
+      var its=map[k].items, pot=0,wt=0,act=0,fore=0, reps={};
+      its.forEach(function(it){ pot+=it.pot; wt+=it.wt; act+=it.act; fore+=it.fore; reps[it.rep]=1; });
+      var repCount=Object.keys(reps).length;
+      var sub = (scope==='all' && groupBy!=='rep') ? (' · '+repCount+(repCount===1?' rep':' reps')) : '';
+      tb.insertAdjacentHTML('beforeend',
+        '<tr class="grp" data-g="'+gi+'"><td colspan="2"><span class="chev">▾</span>'+k+
+        ' <span class="meta">· '+its.length+' opportunit'+(its.length===1?'y':'ies')+sub+'</span></td>'+
+        '<td class="r">'+cell(pot)+'</td><td class="r"></td><td class="r wt">'+cell(wt)+'</td>'+
+        '<td class="r">'+cell(act)+'</td><td class="r fore">'+cell(fore)+'</td></tr>');
+      its.forEach(function(it){ tb.insertAdjacentHTML('beforeend', rowHtml(it, gi)); });
+    });
+    setFoot(d, T.pot,T.wt,T.act,T.fore, items.length);
+  }
+
+  function render(){
+    var d = DATA[scope];
+    $('kActual').textContent=d.kpi.actual; $('kActualN').textContent=d.kpi.actualN;
+    $('kWt').textContent=d.kpi.wt; $('kFore').textContent=d.kpi.fore;
+    $('kGoalK').textContent=d.kpi.goalK; $('kGoal').textContent=d.kpi.goal;
+    $('kGoalN').textContent=d.kpi.goalN; $('kGoalBar').style.width=d.kpi.goalPct+'%';
+    $('fPipe').textContent=d.flow.pipe; $('fOpen').textContent=d.flow.open; $('fInv').textContent=d.flow.inv; $('fPaid').textContent=d.flow.paid;
+    var isAll = scope==='all';
+    $('repsel').disabled = !isAll;
+    $('repsel').classList.toggle('hot', isAll);
+    if(!isAll){ repFilter='all'; $('repsel').value='all'; }
+    $('ctx').style.display = isAll ? '' : 'none';
+    $('ctxScope').textContent = isAll ? 'Everyone' : 'My pipeline';
+    $('ctxRep').textContent = 'Rep: ' + (repFilter==='all'?'All reps':repFilter);
+    renderTable(d);
+  }
+
+  $('scope').addEventListener('click', function(e){
+    var b = e.target.closest('button'); if(!b) return;
+    scope = b.dataset.scope;
+    [].forEach.call(this.querySelectorAll('button'), function(x){ x.classList.toggle('on', x===b); });
+    render();
+  });
+  $('repsel').addEventListener('change', function(){ repFilter = this.value; render(); });
+  $('tbody').addEventListener('click', function(e){
+    var gr = e.target.closest('tr.grp'); if(!gr) return;
+    var gi = gr.dataset.g, open = gr.querySelector('.chev').textContent==='▾';
+    gr.querySelector('.chev').textContent = open ? '▸' : '▾';
+    [].forEach.call(this.querySelectorAll('tr.it[data-g="'+gi+'"]'), function(r){ r.style.display = open ? 'none' : ''; });
+  });
+  [].forEach.call(document.querySelectorAll('.seg[data-group]'), function(seg){
+    seg.addEventListener('click', function(e){
+      var b = e.target.closest('button'); if(!b) return;
+      [].forEach.call(seg.querySelectorAll('button'), function(x){ x.classList.toggle('on', x===b); });
+      var grp = seg.dataset.group, t = b.textContent.trim();
+      if(grp==='groupby'){
+        groupBy = t==='By Supplier' ? 'supplier' : t==='By Rep' ? 'rep' : t==='By Item' ? 'item' : 'customer';
+        render();
+      } else if(grp==='conf'){
+        confBand = t.indexOf('High')===0 ? 'high' : t.indexOf('Med')===0 ? 'med' : t.indexOf('Low')===0 ? 'low' : 'all';
+        render();
+      }
+      // Period is visual-only in this mock.
     });
   });
+
+  render();
 })();
 </script>
 </body>
