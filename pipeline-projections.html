@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cambium — Pipeline Projections (v2 mockup)</title>
+<style>
+  :root{
+    --bg:#f4f1e9; --panel:#ffffff; --ink:#20261a; --muted:#8b917f;
+    --line:#e7e4d8; --moss:#3b4a2a; --moss-2:#4e6137; --gold:#b08a3e;
+    --clay:#b4472a; --sky:#3f6f82; --soft:#faf8f2;
+    --hi:#2f7d32; --hi-bg:#e4efe0; --med:#8a6d1e; --med-bg:#f6edcf; --lo:#9a4b3a; --lo-bg:#f3e0da;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-size:14px;line-height:1.5}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 20px 56px}
+  .topbar{background:var(--moss);color:#f4f1e9}
+  .topbar .inner{max-width:1180px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:14px}
+  .brand{font-weight:800;letter-spacing:.3px;font-size:15px}
+  .brand span{opacity:.6;font-weight:600}
+  .topnav{display:flex;gap:4px;margin-left:10px}
+  .topnav a{padding:5px 10px;border-radius:7px;font-size:12.5px;opacity:.85;text-decoration:none;color:#f4f1e9}
+  .topnav a.on{background:rgba(255,255,255,.15);opacity:1;font-weight:600}
+  .who{margin-left:auto;font-size:12.5px;opacity:.9}
+
+  h1{font-size:22px;margin:16px 0 2px;font-weight:800;letter-spacing:-.2px}
+  .sub{color:var(--muted);font-size:13px;margin-bottom:14px;max-width:760px}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:14px}
+  .row{display:flex;flex-wrap:wrap;align-items:center;gap:18px}
+  .ctl{display:flex;flex-direction:column;gap:5px}
+  .ctl .lab{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700}
+  .seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+  .seg button{border:0;background:#fff;padding:6px 12px;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer}
+  .seg button.on{background:var(--moss);color:#f4f1e9}
+  .toggle{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted);font-weight:600}
+  .sw{width:34px;height:20px;border-radius:999px;background:var(--moss);position:relative}
+  .sw::after{content:"";position:absolute;top:2px;right:2px;width:16px;height:16px;border-radius:50%;background:#fff}
+  .spacer{flex:1}
+
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+  .kpi.hero{background:linear-gradient(135deg,#20321c,#3b4a2a);border:none;color:#eef2e6}
+  .kpi .k{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700}
+  .kpi.hero .k{color:#cdd8bf}
+  .kpi .v{font-size:23px;font-weight:800;letter-spacing:-.3px;margin-top:3px}
+  .kpi .n{font-size:11.5px;color:var(--muted);margin-top:2px}
+  .kpi.hero .n{color:#b9c6a7}
+  .bar{height:7px;border-radius:999px;background:#d9e3cf;margin-top:9px;overflow:hidden}
+  .bar>i{display:block;height:100%;background:var(--gold)}
+
+  table{width:100%;border-collapse:collapse}
+  thead th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700;text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
+  thead th.r{text-align:right}
+  .grp td{background:var(--soft);font-weight:700;padding:9px 12px;border-top:1px solid var(--line)}
+  .grp .chev{color:var(--muted);margin-right:6px}
+  td{padding:9px 12px;border-top:1px solid var(--line);vertical-align:top}
+  td.r{text-align:right;font-variant-numeric:tabular-nums}
+  .oppt{font-weight:600}
+  .meta{font-size:12px;color:var(--muted)}
+  .supp{font-size:12.5px}
+  .chip{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:2px 9px;font-size:11.5px;font-weight:700}
+  .chip.hi{background:var(--hi-bg);color:var(--hi)} .chip.med{background:var(--med-bg);color:var(--med)} .chip.lo{background:var(--lo-bg);color:var(--lo)}
+  .wt{font-weight:700}
+  .sub-row td{background:#fbfaf5;font-weight:700;border-top:1px dashed var(--line)}
+  tfoot td{background:#eef2e6;font-weight:800;border-top:2px solid var(--moss-2);padding:11px 12px}
+  .fore{color:var(--moss-2);font-weight:800}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:10px 2px 0}
+  .legend b{color:var(--ink)}
+  .note{font-size:12px;color:var(--muted);margin-top:12px;background:#fbf7ec;border:1px solid #ece2c7;border-radius:10px;padding:10px 12px}
+  .flow{display:flex;gap:8px;margin-bottom:14px}
+  .flow .st{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+  .flow .st .t{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700}
+  .flow .st .a{font-size:17px;font-weight:800;margin-top:2px}
+  .flow .st .d{font-size:11px;color:var(--muted);margin-top:1px}
+  .flow .st.paid{background:#eef2e6;border-color:#cfe0c3}
+  .flow .st .man{display:inline-block;margin-top:5px;font-size:10px;font-weight:700;color:var(--gold);border:1px solid #e3cd9a;border-radius:999px;padding:1px 7px}
+  .flow .arr{align-self:center;color:var(--muted);font-weight:800;font-size:16px}
+</style>
+</head>
+<body>
+  <div class="topbar"><div class="inner">
+    <div class="brand">Gehrke Company <span>· Cambium</span></div>
+    <nav class="topnav"><a>Edward</a><a>Orders</a><a>Samples</a><a class="on">Reports</a><a>Setup</a></nav>
+    <div class="who">Brad Nelson ▾</div>
+  </div></div>
+
+  <div class="wrap">
+    <h1>Pipeline Projections</h1>
+    <div class="sub">Weight every opportunity by your confidence, subtotal by customer or supplier, and combine it with
+      what you've actually sold to forecast the year. Built on the same query panel as Item Sales — this is the
+      forward number, not the rear‑view.</div>
+
+    <!-- Query / selection panel (mirrors Item Sales) -->
+    <div class="panel">
+      <div class="row">
+        <div class="ctl"><span class="lab">Period</span>
+          <div class="seg"><button>MTD</button><button>QTD</button><button class="on">FY 2026</button><button>Custom</button></div></div>
+        <div class="ctl"><span class="lab">Group by</span>
+          <div class="seg"><button class="on">By Customer</button><button>By Supplier</button><button>By Item</button></div></div>
+        <div class="ctl"><span class="lab">Confidence</span>
+          <div class="seg"><button class="on">All</button><button>High ≥70%</button><button>Med 40–69%</button><button>Low &lt;40%</button></div></div>
+        <div class="spacer"></div>
+        <div class="toggle"><span class="sw"></span> My pipeline</div>
+      </div>
+    </div>
+
+    <!-- KPI strip -->
+    <div class="kpis">
+      <div class="kpi"><div class="k">Actual sold · FY26</div><div class="v">$3.41M</div><div class="n">invoiced &amp; paid · samples excluded</div></div>
+      <div class="kpi"><div class="k">Weighted pipeline</div><div class="v">$1.86M</div><div class="n">Σ potential × confidence</div></div>
+      <div class="kpi hero"><div class="k">Combined forecast</div><div class="v">$5.27M</div><div class="n">actual + weighted pipeline</div></div>
+      <div class="kpi"><div class="k">Goal · FY26</div><div class="v">$6.0M</div><div class="n">88% of goal projected</div>
+        <div class="bar"><i style="width:88%"></i></div></div>
+    </div>
+
+    <!-- Revenue lifecycle: forward pipeline → realized (what Brad "bird-dogs") -->
+    <div class="flow">
+      <div class="st"><div class="t">Pipeline</div><div class="a">$1.86M</div><div class="d">opportunities, weighted by confidence</div></div>
+      <div class="arr">›</div>
+      <div class="st"><div class="t">Open order</div><div class="a">$0.74M</div><div class="d">placed · awaiting supplier invoice</div></div>
+      <div class="arr">›</div>
+      <div class="st"><div class="t">Invoiced</div><div class="a">$0.52M</div><div class="d">supplier invoiced · chasing payment</div><span class="man">manual flag</span></div>
+      <div class="arr">›</div>
+      <div class="st paid"><div class="t">Paid</div><div class="a">$3.41M</div><div class="d">commission collected · counts as Actual</div></div>
+    </div>
+
+    <!-- Grouped projection table -->
+    <div class="panel" style="padding:0;overflow:hidden">
+      <table>
+        <thead>
+          <tr>
+            <th>Customer / Opportunity</th>
+            <th>Supplier</th>
+            <th class="r">Potential $</th>
+            <th class="r">Confidence</th>
+            <th class="r">Weighted $</th>
+            <th class="r">Actual YTD</th>
+            <th class="r">Forecast</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Customer group 1 -->
+          <tr class="grp"><td colspan="2"><span class="chev">▾</span>General Mills Operations SARL <span class="meta">· 3 opportunities</span></td>
+            <td class="r">$1,350,000</td><td class="r"></td><td class="r wt">$905,000</td><td class="r">$1,210,400</td><td class="r fore">$2,115,400</td></tr>
+          <tr><td><div class="oppt">PB#11 reformulation — peanut flour</div><div class="meta">Pre‑purchase · launch Q1‑2027</div></td>
+            <td class="supp">Galdisa USA</td><td class="r">$720,000</td><td class="r"><span class="chip hi">High · 80%</span></td><td class="r wt">$576,000</td><td class="r">$612,500</td><td class="r fore">$1,188,500</td></tr>
+          <tr><td><div class="oppt">Banana fragments — bar line</div><div class="meta">Samples sent · evaluating</div></td>
+            <td class="supp">MicroDried</td><td class="r">$430,000</td><td class="r"><span class="chip med">Med · 55%</span></td><td class="r wt">$236,500</td><td class="r">$597,900</td><td class="r fore">$834,400</td></tr>
+          <tr><td><div class="oppt">Pear puree — new SKU</div><div class="meta">Qualified lead</div></td>
+            <td class="supp">Principal Distribution</td><td class="r">$200,000</td><td class="r"><span class="chip lo">Low · 30%</span></td><td class="r wt">$60,000</td><td class="r">—</td><td class="r fore">$60,000</td></tr>
+
+          <!-- Customer group 2 -->
+          <tr class="grp"><td colspan="2"><span class="chev">▾</span>Conagra <span class="meta">· 2 opportunities</span></td>
+            <td class="r">$640,000</td><td class="r"></td><td class="r wt">$472,000</td><td class="r">$486,300</td><td class="r fore">$958,300</td></tr>
+          <tr><td><div class="oppt">Cinnamon apple inclusion</div><div class="meta">Pre‑purchase · trial run approved</div></td>
+            <td class="supp">Creative Food Ingredients</td><td class="r">$440,000</td><td class="r"><span class="chip hi">High · 85%</span></td><td class="r wt">$374,000</td><td class="r">$486,300</td><td class="r fore">$860,300</td></tr>
+          <tr><td><div class="oppt">Maple syrup solids</div><div class="meta">Samples sent</div></td>
+            <td class="supp">Creative Food Ingredients</td><td class="r">$200,000</td><td class="r"><span class="chip med">Med · 49%</span></td><td class="r wt">$98,000</td><td class="r">—</td><td class="r fore">$98,000</td></tr>
+
+          <!-- Customer group 3 -->
+          <tr class="grp"><td colspan="2"><span class="chev">▸</span>Bob's Red Mill Natural Foods <span class="meta">· 4 opportunities</span></td>
+            <td class="r">$905,000</td><td class="r"></td><td class="r wt">$483,000</td><td class="r">$1,003,100</td><td class="r fore">$1,486,100</td></tr>
+        </tbody>
+        <tfoot>
+          <tr><td colspan="2">Total — Brad's pipeline</td>
+            <td class="r">$2,895,000</td><td class="r"></td><td class="r">$1,860,000</td><td class="r">$2,699,800</td><td class="r fore">$4,559,800</td></tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <div class="legend">
+      <span><span class="chip hi">High ≥70%</span> near‑certain — counts fully toward the forecast</span>
+      <span><span class="chip med">Med 40–69%</span> likely</span>
+      <span><span class="chip lo">Low &lt;40%</span> early / long shot</span>
+      <span>· <b>Weighted $</b> = Potential × Confidence</span>
+    </div>
+
+    <div class="note">
+      <b>Where the numbers come from.</b> &nbsp;<b>Pipeline</b> = open opportunities in your Projects, each with a potential
+      revenue and a confidence %. <b>Actual (Paid)</b> = orders where the <b>commission has been collected</b> — our one
+      fully reliable realized signal; zero‑commission orders are samples and are excluded. <b>Forecast</b> = Actual +
+      Weighted pipeline; mark a project Won and it moves from pipeline into Actual.
+      <br><br>
+      <b>The Invoiced step is manual — on purpose.</b> &nbsp;Nothing auto‑tells us a supplier has invoiced, and that's the
+      event Brad cares about: it starts the clock toward the supplier being paid and Gehrke collecting commission — the
+      process the team "bird‑dogs." So "Invoiced" is a milestone a rep flags on the order (with a date), giving everyone a
+      live <b>awaiting‑payment</b> list to chase, instead of guessing from a legacy invoice date the old system never
+      filled in.
+    </div>
+  </div>
+</body>
+</html>
