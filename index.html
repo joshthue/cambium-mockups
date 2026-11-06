@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cambium — Mockups</title>
+<style>
+  :root{
+    --bg:#f4f1e9; --panel:#ffffff; --ink:#20261a; --muted:#8b917f;
+    --line:#e7e4d8; --moss:#3b4a2a; --moss-2:#4e6137; --gold:#b08a3e; --sky:#3f6f82;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-size:14px;line-height:1.5}
+  .topbar{background:var(--moss);color:#f4f1e9}
+  .topbar .inner{max-width:1080px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:12px}
+  .brand{font-weight:800;letter-spacing:.3px;font-size:16px}
+  .brand span{opacity:.6;font-weight:600}
+  .wrap{max-width:1080px;margin:0 auto;padding:22px 20px 64px}
+  h1{font-size:24px;margin:4px 0 2px;font-weight:800;letter-spacing:-.3px}
+  .sub{color:var(--muted);font-size:13px;margin-bottom:22px;max-width:680px}
+  h2{font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--moss-2);font-weight:800;margin:26px 0 10px;border-bottom:1px solid var(--line);padding-bottom:6px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+  a.card{display:block;text-decoration:none;color:inherit;background:var(--panel);border:1px solid var(--line);
+    border-radius:13px;padding:14px 16px;transition:border-color .12s, box-shadow .12s}
+  a.card:hover{border-color:var(--moss-2);box-shadow:0 2px 10px rgba(59,74,42,.08)}
+  .card .t{font-weight:800;font-size:14.5px}
+  .card .d{color:var(--muted);font-size:12.5px;margin-top:3px}
+  .card .f{margin-top:9px;font-size:11px;color:var(--sky);font-weight:700;font-family:ui-monospace,Menlo,monospace}
+  .badge{display:inline-block;font-size:10px;font-weight:800;color:var(--gold);border:1px solid #e3cd9a;border-radius:999px;padding:1px 7px;margin-left:6px;vertical-align:middle}
+  .foot{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid var(--line);padding-top:12px}
+</style>
+</head>
+<body>
+  <div class="topbar"><div class="inner">
+    <div class="brand">Gehrke Company <span>· Cambium — Mockups</span></div>
+  </div></div>
+
+  <div class="wrap">
+    <h1>Cambium mockups</h1>
+    <div class="sub">Interactive design mockups for features in flight. These are visual references with illustrative
+      data — not the live app. Grouped by area.</div>
+
+    <h2>Pipeline &amp; Projections</h2>
+    <div class="grid">
+      <a class="card" href="pipeline-projections.html">
+        <div class="t">Pipeline Projections — Rep view <span class="badge">v2</span></div>
+        <div class="d">Weight opportunities by confidence; Actual + Weighted = forecast vs goal. A rep's own pipeline.</div>
+        <div class="f">pipeline-projections.html</div></a>
+      <a class="card" href="pipeline-projections-manager.html">
+        <div class="t">Pipeline Projections — Manager / Everyone <span class="badge">v2</span></div>
+        <div class="d">Everyone scope + Rep dropdown; company forecast and per-rep slicing for a manager or principal.</div>
+        <div class="f">pipeline-projections-manager.html</div></a>
+    </div>
+
+    <h2>Projects</h2>
+    <div class="grid">
+      <a class="card" href="projects-dashboard.html">
+        <div class="t">Projects dashboard</div>
+        <div class="d">Pipeline stages, outcome, priority and progress across a rep's projects.</div>
+        <div class="f">projects-dashboard.html</div></a>
+      <a class="card" href="project-stages-playbook.html">
+        <div class="t">Projects — Stages &amp; Playbook</div>
+        <div class="d">One-pager on the pipeline stages and how a project moves through them.</div>
+        <div class="f">project-stages-playbook.html</div></a>
+    </div>
+
+    <h2>Samples</h2>
+    <div class="grid">
+      <a class="card" href="sample-detail.html">
+        <div class="t">Sample detail — full screen</div>
+        <div class="d">Redesigned full-screen sample page (inferred layout).</div>
+        <div class="f">sample-detail.html</div></a>
+      <a class="card" href="sample-detail-confirmed.html">
+        <div class="t">Sample detail — confirmed</div>
+        <div class="d">Full-screen sample page, confirmed layout pass.</div>
+        <div class="f">sample-detail-confirmed.html</div></a>
+      <a class="card" href="samples-catchup-grid.html">
+        <div class="t">Samples — Catch-up grid</div>
+        <div class="d">Bulk worklist for overdue follow-ups with multi-set editing.</div>
+        <div class="f">samples-catchup-grid.html</div></a>
+      <a class="card" href="find-a-sample.html">
+        <div class="t">Find a sample</div>
+        <div class="d">Prominent search / jump-to for a specific sample.</div>
+        <div class="f">find-a-sample.html</div></a>
+      <a class="card" href="new-sample-add-customer.html">
+        <div class="t">New sample — add a customer</div>
+        <div class="d">Create a sample for a customer not yet in WOS.</div>
+        <div class="f">new-sample-add-customer.html</div></a>
+    </div>
+
+    <h2>Contracts</h2>
+    <div class="grid">
+      <a class="card" href="contract-tiered-pricing.html">
+        <div class="t">Contract tiered pricing</div>
+        <div class="d">Per-item tiered price breaks on a contract.</div>
+        <div class="f">contract-tiered-pricing.html</div></a>
+    </div>
+
+    <div class="foot">Cambium · Birch &amp; Gran — internal design mockups. Illustrative data only.</div>
+  </div>
+</body>
+</html>
