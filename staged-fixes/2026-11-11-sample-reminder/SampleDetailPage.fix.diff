@@ -1,0 +1,121 @@
+--- SampleDetailPage.live.tsx	2026-11-11 18:40:41.154308445 +0000
++++ SampleDetailPage.tsx	2026-11-11 18:40:41.169815077 +0000
+@@ -319,15 +319,34 @@
+   const [fuNote, setFuNote] = useState('')
+   const [fuError, setFuError] = useState<string | null>(null)
+   const [confirmDeleteFuId, setConfirmDeleteFuId] = useState<number | null>(null)
+-  const submitTouch = async (note: string) => {
++  // Next follow-up date picked in the composer. log_touch OVERWRITES
++  // next_followup_date, so we must always send the date we mean to keep —
++  // sending null (the old behaviour) silently wiped Brad's reminder.
++  const [fuNextDate, setFuNextDate] = useState('')
++  const localISO = (d: Date) => {
++    const y = d.getFullYear(), m = String(d.getMonth() + 1).padStart(2, '0'), day = String(d.getDate()).padStart(2, '0')
++    return `${y}-${m}-${day}`
++  }
++  const plusDaysISO = (n: number) => { const d = new Date(); d.setDate(d.getDate() + n); return localISO(d) }
++  // Keep the current date if it's still ahead of today; a past-due date is
++  // what this touch is resolving, so it drops (unless a new one is picked).
++  const keepableNextDate = (): string | null => {
++    const cur = followup?.state?.next_followup_date?.slice(0, 10) ?? null
++    return cur && cur > localISO(new Date()) ? cur : null
++  }
++  const openComposer = (mode: 'call' | 'note') => {
++    setFuMode(mode); setFuNote(''); setFuError(null)
++    setFuNextDate(keepableNextDate() ?? plusDaysISO(14))
++  }
++  const submitTouch = async (note: string, nextDate: string | null) => {
+     if (!header) return
+     setFuError(null)
+     try {
+       await setFollowupHook.trigger({
+         sample_id: header.sample_id, action: 'log_touch', note: note || null,
+-        next_followup_date: null, brokerageId: activeBrokerageId, user_name: currentUser?.name || null,
++        next_followup_date: nextDate, brokerageId: activeBrokerageId, user_name: currentUser?.name || null,
+       })
+-      setFuNote(''); setFuMode('menu')
++      setFuNote(''); setFuNextDate(''); setFuMode('menu')
+       refreshFollowup()
+     } catch (err) {
+       setFuError(err instanceof Error ? err.message : 'Failed to log follow-up.')
+@@ -336,15 +355,15 @@
+   const handleEmail = () => {
+     if (!header || !header.contact_email?.trim()) return
+     window.open(buildSampleMailto(header, currentUser?.name || '', activeBrokerage?.name ?? ''), '_blank', 'noopener,noreferrer')
+-    void submitTouch(`Emailed ${headerContactName(header)} about ${headerItemPhrase(header)}.`)
++    void submitTouch(`Emailed ${headerContactName(header)} about ${headerItemPhrase(header)}.`, keepableNextDate())
+   }
+   const handleCall = () => {
+     if (!header) return
+     const base = `Called ${headerContactName(header)} about ${headerItemPhrase(header)}.`
+     const typed = fuNote.trim()
+-    void submitTouch(typed ? `${base} — ${typed}` : base)
++    void submitTouch(typed ? `${base} — ${typed}` : base, fuNextDate || null)
+   }
+-  const handleNote = () => { const t = fuNote.trim(); if (t) void submitTouch(t) }
++  const handleNote = () => { const t = fuNote.trim(); if (t) void submitTouch(t, fuNextDate || null) }
+   const handleDeleteFollowup = async (followupId: number) => {
+     if (!header || deleteFollowupHook.loading) return
+     setFuError(null)
+@@ -602,11 +621,11 @@
+                       hasEmail={!!header.contact_email?.trim()} currentUserId={actingUserId}
+                       onAdded={() => { refreshDetail() }} />
+                     <Button type="button" size="sm" variant="outline" className="h-8 justify-start" disabled={setFollowupHook.loading}
+-                      onClick={() => { setFuMode('call'); setFuNote(''); setFuError(null) }}>
++                      onClick={() => openComposer('call')}>
+                       <Phone className="mr-1.5 h-3.5 w-3.5" />Logged a call
+                     </Button>
+                     <Button type="button" size="sm" variant="outline" className="h-8 justify-start" disabled={setFollowupHook.loading}
+-                      onClick={() => { setFuMode('note'); setFuNote(''); setFuError(null) }}>
++                      onClick={() => openComposer('note')}>
+                       <Pencil className="mr-1.5 h-3.5 w-3.5" />Note
+                     </Button>
+                   </div>
+@@ -616,6 +635,7 @@
+                     <Label className="text-xs text-muted-foreground">Add a note (optional)</Label>
+                     <Input value={fuNote} onChange={(e) => setFuNote(e.target.value)} placeholder="What was discussed?" className="h-9 bg-background"
+                       onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleCall() } }} />
++                    <NextFollowupPicker value={fuNextDate} onChange={setFuNextDate} plusDaysISO={plusDaysISO} disabled={setFollowupHook.loading} />
+                     <div className="flex justify-end gap-2">
+                       <Button type="button" size="sm" variant="ghost" className="h-8" onClick={() => { setFuMode('menu'); setFuNote('') }}>Cancel</Button>
+                       <Button type="button" size="sm" className="h-8 gap-1.5" disabled={setFollowupHook.loading} onClick={handleCall}>
+@@ -628,6 +648,7 @@
+                   <div className="space-y-1.5">
+                     <Label className="text-xs text-muted-foreground">Note</Label>
+                     <Textarea value={fuNote} onChange={(e) => setFuNote(e.target.value)} placeholder="Tasting feedback, next step…" className="min-h-[64px] bg-background text-sm" />
++                    <NextFollowupPicker value={fuNextDate} onChange={setFuNextDate} plusDaysISO={plusDaysISO} disabled={setFollowupHook.loading} />
+                     <div className="flex justify-end gap-2">
+                       <Button type="button" size="sm" variant="ghost" className="h-8" onClick={() => { setFuMode('menu'); setFuNote('') }}>Cancel</Button>
+                       <Button type="button" size="sm" className="h-8 gap-1.5" disabled={setFollowupHook.loading || fuNote.trim() === ''} onClick={handleNote}>
+@@ -940,4 +961,29 @@
+       </Dialog>
+     </>
+   )
+-}
+\ No newline at end of file
++}
++
++// Next follow-up date for the call/note composer: a date input plus quick
++// presets. Blank = no reminder.
++function NextFollowupPicker({ value, onChange, plusDaysISO, disabled }: {
++  value: string
++  onChange: (v: string) => void
++  plusDaysISO: (n: number) => string
++  disabled?: boolean
++}) {
++  const presets: Array<[string, number]> = [['1 wk', 7], ['2 wks', 14], ['1 mo', 30]]
++  return (
++    <div className="flex flex-wrap items-center gap-2">
++      <Label className="text-xs text-muted-foreground">Next follow-up</Label>
++      <Input type="date" value={value} disabled={disabled} onChange={(e) => onChange(e.target.value)} className="h-8 w-[10.5rem] bg-background text-sm" />
++      {presets.map(([label, n]) => (
++        <Button key={label} type="button" size="sm" variant="ghost" className="h-7 px-2 text-xs" disabled={disabled}
++          onClick={() => onChange(plusDaysISO(n))}>{label}</Button>
++      ))}
++      {value && (
++        <Button type="button" size="sm" variant="ghost" className="h-7 px-2 text-xs text-muted-foreground" disabled={disabled}
++          onClick={() => onChange('')}>No reminder</Button>
++      )}
++    </div>
++  )
++}
