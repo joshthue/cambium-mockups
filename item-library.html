@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cambium &#8212; Item Library (mockup)</title>
+<style>
+  :root{
+    --moss:#3B4A2A; --moss-2:#55693c; --gold:#A3823F; --cream:#F4F1E9; --bg:#ECE8DD;
+    --ink:#20261A; --muted:#6B7257; --line:#D9D4C4; --card:#FFFFFF; --red:#A2402E; --green:#2F6B3A; --amber:#B7791F;
+    --sky:#2C6E8F; --r:10px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+  button,input,select{font:inherit}
+  button{cursor:pointer}
+  .top{background:var(--moss);color:var(--cream);display:flex;align-items:center;gap:18px;padding:10px 22px;position:sticky;top:0;z-index:30}
+  .brand{font-family:Georgia,serif;font-weight:700;letter-spacing:3px;font-size:17px}
+  .nav{display:flex;gap:4px;opacity:.9}
+  .nav span{padding:5px 10px;border-radius:6px;font-size:13px}
+  .nav span.on{background:rgba(255,255,255,.16)}
+  .spacer{flex:1}
+  .mock{background:var(--gold);color:#fff;font-size:11px;font-weight:700;letter-spacing:.5px;padding:3px 8px;border-radius:999px}
+  .subnav{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:46px;z-index:25}
+  .subnav .in{max-width:1280px;margin:0 auto;padding:8px 22px;display:flex;gap:10px;align-items:center}
+  .pills{display:inline-flex;background:#efece2;border-radius:9px;padding:4px;gap:2px}
+  .pills button{border:0;background:transparent;border-radius:7px;padding:6px 13px;font-weight:600;color:var(--ink)}
+  .pills button.on{background:var(--moss);color:var(--cream)}
+  .pills .n{font-weight:500;opacity:.7;margin-left:4px;font-size:12px}
+  .wrap{max-width:1280px;margin:0 auto;padding:12px 22px 40px}
+  .ph{display:flex;align-items:flex-start;gap:10px;margin-bottom:14px}
+  .ph h1{font-size:18px;margin:0;font-weight:650}
+  .ph p{margin:2px 0 0;color:var(--muted)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r)}
+  .btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:7px 12px;color:var(--ink)}
+  .btn:hover{border-color:var(--moss)}
+  .btn.primary{background:var(--moss);color:var(--cream);border-color:var(--moss)}
+  .btn.sm{padding:4px 9px;font-size:12.5px}
+  .muted{color:var(--muted)}
+  .chip{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:999px;padding:1px 8px;font-size:11.5px;background:#fff;white-space:nowrap}
+  .chip.cert{border-color:#b9cdb0;background:#eef5ea;color:var(--green)}
+  .chip.alg{border-color:#ecc9bf;background:#fbefeb;color:var(--red)}
+  .chip.form{border-color:#cfd9e3;background:#eef4f8;color:var(--sky)}
+  .chip.book{border-color:#d8cba4;background:#faf4e3;color:#7a5f22;font-weight:600}
+  .chip.new{border-color:var(--gold);background:var(--gold);color:#fff;font-weight:700}
+  .hidden{display:none!important}
+
+  /* Catalog */
+  .cat{display:grid;grid-template-columns:250px 1fr;gap:14px;align-items:start}
+  .facets{padding:12px 14px;position:sticky;top:110px}
+  .facets h4{margin:12px 0 6px;font-size:11px;letter-spacing:.6px;text-transform:uppercase;color:var(--muted)}
+  .facets h4:first-child{margin-top:0}
+  .facets label{display:flex;align-items:center;gap:7px;font-size:13px;padding:2px 0;cursor:pointer}
+  .facets label .c{margin-left:auto;color:var(--muted);font-size:12px}
+  .seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;padding:2px;gap:2px}
+  .seg button{border:0;background:transparent;border-radius:6px;padding:4px 9px;font-size:12.5px;color:var(--muted)}
+  .seg button.on{background:var(--moss);color:var(--cream)}
+  .search{display:flex;gap:8px;align-items:center;padding:10px 12px;margin-bottom:10px}
+  .search input{flex:1;border:1px solid var(--line);border-radius:8px;padding:9px 12px;background:#fbfaf6}
+  .search .hint{font-size:12px;color:var(--muted)}
+  .results .row{display:grid;grid-template-columns:1fr auto;gap:8px;padding:12px 14px;border-bottom:1px solid #ece8dc;cursor:pointer}
+  .results .row:hover{background:#faf8f2}
+  .results .row:last-child{border-bottom:0}
+  .rt{font-weight:650}
+  .rs{font-size:12.5px;color:var(--muted)}
+  .chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+  .meter{width:86px;height:6px;border-radius:9px;background:#ece8dc;overflow:hidden;margin-top:4px}
+  .meter i{display:block;height:100%;background:var(--moss-2)}
+  .right{text-align:right;font-size:12px;color:var(--muted);min-width:150px}
+  .resbar{display:flex;align-items:center;gap:10px;padding:8px 14px;border-bottom:1px solid var(--line);font-size:12.5px;color:var(--muted)}
+
+  /* Drawer */
+  .scrim{position:fixed;inset:0;background:rgba(20,24,15,.35);z-index:40}
+  .drawer{position:fixed;top:0;right:0;bottom:0;width:min(720px,96vw);background:var(--cream);z-index:41;overflow:auto;box-shadow:-8px 0 30px rgba(0,0,0,.15)}
+  .dh{background:#fff;border-bottom:1px solid var(--line);padding:16px 20px;position:sticky;top:0;z-index:2}
+  .dh h2{margin:0;font-size:19px}
+  .db{padding:16px 20px}
+  .facts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .fact{background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+  .fact .k{font-size:11px;letter-spacing:.5px;text-transform:uppercase;color:var(--muted)}
+  .fact .v{font-weight:600;margin-top:1px}
+  .fact .s{font-size:11px;color:var(--muted);margin-top:3px}
+  .conf{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px;vertical-align:middle}
+  .hi{background:var(--green)}.md{background:var(--amber)}.lo{background:var(--red)}
+  .sec{margin:18px 0 8px;font-weight:650}
+  .docs a{display:flex;gap:10px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin-bottom:6px;color:var(--ink);text-decoration:none}
+  .docs a .ty{font-size:10.5px;font-weight:700;color:#fff;background:var(--red);border-radius:4px;padding:2px 5px}
+  table{width:100%;border-collapse:collapse}
+  th{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);text-align:left;padding:8px 10px;border-bottom:2px solid var(--line)}
+  td{padding:9px 10px;border-bottom:1px solid #ece8dc;font-size:13px;vertical-align:top}
+  td.r,th.r{text-align:right}
+  .status{font-size:11.5px;font-weight:700;border-radius:999px;padding:2px 8px;white-space:nowrap}
+  .st-ready{background:#e7f1e3;color:var(--green)}.st-run{background:#e6f0f6;color:var(--sky)}.st-rev{background:#fbf0d9;color:#8a6215}.st-req{background:#efe9f6;color:#5d3f86}.st-no{background:#f0eee8;color:var(--muted)}
+  .bar{height:8px;border-radius:9px;background:#ece8dc;overflow:hidden;width:120px;display:inline-block;vertical-align:middle}
+  .bar i{display:block;height:100%;background:var(--moss-2)}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
+  .kpi{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:12px 14px}
+  .kpi b{font-size:22px;display:block;color:var(--moss)}
+  .kpi span{font-size:12px;color:var(--muted)}
+
+  /* Review */
+  .rv{padding:14px;margin-bottom:10px}
+  .cmp{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+  .cmp .side{background:#fbfaf6;border:1px solid var(--line);border-radius:8px;padding:10px}
+  .cmp .side h5{margin:0 0 6px;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)}
+  .diff{background:#fff3cd;border-radius:3px;padding:0 2px}
+
+  /* Picker */
+  .modal{max-width:760px;margin:0 auto}
+  .modal .mh{padding:14px 16px;border-bottom:1px solid var(--line);font-weight:650}
+  .modal .mb{padding:14px 16px}
+  .pick{border:1px solid var(--line);border-radius:8px;margin-top:8px;overflow:hidden}
+  .pick .opt{display:grid;grid-template-columns:1fr auto;gap:8px;padding:10px 12px;border-bottom:1px solid #ece8dc;cursor:pointer}
+  .pick .opt:hover{background:#faf8f2}
+  .pick .grp{background:#f6f3ea;font-size:11px;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);padding:6px 12px}
+  .why{font-size:11.5px;color:var(--green)}
+  .note{background:#fff8e6;border:1px solid #ecd9a8;color:#6d5418;border-radius:8px;padding:9px 12px;font-size:12.5px;margin-top:12px}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="brand">CAMBIUM</div>
+  <div class="nav"><span>Bud</span><span>Orders</span><span>Samples</span><span>Reports</span><span class="on">Items</span><span>Setup</span></div>
+  <div class="spacer"></div>
+  <span class="mock">MOCKUP &middot; sample data</span>
+</div>
+
+<div class="subnav"><div class="in">
+  <div class="pills" id="tabs">
+    <button data-t="catalog" class="on">Catalog</button>
+    <button data-t="suppliers">Suppliers</button>
+    <button data-t="review">Review <span class="n">4</span></button>
+    <button data-t="picker">Sample picker</button>
+  </div>
+</div></div>
+
+<div class="wrap">
+
+<!-- ============ CATALOG ============ -->
+<section id="t-catalog">
+  <div class="ph"><div>
+    <h1>Item Library</h1>
+    <p>Every item from your suppliers, carried or not, with specs, certifications, allergens and documents. Each fact shows where it came from.</p>
+  </div></div>
+
+  <div class="cat">
+    <div class="card facets" id="facets"></div>
+    <div>
+      <div class="card search">
+        <input id="q" placeholder="Try: organic blueberry powder kosher" value="">
+        <span class="hint">Searches names, codes, specs and applications</span>
+      </div>
+      <div class="card results">
+        <div class="resbar"><span id="count"></span><span class="spacer" style="flex:1"></span>
+          <div class="seg" id="bookseg"><button data-b="all" class="on">All items</button><button data-b="carried">Carried</button><button data-b="new">Not carried yet</button></div>
+        </div>
+        <div id="list"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SUPPLIERS ============ -->
+<section id="t-suppliers" class="hidden">
+  <div class="ph"><div>
+    <h1>Supplier research</h1>
+    <p>How much we know about each supplier's line. Biggest suppliers first. Research runs on public product pages, spec sheets and certification registries, or on files a supplier sends us.</p>
+  </div></div>
+  <div class="kpis">
+    <div class="kpi"><b>1,284</b><span>supplier products found</span></div>
+    <div class="kpi"><b>412</b><span>matched to items you carry</span></div>
+    <div class="kpi"><b>872</b><span>not carried yet (cross-sell list)</span></div>
+    <div class="kpi"><b>71%</b><span>of sold items have specs + certs</span></div>
+  </div>
+  <div class="card">
+    <table>
+      <thead><tr><th>Supplier</th><th class="r">Sales 12m</th><th class="r">Carried</th><th class="r">Found</th><th class="r">Not carried</th><th>Completeness</th><th>Source</th><th>Status</th><th></th></tr></thead>
+      <tbody id="suptable"></tbody>
+    </table>
+  </div>
+  <div class="note"><b>Request spec library</b> drafts an email to the supplier's sales contact asking for their spec sheets, certifications and catalog export. Files they send drop straight into research and outrank anything found on the web.</div>
+</section>
+
+<!-- ============ REVIEW ============ -->
+<section id="t-review" class="hidden">
+  <div class="ph"><div>
+    <h1>Needs a human</h1>
+    <p>Matches the research wasn't sure about. Nothing here changes your items until someone accepts it.</p>
+  </div></div>
+  <div id="reviews"></div>
+</section>
+
+<!-- ============ PICKER ============ -->
+<section id="t-picker" class="hidden">
+  <div class="ph"><div>
+    <h1>What this does for New Sample</h1>
+    <p>The item picker searches the whole library, including items you don't carry yet, and explains why each result matched.</p>
+  </div></div>
+  <div class="card modal">
+    <div class="mh">New sample &middot; Items</div>
+    <div class="mb">
+      <div class="muted" style="font-size:12.5px;margin-bottom:6px">Customer: <b style="color:var(--ink)">Golden Hour Granola</b> &nbsp;&middot;&nbsp; Application: <b style="color:var(--ink)">Cereal &amp; granola</b> &nbsp;&middot;&nbsp; Needs: <span class="chip cert">Organic</span> <span class="chip cert">Kosher</span> <span class="chip alg">No tree nuts</span></div>
+      <input id="pq" style="width:100%;border:1px solid var(--moss);border-radius:8px;padding:10px 12px" value="berry powder">
+      <div class="pick" id="pick"></div>
+      <div class="note">Picking a <b>Not carried yet</b> item creates a sample-only item with its specs, certifications and spec sheet already filled in. If it later sells, it becomes a regular catalog item with its history intact.</div>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<div class="scrim hidden" id="scrim"></div>
+<aside class="drawer hidden" id="drawer"></aside>
+
+<script>
+var SUP = [
+  {n:'Cascade Fruit Concentrates', sales:4210000, carried:38, found:212, src:'Supplier files', st:'ready', comp:92},
+  {n:'Red Marsh Cranberry Co.', sales:3380000, carried:21, found:96, src:'Website + registry', st:'ready', comp:84},
+  {n:'Tule Valley Nut Butters', sales:1960000, carried:44, found:171, src:'Website', st:'rev', comp:73},
+  {n:'Meadowlark Pulse Proteins', sales:1210000, carried:17, found:58, src:'Website + registry', st:'ready', comp:88},
+  {n:'Copperleaf Cocoa Works', sales:980000, carried:26, found:140, src:'Website', st:'run', comp:41},
+  {n:'Prairie Mill Oats Co.', sales:860000, carried:31, found:77, src:'Supplier files', st:'ready', comp:95},
+  {n:'Juniper Hill Flavors', sales:640000, carried:58, found:310, src:'Requested', st:'req', comp:22},
+  {n:'Kettle River Dairy Ingredients', sales:510000, carried:12, found:44, src:'Website', st:'rev', comp:66},
+  {n:'Saltgrass Spice Traders', sales:330000, carried:63, found:176, src:'Website', st:'run', comp:38},
+  {n:'Wild Aster Honey Co.', sales:120000, carried:6, found:0, src:'No public catalog', st:'no', comp:12}
+];
+var ST = {ready:['st-ready','Ready'], run:['st-run','Researching'], rev:['st-rev','Needs review'], req:['st-req','Request sent'], no:['st-no','Nothing public']};
+
+// item: name, sup, code, form, cat, certs[], alg[] (contains), origin, shelf, carried, lastSold, samples, comp, apps, src, conf
+var IT = [
+ {n:'Blueberry Powder, Freeze-Dried', s:'Cascade Fruit Concentrates', c:'CF-70011', f:'Powder', k:'Fruit', certs:['Kosher','Non-GMO'], alg:[], o:'USA', sh:'24 months, cool & dry', car:true, sold:'Nov 3', smp:14, comp:95, apps:'Bars, cereal coatings, smoothies', src:'Supplier spec sheet', conf:'hi'},
+ {n:'Organic Blueberry Powder', s:'Cascade Fruit Concentrates', c:'CF-70038', f:'Powder', k:'Fruit', certs:['Organic','Kosher','Non-GMO'], alg:[], o:'Canada', sh:'24 months', car:false, sold:null, smp:0, comp:90, apps:'Granola, yogurt inclusions', src:'Supplier spec sheet', conf:'hi'},
+ {n:'Strawberry Powder, Organic', s:'Cascade Fruit Concentrates', c:'CF-70096', f:'Powder', k:'Fruit', certs:['Organic','Kosher'], alg:[], o:'USA', sh:'18 months', car:true, sold:'Oct 29', smp:22, comp:91, apps:'Bars, frostings, beverages', src:'Supplier spec sheet', conf:'hi'},
+ {n:'Raspberry Puree, Seedless, 10 Brix', s:'Cascade Fruit Concentrates', c:'CF-21005', f:'Puree', k:'Fruit', certs:['Kosher'], alg:[], o:'USA', sh:'12 months frozen', car:true, sold:'Sep 18', smp:5, comp:83, apps:'Fillings, frozen desserts', src:'Website', conf:'hi'},
+ {n:'Sweetened Dried Cranberries, Sliced', s:'Red Marsh Cranberry Co.', c:'RM-1169', f:'Pieces', k:'Fruit', certs:['Kosher','Non-GMO','Gluten-free'], alg:[], o:'USA', sh:'12 months', car:true, sold:'Nov 7', smp:31, comp:88, apps:'Bakery, trail mix, salads', src:'Website + Non-GMO registry', conf:'hi'},
+ {n:'Infused Dried Cranberries, Organic', s:'Red Marsh Cranberry Co.', c:'RM-0007', f:'Whole', k:'Fruit', certs:['Organic','Kosher'], alg:[], o:'USA', sh:'12 months', car:false, sold:null, smp:0, comp:78, apps:'Granola, snack mixes', src:'Website + USDA Organic registry', conf:'md'},
+ {n:'Cranberry Powder', s:'Red Marsh Cranberry Co.', c:'RM-2210', f:'Powder', k:'Fruit', certs:['Kosher'], alg:[], o:'USA', sh:'18 months', car:false, sold:null, smp:0, comp:64, apps:'Supplements, beverages', src:'Website', conf:'md'},
+ {n:'Almond Butter, Smooth, Roasted', s:'Tule Valley Nut Butters', c:'TV-3304', f:'Paste', k:'Nuts & seeds', certs:['Kosher','Non-GMO'], alg:['Tree nuts'], o:'USA', sh:'12 months', car:true, sold:'Nov 10', smp:9, comp:86, apps:'Bars, fillings, spreads', src:'Website', conf:'hi'},
+ {n:'Peanut Flour, Light Roast, 12% Fat', s:'Tule Valley Nut Butters', c:'TV-1180', f:'Flour', k:'Nuts & seeds', certs:['Kosher','Gluten-free'], alg:['Peanuts'], o:'USA', sh:'12 months', car:true, sold:'Oct 2', smp:4, comp:72, apps:'Protein bars, coatings', src:'Website', conf:'md'},
+ {n:'Sunflower Seed Butter', s:'Tule Valley Nut Butters', c:'TV-5512', f:'Paste', k:'Nuts & seeds', certs:['Kosher','Gluten-free','Non-GMO'], alg:[], o:'USA', sh:'12 months', car:false, sold:null, smp:0, comp:70, apps:'Nut-free bars, school snacks', src:'Website', conf:'md'},
+ {n:'Pea Protein Isolate 85%', s:'Meadowlark Pulse Proteins', c:'MP-85', f:'Powder', k:'Protein', certs:['Non-GMO','Gluten-free','Kosher','Halal'], alg:[], o:'Canada', sh:'24 months', car:true, sold:'Nov 1', smp:18, comp:94, apps:'Shakes, bars, plant-based meat', src:'Supplier files', conf:'hi'},
+ {n:'Fava Bean Protein Concentrate', s:'Meadowlark Pulse Proteins', c:'MP-FV60', f:'Powder', k:'Protein', certs:['Organic','Non-GMO'], alg:[], o:'Canada', sh:'18 months', car:false, sold:null, smp:2, comp:88, apps:'Plant-based dairy, baking', src:'Supplier files', conf:'hi'},
+ {n:'Dutch Cocoa Powder 10/12', s:'Copperleaf Cocoa Works', c:'CC-1012D', f:'Powder', k:'Cocoa', certs:['Kosher'], alg:[], o:'Netherlands', sh:'24 months', car:true, sold:'Oct 21', smp:3, comp:55, apps:'Baking, beverages', src:'Website', conf:'md'},
+ {n:'Cocoa Nibs, Organic', s:'Copperleaf Cocoa Works', c:'CC-NIB-O', f:'Pieces', k:'Cocoa', certs:['Organic'], alg:[], o:'Peru', sh:'18 months', car:false, sold:null, smp:0, comp:40, apps:'Granola, toppings', src:'Website', conf:'lo'},
+ {n:'Rolled Oats, Thick Cut, Gluten-free', s:'Prairie Mill Oats Co.', c:'PM-ROT-GF', f:'Flakes', k:'Grains', certs:['Gluten-free','Kosher','Non-GMO'], alg:[], o:'USA', sh:'12 months', car:true, sold:'Nov 9', smp:6, comp:97, apps:'Granola, bars, cereal', src:'Supplier files', conf:'hi'},
+ {n:'Oat Flour, Organic', s:'Prairie Mill Oats Co.', c:'PM-OF-O', f:'Flour', k:'Grains', certs:['Organic','Kosher'], alg:[], o:'USA', sh:'9 months', car:false, sold:null, smp:0, comp:93, apps:'Baking, pancake mixes', src:'Supplier files', conf:'hi'},
+ {n:'Natural Vanilla Flavor WONF', s:'Juniper Hill Flavors', c:'JH-V220', f:'Liquid', k:'Flavors', certs:['Kosher'], alg:[], o:'USA', sh:'12 months', car:true, sold:'Oct 15', smp:11, comp:30, apps:'Bakery, dairy, beverages', src:'Our orders only', conf:'lo'},
+ {n:'Nonfat Dry Milk, High Heat', s:'Kettle River Dairy Ingredients', c:'KR-NFDM-HH', f:'Powder', k:'Dairy', certs:['Kosher (dairy)','Halal'], alg:['Milk'], o:'USA', sh:'18 months', car:true, sold:'Nov 5', smp:2, comp:68, apps:'Baking, confections', src:'Website', conf:'md'},
+ {n:'Smoked Paprika', s:'Saltgrass Spice Traders', c:'SS-PAP-SM', f:'Ground', k:'Spices', certs:['Kosher'], alg:[], o:'Spain', sh:'24 months', car:true, sold:'Sep 30', smp:8, comp:45, apps:'Seasonings, sauces', src:'Website', conf:'md'},
+ {n:'Mixed Berry Powder, Organic', s:'Cascade Fruit Concentrates', c:'CF-70210', f:'Powder', k:'Fruit', certs:['Organic','Kosher','Non-GMO'], alg:[], o:'USA', sh:'24 months', car:false, sold:null, smp:0, comp:89, apps:'Cereal coatings, smoothies', src:'Supplier spec sheet', conf:'hi'}
+];
+
+var state = {q:'', book:'all', f:{}};
+var FACETS = [
+  {key:'s', label:'Supplier'}, {key:'f', label:'Form'}, {key:'certs', label:'Certifications', multi:true},
+  {key:'alg', label:'Free from (allergens)', free:true}, {key:'o', label:'Origin'}
+];
+var ALLERGENS = ['Tree nuts','Peanuts','Milk','Soy','Wheat'];
+
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function money(v){return v>=1e6?'$'+(v/1e6).toFixed(2)+'M':v>=1e4?'$'+Math.round(v/1e3)+'k':'$'+v}
+
+function matches(it){
+  var q = state.q.trim().toLowerCase();
+  if (q){
+    var hay = (it.n+' '+it.s+' '+it.c+' '+it.f+' '+it.k+' '+it.apps+' '+it.certs.join(' ')+' '+it.o).toLowerCase();
+    if (!q.split(/\s+/).every(function(w){return hay.indexOf(w)>=0})) return false;
+  }
+  if (state.book==='carried' && !it.car) return false;
+  if (state.book==='new' && it.car) return false;
+  for (var k in state.f){
+    var sel = state.f[k]; if (!sel || !sel.length) continue;
+    if (k==='certs'){ if (!sel.every(function(c){return it.certs.indexOf(c)>=0})) return false; }
+    else if (k==='alg'){ if (sel.some(function(a){return it.alg.indexOf(a)>=0})) return false; }
+    else if (sel.indexOf(it[k])<0) return false;
+  }
+  return true;
+}
+
+function renderFacets(){
+  var h='';
+  FACETS.forEach(function(F){
+    var vals={};
+    if (F.free){ ALLERGENS.forEach(function(a){vals[a]=IT.filter(function(i){return i.alg.indexOf(a)<0}).length}); }
+    else IT.forEach(function(i){ var v=i[F.key]; (Array.isArray(v)?v:[v]).forEach(function(x){vals[x]=(vals[x]||0)+1}) });
+    h+='<h4>'+F.label+'</h4>';
+    Object.keys(vals).sort().forEach(function(v){
+      var on=(state.f[F.key]||[]).indexOf(v)>=0;
+      h+='<label><input type="checkbox" data-k="'+F.key+'" data-v="'+esc(v)+'"'+(on?' checked':'')+'>'+esc(F.free?'No '+v.toLowerCase():v)+'<span class="c">'+vals[v]+'</span></label>';
+    });
+  });
+  document.getElementById('facets').innerHTML=h;
+}
+
+function badges(it){
+  var b='<span class="chip form">'+esc(it.f)+'</span>';
+  it.certs.forEach(function(c){b+='<span class="chip cert">'+esc(c)+'</span>'});
+  it.alg.forEach(function(a){b+='<span class="chip alg">Contains '+esc(a.toLowerCase())+'</span>'});
+  b+=it.car?'<span class="chip book">Carried</span>':'<span class="chip new">Not carried yet</span>';
+  return b;
+}
+
+function renderList(){
+  var rows=IT.filter(matches);
+  document.getElementById('count').textContent=rows.length+' of '+IT.length+' items';
+  document.getElementById('list').innerHTML = rows.map(function(it,i){
+    var idx=IT.indexOf(it);
+    return '<div class="row" data-i="'+idx+'"><div><div class="rt">'+esc(it.n)+'</div>'+
+      '<div class="rs">'+esc(it.s)+' &middot; '+esc(it.c)+' &middot; '+esc(it.o)+' &middot; '+esc(it.apps)+'</div>'+
+      '<div class="chips">'+badges(it)+'</div></div>'+
+      '<div class="right">'+(it.car?'Last sold '+esc(it.sold):'Never ordered')+'<br>'+(it.smp?it.smp+' samples sent':'Not sampled')+
+      '<div style="margin-top:6px">Info complete '+it.comp+'%</div><div class="meter" style="margin-left:auto"><i style="width:'+it.comp+'%"></i></div></div></div>';
+  }).join('') || '<div style="padding:30px;text-align:center" class="muted">No items match. Try fewer filters.</div>';
+}
+
+function fact(k,v,src,conf){return '<div class="fact"><div class="k">'+k+'</div><div class="v">'+v+'</div><div class="s"><span class="conf '+conf+'"></span>'+esc(src)+'</div></div>'}
+
+function openItem(i){
+  var it=IT[i];
+  var srcDate=' &middot; checked Nov 10';
+  var d='<div class="dh"><div style="display:flex;gap:10px;align-items:flex-start"><div style="flex:1">'+
+    '<div class="muted" style="font-size:12px">'+esc(it.s)+' &middot; '+esc(it.c)+'</div><h2>'+esc(it.n)+'</h2>'+
+    '<div class="chips">'+badges(it)+'</div></div>'+
+    '<button class="btn sm" onclick="closeD()">Close</button></div>'+
+    '<div style="display:flex;gap:8px;margin-top:12px">'+
+    '<button class="btn primary sm">Sample this</button>'+
+    (it.car?'':'<button class="btn sm">Add to catalog</button>')+
+    '<button class="btn sm">Ask the supplier</button><button class="btn sm">Something\'s wrong</button></div></div>';
+  d+='<div class="db"><div class="sec" style="margin-top:0">Key facts</div><div class="facts">'+
+    fact('Form',esc(it.f),it.src+srcDate,it.conf)+
+    fact('Category',esc(it.k),it.src+srcDate,it.conf)+
+    fact('Certifications',it.certs.map(esc).join(', ')||'&mdash;',it.certs.indexOf('Organic')>=0?'USDA Organic registry'+srcDate:it.src+srcDate,it.certs.indexOf('Organic')>=0?'hi':it.conf)+
+    fact('Allergens',it.alg.length?'Contains '+it.alg.map(esc).join(', ').toLowerCase():'None of the top 9 declared',it.src+srcDate,it.conf)+
+    fact('Country of origin',esc(it.o),it.src+srcDate,it.conf)+
+    fact('Shelf life / storage',esc(it.sh),it.src+srcDate,it.conf)+
+    fact('Typical applications',esc(it.apps),'Supplier website'+srcDate,'md')+
+    fact('Pack',it.f==='Liquid'?'5 gal pail, 275 gal tote':it.f==='Paste'?'35 lb pail, 1,800 lb tote':'25 lb bag, 50 lb bag','Supplier spec sheet'+srcDate,it.conf)+
+    '</div>';
+  d+='<div class="sec">Documents</div><div class="docs">'+
+    '<a href="#"><span class="ty">PDF</span><span><b>Product specification</b><br><span class="muted" style="font-size:12px">'+esc(it.s)+' &middot; rev. Aug 2026 &middot; from supplier website</span></span></a>'+
+    '<a href="#"><span class="ty">PDF</span><span><b>Safety data sheet</b><br><span class="muted" style="font-size:12px">rev. Mar 2026</span></span></a>'+
+    (it.certs.indexOf('Kosher')>=0||it.certs.indexOf('Kosher (dairy)')>=0?'<a href="#"><span class="ty">PDF</span><span><b>Kosher certificate</b><br><span class="muted" style="font-size:12px">valid through Jun 2027</span></span></a>':'')+
+    '</div>';
+  d+='<div class="sec">In your book</div><div class="card" style="padding:10px 12px">'+
+    (it.car?'Sold to <b>6 customers</b> in the last 12 months &middot; last order '+esc(it.sold)+' &middot; '+it.smp+' samples sent (2 turned into orders)':'Never ordered. '+(it.smp?it.smp+' samples sent.':'Never sampled.')+' Customers buying similar items: <b>Golden Hour Granola</b>, <b>Summit Trail Bar Company</b>.')+
+    '</div>';
+  var sim=IT.filter(function(x){return x!==it && x.k===it.k && x.f===it.f}).slice(0,3);
+  if (sim.length){
+    d+='<div class="sec">Similar items</div><div class="card">'+sim.map(function(x){
+      return '<div class="row" style="display:flex;gap:8px;padding:9px 12px;border-bottom:1px solid #ece8dc;cursor:pointer" onclick="openItem('+IT.indexOf(x)+')"><div style="flex:1"><b>'+esc(x.n)+'</b><div class="muted" style="font-size:12px">'+esc(x.s)+'</div></div>'+(x.car?'<span class="chip book">Carried</span>':'<span class="chip new">Not carried yet</span>')+'</div>';
+    }).join('')+'</div>';
+  }
+  d+='<div class="sec">Where this came from</div><div class="muted" style="font-size:12.5px">'+
+    '<span class="conf hi"></span>Confirmed: supplier document or official registry &nbsp; '+
+    '<span class="conf md"></span>Likely: supplier website, matched by item code &nbsp; '+
+    '<span class="conf lo"></span>Unverified: matched by name only or our own order history</div></div>';
+  var dr=document.getElementById('drawer'); dr.innerHTML=d;
+  dr.classList.remove('hidden'); document.getElementById('scrim').classList.remove('hidden');
+}
+function closeD(){document.getElementById('drawer').classList.add('hidden');document.getElementById('scrim').classList.add('hidden')}
+
+function renderSuppliers(){
+  document.getElementById('suptable').innerHTML=SUP.map(function(s){
+    var st=ST[s.st];
+    return '<tr><td><b>'+esc(s.n)+'</b></td><td class="r">'+money(s.sales)+'</td><td class="r">'+s.carried+'</td><td class="r">'+s.found+'</td><td class="r">'+Math.max(0,s.found-s.carried)+'</td>'+
+      '<td><span class="bar"><i style="width:'+s.comp+'%"></i></span> <span class="muted" style="font-size:12px">'+s.comp+'%</span></td>'+
+      '<td class="muted">'+esc(s.src)+'</td><td><span class="status '+st[0]+'">'+st[1]+'</span></td>'+
+      '<td class="r">'+(s.st==='no'||s.st==='rev'||s.comp<50?'<button class="btn sm">Request spec library</button>':'<button class="btn sm">Re-check</button>')+'</td></tr>';
+  }).join('');
+}
+
+var REV=[
+  {ours:'TV 3304 ALMOND BTR SMTH', oc:'TV-3304', found:'Almond Butter, Smooth, <span class="diff">Raw</span>', fc:'TV-3304R', why:'Same code stem, but the website lists a raw and a roasted version. Your orders don\'t say which.', conf:'md'},
+  {ours:'VANILLA FLAV NAT 220', oc:'JH-V220', found:'Natural Vanilla Flavor <span class="diff">with other natural flavors</span>', fc:'(no code shown)', why:'Matched by name only. The supplier site shows no item codes.', conf:'lo'},
+  {ours:'NFDM HH 50#', oc:'KR-NFDM-HH', found:'Nonfat Dry Milk, High Heat, <span class="diff">Grade A</span>', fc:'KR-NFDM-HH', why:'Code matches. The website says Halal, but the certificate it links to expired in 2025.', conf:'md'},
+  {ours:'COCOA NIBS ORG', oc:'(sample-only)', found:'Cocoa Nibs, Organic', fc:'CC-NIB-O', why:'A rep keyed this in for a sample. Looks like the supplier\'s catalog item; merge them?', conf:'md'}
+];
+function renderReview(){
+  document.getElementById('reviews').innerHTML=REV.map(function(r){
+    return '<div class="card rv"><div style="display:flex;gap:8px;align-items:center"><span class="conf '+r.conf+'"></span><b>'+esc(r.ours)+'</b><span class="spacer" style="flex:1"></span>'+
+      '<button class="btn sm primary">Same item: accept</button><button class="btn sm">Different item</button><button class="btn sm">Skip</button></div>'+
+      '<div class="muted" style="font-size:12.5px;margin-top:4px">'+r.why+'</div>'+
+      '<div class="cmp"><div class="side"><h5>Your item</h5>'+esc(r.ours)+'<div class="muted" style="font-size:12px">'+esc(r.oc)+'</div></div>'+
+      '<div class="side"><h5>Found on supplier site</h5>'+r.found+'<div class="muted" style="font-size:12px">'+esc(r.fc)+'</div></div></div></div>';
+  }).join('');
+}
+
+function renderPick(){
+  var q=document.getElementById('pq').value.trim().toLowerCase();
+  var words=q.split(/\s+/).filter(Boolean);
+  var hits=IT.filter(function(it){
+    var hay=(it.n+' '+it.c+' '+it.k+' '+it.apps).toLowerCase();
+    return words.every(function(w){return hay.indexOf(w.replace(/s$/,''))>=0 || (w==='berry'&&/berr|cranberr/.test(hay))});
+  });
+  function score(it){var s=0; if(it.certs.indexOf('Organic')>=0)s+=2; if(it.certs.join(' ').indexOf('Kosher')>=0)s+=2; if(it.alg.indexOf('Tree nuts')<0)s+=1; if(/granola|cereal/i.test(it.apps))s+=1; return s}
+  hits.sort(function(a,b){return score(b)-score(a)});
+  function why(it){var w=[]; if(it.certs.indexOf('Organic')>=0)w.push('organic'); if(it.certs.join(' ').indexOf('Kosher')>=0)w.push('kosher'); if(it.alg.indexOf('Tree nuts')<0)w.push('no tree nuts'); if(/granola|cereal/i.test(it.apps))w.push('used in granola/cereal'); return w}
+  var carried=hits.filter(function(i){return i.car}), fresh=hits.filter(function(i){return !i.car});
+  function opt(it){var w=why(it); var full=w.length>=4;
+    return '<div class="opt" onclick="openItem('+IT.indexOf(it)+')"><div><b>'+esc(it.n)+'</b> <span class="muted" style="font-size:12px">'+esc(it.s)+' &middot; '+esc(it.c)+'</span>'+
+      '<div class="why">'+(full?'Fits all requirements: ':'Matches: ')+w.join(', ')+'</div></div><div class="chips" style="margin:0">'+badges(it)+'</div></div>'}
+  document.getElementById('pick').innerHTML=
+    (carried.length?'<div class="grp">Carried &middot; '+carried.length+'</div>'+carried.map(opt).join(''):'')+
+    (fresh.length?'<div class="grp">Not carried yet &middot; from supplier catalogs &middot; '+fresh.length+'</div>'+fresh.map(opt).join(''):'')+
+    (!hits.length?'<div style="padding:16px" class="muted">Nothing found. Try another word.</div>':'');
+}
+
+document.getElementById('tabs').addEventListener('click',function(e){
+  var b=e.target.closest('button'); if(!b)return;
+  [].forEach.call(this.children,function(x){x.classList.toggle('on',x===b)});
+  ['catalog','suppliers','review','picker'].forEach(function(t){document.getElementById('t-'+t).classList.toggle('hidden',t!==b.dataset.t)});
+  window.scrollTo(0,0);
+});
+document.getElementById('facets').addEventListener('change',function(e){
+  var k=e.target.dataset.k, v=e.target.dataset.v; if(!k)return;
+  var a=state.f[k]||(state.f[k]=[]); var i=a.indexOf(v);
+  if(e.target.checked&&i<0)a.push(v); if(!e.target.checked&&i>=0)a.splice(i,1);
+  renderList();
+});
+document.getElementById('bookseg').addEventListener('click',function(e){
+  var b=e.target.closest('button'); if(!b)return;
+  [].forEach.call(this.children,function(x){x.classList.toggle('on',x===b)});
+  state.book=b.dataset.b; renderList();
+});
+document.getElementById('q').addEventListener('input',function(){state.q=this.value; renderList()});
+document.getElementById('list').addEventListener('click',function(e){var r=e.target.closest('.row'); if(r)openItem(+r.dataset.i)});
+document.getElementById('scrim').addEventListener('click',closeD);
+document.getElementById('pq').addEventListener('input',renderPick);
+
+renderFacets(); renderList(); renderSuppliers(); renderReview(); renderPick();
+</script>
+</body>
+</html>
