@@ -1,0 +1,619 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cambium &#8212; Dashboard builder (mockup)</title>
+<style>
+  :root{
+    --moss:#3B4A2A; --moss-2:#55693c; --gold:#A3823F; --cream:#F4F1E9; --bg:#ECE8DD;
+    --ink:#20261A; --muted:#6B7257; --line:#D9D4C4; --card:#FFFFFF; --red:#A2402E; --green:#2F6B3A; --amber:#B7791F;
+    --r:10px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+  button{font:inherit;cursor:pointer}
+  .top{background:var(--moss);color:var(--cream);display:flex;align-items:center;gap:18px;padding:10px 22px;position:sticky;top:0;z-index:20}
+  .brand{font-family:Georgia,serif;font-weight:700;letter-spacing:3px;font-size:17px}
+  .nav{display:flex;gap:4px;opacity:.85}
+  .nav span{padding:5px 10px;border-radius:6px;font-size:13px}
+  .nav span.on{background:rgba(255,255,255,.14);opacity:1}
+  .spacer{flex:1}
+  .viewas{display:flex;align-items:center;gap:8px;font-size:12.5px;opacity:.95}
+  .viewas select{background:rgba(255,255,255,.12);color:var(--cream);border:1px solid rgba(255,255,255,.25);border-radius:6px;padding:5px 8px;font:inherit}
+  .viewas select option{color:var(--ink)}
+  .mock{background:var(--gold);color:#fff;font-size:11px;font-weight:700;letter-spacing:.5px;padding:3px 8px;border-radius:999px}
+
+  .wrap{max-width:1240px;margin:0 auto;padding:22px}
+  .head{display:flex;align-items:flex-end;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+  .head h1{font-family:Georgia,serif;font-size:26px;margin:0}
+  .head .sub{color:var(--muted);margin-top:2px}
+  .btn{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:7px 12px;color:var(--ink)}
+  .btn:hover{border-color:var(--moss)}
+  .btn.primary{background:var(--moss);color:var(--cream);border-color:var(--moss)}
+  .btn.ghost{background:transparent}
+  .btn.sm{padding:4px 9px;font-size:12.5px}
+  .editbar{display:none;background:#fff8e6;border:1px solid #ecd9a8;color:#6d5418;border-radius:var(--r);padding:10px 14px;margin-bottom:14px;align-items:center;gap:10px;flex-wrap:wrap}
+  body.editing .editbar{display:flex}
+
+  .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px;align-items:start}
+  .w{grid-column:span 6;background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 1px 0 rgba(0,0,0,.03);position:relative;min-width:0}
+  .w.S{grid-column:span 4}.w.M{grid-column:span 6}.w.L{grid-column:span 12}
+  .w .wh{display:flex;align-items:center;gap:8px;padding:11px 14px 6px}
+  .w .wt{font-weight:650;font-size:14px}
+  .w .cat{font-size:10.5px;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:1px 7px}
+  .w .wb{padding:4px 14px 14px}
+  .w .tools{display:none;margin-left:auto;gap:4px;align-items:center}
+  body.editing .w .tools{display:flex}
+  body.editing .w{outline:2px dashed #cfc6a8;outline-offset:-2px;cursor:grab}
+  body.editing .w.dragging{opacity:.4}
+  body.editing .w.drop-before{box-shadow:-7px 0 0 0 var(--moss)}
+  body.editing .w.drop-after{box-shadow:7px 0 0 0 var(--moss)}
+  body.editing .addtile.drop-end{border-color:var(--moss);background:#eef0e8}
+  .tools button{border:1px solid var(--line);background:#fff;border-radius:6px;padding:1px 7px;font-size:11.5px;color:var(--muted)}
+  .tools button.on{background:var(--moss);color:#fff;border-color:var(--moss)}
+  .tools .x{color:var(--red);font-weight:700}
+  .handle{display:none;color:#b3ab92;font-size:15px;letter-spacing:-2px}
+  body.editing .handle{display:inline}
+  .addtile{display:none;grid-column:span 4;border:2px dashed #cfc6a8;border-radius:var(--r);min-height:120px;align-items:center;justify-content:center;color:var(--muted);background:rgba(255,255,255,.4)}
+  body.editing .addtile{display:flex}
+
+  /* widget internals */
+  .row{display:flex;align-items:center;gap:10px;padding:7px 0;border-top:1px solid #efece3}
+  .row:first-child{border-top:0}
+  .grow{flex:1;min-width:0}
+  .t1{font-weight:550;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .t2{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .chip{font-size:11px;border-radius:999px;padding:2px 8px;white-space:nowrap;background:#eef0e8;color:#4a5a37}
+  .chip.red{background:#f6e3df;color:var(--red)}.chip.amber{background:#fbefd6;color:#8a5a12}.chip.green{background:#e2efe2;color:var(--green)}
+  .pri{width:9px;height:9px;border-radius:50%;flex:none}
+  .p1{background:var(--red)}.p2{background:var(--amber)}.p3{background:#9aa088}
+  .kpis{display:flex;gap:10px;flex-wrap:wrap}
+  .kpi{flex:1;min-width:92px;background:var(--cream);border-radius:8px;padding:9px 11px}
+  .kpi .v{font-size:21px;font-weight:700;font-family:Georgia,serif}
+  .kpi .l{font-size:11.5px;color:var(--muted)}
+  .up{color:var(--green)}.dn{color:var(--red)}
+  .funnel .fr{display:flex;align-items:center;gap:8px;margin:5px 0;font-size:12.5px}
+  .funnel .fl{width:118px;color:var(--muted);flex:none}
+  .funnel .fb{height:16px;background:var(--moss-2);border-radius:4px}
+  .verdict{display:flex;align-items:center;gap:10px;background:#e2efe2;border-radius:8px;padding:8px 10px;margin-bottom:8px}
+  .verdict b{font-size:15px}
+  .muted{color:var(--muted)}
+  .ask{display:flex;gap:6px;margin-top:4px}
+  .ask input{flex:1;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font:inherit}
+  .nug{background:var(--cream);border-left:3px solid var(--gold);padding:9px 11px;border-radius:6px;font-family:Georgia,serif}
+  .lock{font-size:11px;color:var(--muted)}
+  .bar2{display:flex;gap:2px;align-items:flex-end;height:46px}
+  .bar2 i{flex:1;background:var(--moss-2);border-radius:2px 2px 0 0;display:block}
+  .bar2 i.ly{background:#cdd3bf}
+
+  /* drawer */
+  .drawer{position:fixed;top:0;right:0;height:100%;width:420px;max-width:100%;background:#fff;border-left:1px solid var(--line);box-shadow:-10px 0 30px rgba(0,0,0,.08);transform:translateX(105%);transition:transform .2s;z-index:40;display:flex;flex-direction:column}
+  .drawer.open{transform:none}
+  .dh{padding:16px 18px 8px;border-bottom:1px solid var(--line)}
+  .dh h2{margin:0 0 4px;font-family:Georgia,serif;font-size:20px}
+  .dh input{width:100%;margin-top:8px;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font:inherit}
+  .cats{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+  .cats button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:3px 10px;font-size:12px}
+  .cats button.on{background:var(--moss);border-color:var(--moss);color:#fff}
+  .dl{overflow:auto;padding:10px 18px 30px;flex:1}
+  .ci{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:8px 0;display:flex;gap:10px;align-items:flex-start}
+  .ci .grow .t1{white-space:normal}
+  .ci .t2{white-space:normal}
+  .for{display:flex;gap:4px;flex-wrap:wrap;margin-top:5px}
+  .for span{font-size:10.5px;background:var(--cream);border-radius:999px;padding:1px 7px;color:var(--muted)}
+  .catlabel{font-size:11px;letter-spacing:.7px;text-transform:uppercase;color:var(--muted);margin:16px 0 2px}
+  .scrim{position:fixed;inset:0;background:rgba(20,25,15,.25);display:none;z-index:30}
+  .scrim.open{display:block}
+  .note{font-size:12.5px;color:var(--muted);margin-top:22px;text-align:center}
+
+  /* build-your-own chart */
+  .cfgbtn{margin-left:auto;border:1px solid var(--line);background:#fff;border-radius:6px;padding:1px 7px;font-size:12px;color:var(--muted)}
+  body.editing .cfgbtn{margin-left:0}
+  .chart svg{display:block;width:100%;height:auto}
+  .chart .legend{display:flex;gap:12px;font-size:11.5px;color:var(--muted);margin-top:4px}
+  .chart .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+  .big{font-family:Georgia,serif;font-size:34px;font-weight:700;line-height:1.1}
+  .ctable{width:100%;border-collapse:collapse;font-size:13px}
+  .ctable td{padding:6px 0;border-top:1px solid #efece3}.ctable td.n{text-align:right;font-variant-numeric:tabular-nums}
+  .ctable tr:first-child td{border-top:0}
+  .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:60;background:rgba(20,25,15,.35);padding:16px}
+  .modal.open{display:flex}
+  .mbox{background:#fff;border-radius:14px;width:980px;max-width:100%;max-height:94vh;overflow:auto;display:grid;grid-template-columns:340px 1fr;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+  .mform{padding:18px 18px 16px;border-right:1px solid var(--line);background:#fbfaf6}
+  .mform h2{font-family:Georgia,serif;margin:0 0 2px;font-size:20px}
+  .fld{margin:11px 0}
+  .fld label{display:block;font-size:11.5px;letter-spacing:.4px;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+  .fld select,.fld input{width:100%;border:1px solid var(--line);border-radius:8px;padding:7px 9px;font:inherit;background:#fff}
+  .seg{display:flex;flex-wrap:wrap;gap:4px}
+  .seg button{border:1px solid var(--line);background:#fff;border-radius:7px;padding:4px 9px;font-size:12.5px}
+  .seg button.on{background:var(--moss);border-color:var(--moss);color:#fff}
+  .seg button:disabled{opacity:.4;cursor:not-allowed}
+  .mprev{padding:18px;display:flex;flex-direction:column;gap:10px;background:var(--bg)}
+  .mprev .w{grid-column:auto}
+  .sentence{font-size:13.5px;color:var(--muted);font-style:italic}
+  .tpl{display:flex;gap:6px;flex-wrap:wrap}
+  @media (max-width:860px){ .mbox{grid-template-columns:1fr} }
+
+  @media (max-width:860px){ .w,.w.S,.w.M,.w.L,.addtile{grid-column:span 12} .nav{display:none} }
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="brand">CAMBIUM</div>
+  <div class="nav"><span class="on">Dashboard</span><span>Projects</span><span>Samples</span><span>Accounts</span><span>Orders</span><span>EDI</span></div>
+  <div class="spacer"></div>
+  <div class="viewas">Preview as
+    <select id="role">
+      <option value="sales">Brad &#8212; Sales</option>
+      <option value="owner">Dom &#8212; Owner</option>
+      <option value="desk">Patty &#8212; Order desk</option>
+      <option value="acct">Julie &#8212; Accounting</option>
+    </select>
+  </div>
+  <span class="mock">MOCKUP</span>
+</div>
+
+<div class="wrap">
+  <div class="head">
+    <div>
+      <h1 id="hello">Good morning, Brad</h1>
+      <div class="sub" id="subline">Thursday, November 12 &#183; here's what needs you today</div>
+    </div>
+    <div class="spacer"></div>
+    <button class="btn" id="editBtn">&#9998; Customize dashboard</button>
+  </div>
+
+  <div class="editbar">
+    <b>Customizing.</b> Drag a card onto the left or right half of another card (a green bar shows where it lands) &#183; S / M / L to resize &#183; &#215; to remove.
+    <div class="spacer"></div>
+    <button class="btn sm" id="resetBtn">Reset to the <span id="roleName">Sales</span> starter</button>
+    <button class="btn sm" id="addBtn">+ Add a card</button>
+    <button class="btn sm primary" id="doneBtn">Done</button>
+  </div>
+
+  <div class="grid" id="grid"></div>
+  <p class="note">Mockup with sample data (project names are real Gehrke projects; numbers are illustrative). Every card is its own component, so any card can go on any person's dashboard.</p>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer">
+  <div class="dh">
+    <div style="display:flex;align-items:center"><h2>Add a card</h2><div class="spacer"></div><button class="btn sm ghost" id="closeDrawer">Close</button></div>
+    <div class="muted" style="font-size:12.5px">Pick what you want on your dashboard. You can change it any time.</div>
+    <input id="search" placeholder="Search cards&#8230; (e.g. pipeline, EDI, commission)">
+    <div class="cats" id="cats"></div>
+  </div>
+  <div class="dl" id="catalog"></div>
+</aside>
+
+<div class="modal" id="modal">
+  <div class="mbox">
+    <div class="mform">
+      <h2 id="mTitle">Build a chart</h2>
+      <div class="muted" style="font-size:12.5px">Pick what to show. The preview updates as you go.</div>
+      <div class="fld"><label>Start from</label><div class="tpl" id="mTpl"></div></div>
+      <div class="fld"><label>Show me</label><div class="seg" id="fMeasure"></div></div>
+      <div class="fld"><label>For</label>
+        <select id="fFilter"></select>
+        <select id="fValue" style="margin-top:6px"></select>
+      </div>
+      <div class="fld"><label>When</label><div class="seg" id="fRange"></div></div>
+      <div class="fld"><label>Broken down</label><div class="seg" id="fGroup"></div></div>
+      <div class="fld"><label>As a</label><div class="seg" id="fType"></div></div>
+      <div class="fld"><label>Compared to</label><div class="seg" id="fCompare"></div></div>
+      <div class="fld"><label>Card name</label><input id="fTitle" placeholder="(automatic)"></div>
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <button class="btn primary" id="mSave">Add to my dashboard</button>
+        <button class="btn ghost" id="mCancel">Cancel</button>
+      </div>
+    </div>
+    <div class="mprev">
+      <div class="sentence" id="mSentence"></div>
+      <div id="mPreview"></div>
+      <div class="muted" style="font-size:12px">Preview uses sample numbers. In the real build these read live from the warehouse, scoped to your brokerage.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ---------- sample data (project names are real; numbers illustrative) ----------
+const D = {
+  projects: [
+    {n:"Almond Opportunity", c:"Brown & Haley", p:1, step:"Qualified Lead", fu:"Nov 17", rev:null},
+    {n:"Replace Freeze Dry with MicroDried", c:"Attune Foods", p:1, step:"Samples Sent", fu:"Nov 13", rev:null, due:true},
+    {n:"WD Vinegar 12% \u2014 MizKan", c:"Litehouse", p:1, step:"Qualified Lead", fu:"Nov 6", rev:"$200K", over:true},
+    {n:"1/8\" IQF Ginger Contract 2027", c:"Rikki Gourmet Foods", p:1, step:"In Negotiations", fu:"Oct 29", rev:"$15K", over:true},
+    {n:"Organic FavaBean Protein \u2014 Burcon", c:"One Degree Organic", p:2, step:"Initial Contact", fu:"Nov 16", rev:"$620K"},
+    {n:"Raisin Business \u2014 SunMaid 2027", c:"US Bakery", p:2, step:"Qualified Lead", fu:"May 6", rev:"$1.11M"},
+    {n:"Dairy Protein Toppers \u2014 EMPWR", c:"EMPWR USA", p:2, step:"Qualified Lead", fu:"Nov 18", rev:null},
+  ],
+  followups: [
+    {c:"GetWell Gathered", i:"FG10122 \u2014 Banana Powder", when:"Nov 25", st:"chip"},
+    {c:"Glanbia Nutritionals", i:"FG70125 \u2014 Banana Fragments", when:"8 days overdue", st:"red"},
+    {c:"Attune Foods", i:"MicroDried strawberry pieces", when:"Today", st:"amber"},
+  ],
+  accounts: [
+    {c:"General Mills", plan:"Current", rev:"Mar 2027", trend:+12},
+    {c:"ConAgra Foods", plan:"Review due", rev:"Nov 20", trend:-4},
+    {c:"Litehouse", plan:"Draft", rev:"\u2014", trend:+7},
+    {c:"Bob's Red Mill", plan:"Current", rev:"Jan 2027", trend:+22},
+    {c:"Rikki Gourmet Foods", plan:"No plan yet", rev:"\u2014", trend:-15},
+  ],
+  quiet: [
+    {c:"Innovative Bakery Research", last:"74 days", usual:"monthly"},
+    {c:"Oregon Freeze Dry", last:"61 days", usual:"every ~3 weeks"},
+    {c:"Sun-Opta", last:"58 days", usual:"monthly"},
+  ],
+  edi: [
+    {t:"850", po:"13370063", s:"Diamond Foods", what:"New PO \u00b7 walnut pieces 16,860 lb", st:"New"},
+    {t:"860", po:"13353599", s:"Galdisa", what:"Date change \u00b7 Dec 9 \u2192 Dec 12", st:"Change"},
+    {t:"860", po:"13353597", s:"Galdisa", what:"Date change \u00b7 Dec 3 \u2192 Dec 6", st:"Change"},
+  ],
+};
+
+// ---------- the card catalog: every card is a component ----------
+const CATS = {
+  custom:"Build your own", projects:"Projects", samples:"Samples", accounts:"Key accounts", orders:"Orders", edi:"EDI", money:"Money", team:"Team", edward:"Edward"
+};
+const esc = s => String(s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+const W = {
+  p_action: {cat:"projects", title:"Needs you today", size:"L", for:["Sales","Owner"],
+    desc:"Overdue and due-today items across your projects and samples, in one list.",
+    render(){ const items=[
+        ...D.projects.filter(p=>p.over||p.due).map(p=>({a:p.n,b:p.c+" \u00b7 project \u00b7 "+p.step,chip:p.over?["red","Overdue \u00b7 "+p.fu]:["amber","Due today"]})),
+        ...D.followups.filter(f=>f.st!=="chip").map(f=>({a:f.c+" \u2014 "+f.i,b:"sample follow-up",chip:[f.st,f.when]}))];
+      return items.map(x=>`<div class="row"><div class="grow"><div class="t1">${esc(x.a)}</div><div class="t2">${esc(x.b)}</div></div><span class="chip ${x.chip[0]}">${esc(x.chip[1])}</span><button class="btn sm">Log touch</button></div>`).join(""); }},
+  p_top: {cat:"projects", title:"My top projects", size:"M", for:["Sales","Owner"],
+    desc:"Your highest-priority open projects with stage, next follow-up and estimated revenue.",
+    render(){ return D.projects.slice(0,6).map(p=>`<div class="row"><span class="pri p${p.p}"></span><div class="grow"><div class="t1">${esc(p.n)}</div><div class="t2">${esc(p.c)} \u00b7 next ${esc(p.fu)}${p.rev?" \u00b7 "+p.rev:""}</div></div><span class="chip">${esc(p.step)}</span></div>`).join(""); }},
+  p_pipeline: {cat:"projects", title:"Is my pipeline growing?", size:"M", for:["Sales","Owner"],
+    desc:"One-line verdict (growing / steady / shrinking), projects by stage, and the 12-week trend.",
+    render(){ const st=[["Initial Contact",5],["Qualified Lead",5],["Samples Sent",4],["Pre-purchase",1],["In Negotiations",1]];
+      const wk=[9,9,10,11,11,12,12,13,14,14,15,16];
+      return `<div class="verdict"><span style="font-size:20px">\u25b2</span><div><b>Growing</b><div class="t2" style="white-space:normal">16 open, up from 9 twelve weeks ago \u00b7 7 new this month, 1 won</div></div></div>
+      <div class="funnel">${st.map(([n,v])=>`<div class="fr"><span class="fl">${n}</span><span class="fb" style="width:${v*34}px"></span><b>${v}</b></div>`).join("")}</div>
+      <div class="t2" style="margin-top:8px">Open projects, last 12 weeks</div><div class="bar2">${wk.map(v=>`<i style="height:${v/16*100}%"></i>`).join("")}</div>`; }},
+  p_stalled: {cat:"projects", title:"Projects gone quiet", size:"S", for:["Sales","Owner"],
+    desc:"Open projects with no touch in 21+ days, so nothing slides.",
+    render(){ return [["Bob's Red Mill \u2014 Savory",23],["IMind Brain Food \u2014 Snackteva",26],["5 gallon pail \u2014 Sun-Opta",31]].map(([n,d])=>`<div class="row"><div class="grow"><div class="t1">${n}</div></div><span class="chip amber">${d} days</span></div>`).join(""); }},
+  p_outcomes: {cat:"projects", title:"Recent wins & losses", size:"S", for:["Owner","Sales"],
+    desc:"Closed projects and the lesson captured on each one.",
+    render(){ return `<div class="row"><span class="chip green">Won</span><div class="grow"><div class="t1">Almond Flour \u2014 Bob's Red Mill</div><div class="t2">$1.48M \u00b7 SunnyGem</div></div></div>
+      <div class="row"><span class="chip red">Lost</span><div class="grow"><div class="t1">Cranberry inclusions \u2014 OFD</div><div class="t2">"Price \u2014 lost to direct buy"</div></div></div>`; }},
+
+  s_followups: {cat:"samples", title:"Sample follow-ups", size:"M", for:["Sales"],
+    desc:"Samples you owe a call or email on, soonest first. Log a touch right here.",
+    render(){ return D.followups.map(f=>`<div class="row"><div class="grow"><div class="t1">${esc(f.c)}</div><div class="t2">${esc(f.i)}</div></div><span class="chip ${f.st==='chip'?'':f.st}">${esc(f.when)}</span></div>`).join(""); }},
+  s_waiting: {cat:"samples", title:"Waiting on feedback", size:"S", for:["Sales"],
+    desc:"Delivered samples with no customer response yet, by days waiting.",
+    render(){ return `<div class="kpis"><div class="kpi"><div class="v">11</div><div class="l">delivered, no reply</div></div><div class="kpi"><div class="v">4</div><div class="l">over 30 days</div></div></div>`; }},
+  s_convert: {cat:"samples", title:"Samples \u2192 orders", size:"S", for:["Owner","Sales"],
+    desc:"How many samples turned into orders this quarter, and the dollars that followed.",
+    render(){ return `<div class="kpis"><div class="kpi"><div class="v">14%</div><div class="l">converted this qtr</div></div><div class="kpi"><div class="v">$2.1M</div><div class="l">orders that followed</div></div></div>`; }},
+
+  k_plans: {cat:"accounts", title:"Key Account Plans", size:"M", for:["Sales","Owner"],
+    desc:"Each key account's plan status and next review. Edward can draft a plan from order and sample history.",
+    render(){ const cls={"Current":"green","Review due":"amber","Draft":"","No plan yet":"red"};
+      return D.accounts.map(a=>`<div class="row"><div class="grow"><div class="t1">${esc(a.c)}</div><div class="t2">next review ${esc(a.rev)}</div></div><span class="chip ${cls[a.plan]}">${a.plan}</span>${a.plan==="No plan yet"||a.plan==="Draft"?'<button class="btn sm">\u2726 Draft with Edward</button>':''}</div>`).join(""); }},
+  k_health: {cat:"accounts", title:"Account health", size:"M", for:["Owner","Sales"],
+    desc:"Your key accounts' last-12-months sales versus the year before, with the direction at a glance.",
+    render(){ return D.accounts.map(a=>`<div class="row"><div class="grow"><div class="t1">${esc(a.c)}</div></div><b class="${a.trend>=0?'up':'dn'}">${a.trend>=0?'\u25b2':'\u25bc'} ${Math.abs(a.trend)}%</b></div>`).join(""); }},
+  k_quiet: {cat:"accounts", title:"Customers gone quiet", size:"S", for:["Sales","Owner"],
+    desc:"Customers who used to order regularly and have stopped. Worth a call.",
+    render(){ return D.quiet.map(q=>`<div class="row"><div class="grow"><div class="t1">${esc(q.c)}</div><div class="t2">usually ${esc(q.usual)}</div></div><span class="chip amber">${q.last}</span></div>`).join(""); }},
+
+  o_today: {cat:"orders", title:"Today's orders", size:"S", for:["Order desk","Owner","Accounting"],
+    desc:"Orders entered today, value, and how many came in by EDI.",
+    render(){ return `<div class="kpis"><div class="kpi"><div class="v">17</div><div class="l">orders \u00b7 3 EDI</div></div><div class="kpi"><div class="v">$280K</div><div class="l">order value</div></div></div>`; }},
+  o_arrivals: {cat:"orders", title:"Arriving this week", size:"M", for:["Order desk"],
+    desc:"Shipments arriving in the next 7 days, with today's called out.",
+    render(){ return `<div class="kpis" style="margin-bottom:6px"><div class="kpi"><div class="v">6</div><div class="l">arriving today</div></div><div class="kpi"><div class="v">91</div><div class="l">next 7 days</div></div></div>
+      <div class="row"><div class="grow"><div class="t1">Galdisa \u2192 General Mills, Belvidere</div><div class="t2">PO 13335002 \u00b7 peanuts roasted HO</div></div><span class="chip">Today</span></div>`; }},
+  o_mine: {cat:"orders", title:"My recent orders", size:"S", for:["Order desk","Sales"],
+    desc:"The last few orders you entered or are rep of record on.",
+    render(){ return [["327836","General Mills"],["327829","Litehouse"],["327811","ConAgra"]].map(([o,c])=>`<div class="row"><div class="grow"><div class="t1">#${o}</div><div class="t2">${c}</div></div></div>`).join(""); }},
+
+  e_inbox: {cat:"edi", title:"EDI inbox", size:"L", for:["Order desk"],
+    desc:"New POs and changes from General Mills waiting on you, with one-click approve.",
+    render(){ return D.edi.map(e=>`<div class="row"><span class="chip ${e.t==='850'?'green':'amber'}">${e.t}</span><div class="grow"><div class="t1">PO ${e.po} \u00b7 ${esc(e.s)}</div><div class="t2">${esc(e.what)}</div></div><button class="btn sm">${e.t==='850'?'Approve into WOS':'Review change'}</button></div>`).join(""); }},
+
+  m_commission: {cat:"money", title:"Commission this month", size:"S", for:["Owner","Accounting"], restricted:true,
+    desc:"Month-to-date commission against the same point last year. Owner and accounting only.",
+    render(){ return `<div class="kpis"><div class="kpi"><div class="v">$214K</div><div class="l">month to date</div></div><div class="kpi"><div class="v up">\u25b2 6%</div><div class="l">vs last Nov</div></div></div>`; }},
+  m_unpaid: {cat:"money", title:"Commission to collect", size:"L", for:["Accounting","Owner"], restricted:true,
+    desc:"Invoiced orders where the broker commission hasn't been paid yet, oldest first.",
+    render(){ return [["Tree Top","14 orders","$38,420","62 days"],["Galdisa","9 orders","$21,105","41 days"],["SupHerb","6 orders","$12,870","35 days"]].map(r=>`<div class="row"><div class="grow"><div class="t1">${r[0]}</div><div class="t2">${r[1]}</div></div><b>${r[2]}</b><span class="chip amber">${r[3]}</span><button class="btn sm">Settle</button></div>`).join(""); }},
+
+  t_activity: {cat:"team", title:"Team in Cambium", size:"M", for:["Owner"],
+    desc:"Who's using Cambium this week and what they did, with shout-outs.",
+    render(){ return `<div class="row"><div class="grow"><div class="t1">Brad</div><div class="t2">12 follow-ups logged \u00b7 3 new projects</div></div><span class="chip green">\u{1f338} flowers</span></div>
+      <div class="row"><div class="grow"><div class="t1">Patty</div><div class="t2">14 EDI documents handled</div></div></div>
+      <div class="row"><div class="grow"><div class="t1">Allison</div><div class="t2">entered her first order in Cambium</div></div></div>`; }},
+
+  a_ask: {cat:"edward", title:"Ask Edward", size:"S", for:["Sales","Owner","Order desk","Accounting"],
+    desc:"Ask for a report, a list, anything. The answer shows up here.",
+    render(){ return `<div class="t2" style="white-space:normal">Last answer: "Top 10 suppliers by month" \u00b7 <a href="#">open report</a></div><div class="ask"><input placeholder="Edward, make me a list of\u2026"><button class="btn primary sm">Send</button></div>`; }},
+  a_nug: {cat:"edward", title:"Edward's Nugz", size:"S", for:["Sales","Owner"],
+    desc:"One useful thing Edward noticed in your book today.",
+    render(){ return `<div class="nug">Market of Choice hasn't ordered since August, but they bought every month last year. Worth a call?</div>`; }},
+};
+
+// ---------- build-your-own chart: one configurable component ----------
+const MEASURES = {
+  sales:{l:"Sales $", unit:"$"}, orders:{l:"Orders"}, lbs:{l:"Pounds", unit:"lb"},
+  samples:{l:"Samples sent"}, projects:{l:"New projects"}, commission:{l:"Commission $", unit:"$", restricted:true},
+};
+const FILTERS = {none:"Everything in my book", customer:"One customer", supplier:"One supplier", rep:"One salesperson", item:"One item"};
+const VALUES = {
+  customer:["General Mills (GMI)","ConAgra","Litehouse","Bob's Red Mill","Hormel","Glanbia"],
+  supplier:["Galdisa","Tree Top","Creative Food Ingredients","SupHerb Farms","Wyman's","Diamond Foods"],
+  rep:["Brad Nelson","Paul Vieth","Irene Pagana","Jared Johnson","Amy Rychlick"],
+  item:["Peanut butter","Roasted peanuts","Walnut pieces","Apple juice concentrate","IQF ginger"],
+};
+const RANGES = {today:"Today", week:"This week", month:"This month", qtr:"This quarter", ytd:"Year to date", m12:"Last 12 months"};
+const GROUPS = {time:"Over time", customer:"By customer", supplier:"By supplier", item:"By item", rep:"By salesperson"};
+const TYPES = {bar:"Bars", line:"Line", number:"Big number", table:"Table"};
+const COMPARE = {none:"Nothing", ly:"Same time last year", prev:"Previous period"};
+const TEMPLATES = [
+  {label:"This week for GMI", cfg:{measure:"orders", filter:"customer", value:"General Mills (GMI)", range:"week", group:"time", type:"bar", compare:"ly", title:"This week for GMI"}},
+  {label:"Galdisa by month", cfg:{measure:"sales", filter:"supplier", value:"Galdisa", range:"m12", group:"time", type:"line", compare:"ly", title:""}},
+  {label:"My samples by customer", cfg:{measure:"samples", filter:"rep", value:"Brad Nelson", range:"month", group:"customer", type:"bar", compare:"none", title:"My samples this month"}},
+  {label:"Top suppliers this quarter", cfg:{measure:"sales", filter:"none", value:"", range:"qtr", group:"supplier", type:"table", compare:"prev", title:""}},
+  {label:"Pounds of peanuts YTD", cfg:{measure:"lbs", filter:"item", value:"Roasted peanuts", range:"ytd", group:"time", type:"number", compare:"ly", title:""}},
+];
+
+function buckets(range){
+  return ({today:["8a","10a","12p","2p","4p"], week:["Mon","Tue","Wed","Thu","Fri"], month:["Wk 1","Wk 2","Wk 3","Wk 4","Wk 5"],
+    qtr:["Sep","Oct","Nov"], ytd:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov"],
+    m12:["Dec","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov"]})[range];
+}
+function seeded(str){ let h=1779033703^str.length; for(let i=0;i<str.length;i++){h=Math.imul(h^str.charCodeAt(i),3432918353);h=h<<13|h>>>19}
+  return function(){ h=Math.imul(h^h>>>16,2246822507); h=Math.imul(h^h>>>13,3266489909); return ((h^=h>>>16)>>>0)/4294967296; }; }
+function chartData(c){
+  const rnd = seeded(JSON.stringify([c.measure,c.filter,c.value,c.range,c.group]));
+  const span = {today:.04, week:.2, month:1, qtr:3, ytd:10, m12:12}[c.range];
+  const per = c.group==="time" ? span/buckets(c.range).length : span/5;
+  const narrow = c.filter==="none" ? 1 : c.filter==="rep" ? .2 : .35;
+  const base = {sales:9000000, orders:360, lbs:6000000, samples:40, projects:6, commission:21000}[c.measure] * per * narrow;
+  const labels = c.group==="time" ? buckets(c.range) : VALUES[c.group].filter(v=>v!==c.value).slice(0,5);
+  const vals = labels.map((_,i)=> Math.max(0, base*(0.55+rnd()*0.9)*(c.group==="time"?1:(1.5-i*0.22))));
+  const cmp = c.compare==="none" ? null : vals.map(v=> v*(0.75+rnd()*0.45));
+  const whole = ["orders","samples","projects"].includes(c.measure);
+  return {labels, vals: vals.map(v=>whole?Math.round(v):v), cmp: cmp && cmp.map(v=>whole?Math.round(v):v)};
+}
+function fmt(m,v){ if(m==="sales"||m==="commission") return v>=1e6?"$"+(v/1e6).toFixed(1)+"M":v>=1e3?"$"+Math.round(v/1e3)+"K":"$"+Math.round(v);
+  if(m==="lbs") return v>=1e6?(v/1e6).toFixed(1)+"M lb":Math.round(v/1e3)+"K lb"; return String(Math.round(v)); }
+function autoTitle(c){
+  const who = c.filter==="none" ? "" : " \u00b7 " + c.value;
+  return MEASURES[c.measure].l.replace(" $","") + who + " \u00b7 " + RANGES[c.range].toLowerCase();
+}
+function sentence(c){
+  return `Show me ${MEASURES[c.measure].l.toLowerCase()} for ${c.filter==="none"?"everything in my book":c.value}, ${RANGES[c.range].toLowerCase()}, ${GROUPS[c.group].toLowerCase()}, as ${TYPES[c.type].toLowerCase()}${c.compare==="none"?"":", compared to "+COMPARE[c.compare].toLowerCase()}.`;
+}
+function chartHTML(c){
+  const d = chartData(c), m = c.measure, C1="#55693c", C2="#cdd3bf";
+  const cmpName = COMPARE[c.compare];
+  const legend = d.cmp ? `<div class="legend"><span><i style="background:${C1}"></i>${RANGES[c.range]}</span><span><i style="background:${C2}"></i>${cmpName}</span></div>` : "";
+  const total = d.vals.reduce((a,b)=>a+b,0), ctot = d.cmp ? d.cmp.reduce((a,b)=>a+b,0) : null;
+  const delta = ctot ? Math.round((total-ctot)/ctot*100) : null;
+  const deltaHTML = delta==null ? "" : `<b class="${delta>=0?'up':'dn'}">${delta>=0?'\u25b2':'\u25bc'} ${Math.abs(delta)}%</b> <span class="muted">vs ${cmpName.toLowerCase()}</span>`;
+  if (c.type==="number"){
+    return `<div class="chart"><div class="big">${fmt(m,total)}</div><div style="margin-top:4px">${deltaHTML}</div></div>`;
+  }
+  if (c.type==="table"){
+    return `<div class="chart"><table class="ctable">${d.labels.map((l,i)=>`<tr><td>${esc(l)}</td><td class="n"><b>${fmt(m,d.vals[i])}</b></td>${d.cmp?`<td class="n ${d.vals[i]>=d.cmp[i]?'up':'dn'}">${d.vals[i]>=d.cmp[i]?'\u25b2':'\u25bc'} ${Math.abs(Math.round((d.vals[i]-d.cmp[i])/(d.cmp[i]||1)*100))}%</td>`:''}</tr>`).join("")}</table>
+      <div class="t2" style="margin-top:6px">Total ${fmt(m,total)} ${deltaHTML}</div></div>`;
+  }
+  const W0=520, H0=170, L=6, B=22, T=16, n=d.labels.length;
+  const max = Math.max(...d.vals, ...(d.cmp||[0])) || 1;
+  const y = v => T + (H0-T-B)*(1 - v/max);
+  const bw = (W0-L*2)/n;
+  let s = `<svg viewBox="0 0 ${W0} ${H0}">`;
+  s += `<line x1="${L}" x2="${W0-L}" y1="${H0-B}" y2="${H0-B}" stroke="#d9d4c4"/>`;
+  if (c.type==="bar"){
+    d.labels.forEach((lab,i)=>{
+      const x = L + i*bw, inner = bw*0.72, gap = (bw-inner)/2;
+      if (d.cmp){ const w=inner/2-1;
+        s += `<rect x="${x+gap}" y="${y(d.cmp[i])}" width="${w}" height="${H0-B-y(d.cmp[i])}" fill="${C2}" rx="2"/>`;
+        s += `<rect x="${x+gap+w+2}" y="${y(d.vals[i])}" width="${w}" height="${H0-B-y(d.vals[i])}" fill="${C1}" rx="2"/>`;
+      } else s += `<rect x="${x+gap}" y="${y(d.vals[i])}" width="${inner}" height="${H0-B-y(d.vals[i])}" fill="${C1}" rx="2"/>`;
+      if (n<=6) s += `<text x="${x+bw/2}" y="${y(d.vals[i])-4}" text-anchor="middle" font-size="11" fill="#20261A">${fmt(m,d.vals[i])}</text>`;
+      s += `<text x="${x+bw/2}" y="${H0-6}" text-anchor="middle" font-size="11" fill="#6B7257">${esc(lab.length>12?lab.slice(0,11)+'\u2026':lab)}</text>`;
+    });
+  } else {
+    const px = i => L + bw*i + bw/2;
+    const path = arr => arr.map((v,i)=>`${i?'L':'M'}${px(i)},${y(v)}`).join(" ");
+    if (d.cmp) s += `<path d="${path(d.cmp)}" fill="none" stroke="${C2}" stroke-width="2.5" stroke-dasharray="5 4"/>`;
+    s += `<path d="${path(d.vals)}" fill="none" stroke="${C1}" stroke-width="2.5"/>`;
+    d.vals.forEach((v,i)=>{ s += `<circle cx="${px(i)}" cy="${y(v)}" r="3" fill="${C1}"/>`; });
+    d.labels.forEach((lab,i)=>{ s += `<text x="${px(i)}" y="${H0-6}" text-anchor="middle" font-size="11" fill="#6B7257">${esc(lab.length>12?lab.slice(0,11)+'\u2026':lab)}</text>`; });
+  }
+  s += `</svg>`;
+  return `<div class="chart"><div class="t2" style="margin-bottom:2px">${fmt(m,total)} total ${deltaHTML}</div>${s}${legend}</div>`;
+}
+function customWidget(c){
+  return {cat:"custom", title: c.title || autoTitle(c), render(){ return chartHTML(c); }};
+}
+
+const PRESETS = {
+  sales:{name:"Brad", label:"Sales", sub:"here's what needs you today",
+    cards:[["p_action","L"],["p_top","M"],["p_pipeline","M"],["s_followups","M"],["k_plans","M"],["k_quiet","S"],["custom","M",TEMPLATES[2].cfg],["a_nug","S"],["a_ask","S"]]},
+  owner:{name:"Dom", label:"Owner", sub:"how the business is doing",
+    cards:[["p_pipeline","M"],["k_health","M"],["m_commission","S"],["o_today","S"],["s_convert","S"],["custom","M",TEMPLATES[1].cfg],["t_activity","M"],["p_outcomes","S"],["a_nug","S"]]},
+  desk:{name:"Patty", label:"Order desk", sub:"what's waiting in the inbox",
+    cards:[["e_inbox","L"],["custom","M",TEMPLATES[0].cfg],["o_arrivals","M"],["o_today","S"],["o_mine","S"],["a_ask","S"]]},
+  acct:{name:"Julie", label:"Accounting", sub:"what's owed and what came in",
+    cards:[["m_unpaid","L"],["m_commission","S"],["o_today","S"],["a_ask","S"]]},
+};
+const ROLE_CAN_SEE_MONEY = {owner:true, acct:true};
+
+// ---------- state ----------
+let role = "sales";
+let layout = {};               // role -> [[id,size],...]
+let editing = false;
+let activeCat = "all";
+
+const $ = s => document.querySelector(s);
+const grid = $("#grid");
+
+function current(){ return layout[role] || (layout[role] = JSON.parse(JSON.stringify(PRESETS[role].cards))); }
+
+function render(){
+  const P = PRESETS[role];
+  $("#hello").textContent = "Good morning, " + P.name;
+  $("#subline").textContent = "Thursday, November 12 \u00b7 " + P.sub;
+  $("#roleName").textContent = P.label;
+  grid.innerHTML = "";
+  current().forEach(([id,size,cfg], idx) => {
+    const w = id==="custom" ? customWidget(cfg) : W[id]; if (!w) return;
+    const el = document.createElement("section");
+    el.className = "w " + size; el.dataset.idx = idx; el.draggable = editing;
+    el.innerHTML = `<div class="wh"><span class="handle">\u22ee\u22ee</span><span class="wt">${w.title}</span><span class="cat">${CATS[w.cat]}</span>
+      ${id==="custom"?'<button class="cfgbtn" title="Change this chart">\u2699 Edit</button>':''}
+      <div class="tools">${["S","M","L"].map(s=>`<button data-size="${s}" class="${s===size?'on':''}">${s}</button>`).join("")}<button class="x" title="Remove">\u00d7</button></div></div>
+      <div class="wb">${w.render()}</div>`;
+    el.querySelectorAll("[data-size]").forEach(b => b.onclick = () => { current()[idx][1] = b.dataset.size; render(); });
+    el.querySelector(".x").onclick = () => { current().splice(idx,1); render(); };
+    const cb = el.querySelector(".cfgbtn"); if (cb) cb.onclick = () => openBuilder(idx);
+    // Drag to reorder: drop on the LEFT half of a card to go before it, the RIGHT half to go after it.
+    // A green bar shows exactly where the card will land. Drop on "Add a card" to send it to the end.
+    el.addEventListener("dragstart", e => { dragFrom = idx; el.classList.add("dragging"); e.dataTransfer.effectAllowed = "move"; e.dataTransfer.setData("text/plain", String(idx)); });
+    el.addEventListener("dragend", () => { dragFrom = null; clearDropMarks(); el.classList.remove("dragging"); });
+    el.addEventListener("dragover", e => {
+      if (!editing || dragFrom == null) return;
+      e.preventDefault();
+      const r = el.getBoundingClientRect();
+      const after = (e.clientX - r.left) > r.width / 2;
+      clearDropMarks();
+      if (idx !== dragFrom) el.classList.add(after ? "drop-after" : "drop-before");
+      el.dataset.side = after ? "after" : "before";
+    });
+    el.addEventListener("drop", e => {
+      e.preventDefault();
+      if (dragFrom == null || idx === dragFrom) { clearDropMarks(); return; }
+      let to = el.dataset.side === "after" ? idx + 1 : idx;
+      moveCard(dragFrom, to);
+    });
+    grid.appendChild(el);
+  });
+  const add = document.createElement("button");
+  add.className = "addtile"; add.innerHTML = "<div style='text-align:center'><div style='font-size:26px'>+</div>Add a card</div>";
+  add.onclick = openDrawer;
+  add.addEventListener("dragover", e => { if (editing && dragFrom != null) { e.preventDefault(); clearDropMarks(); add.classList.add("drop-end"); } });
+  add.addEventListener("dragleave", () => add.classList.remove("drop-end"));
+  add.addEventListener("drop", e => { e.preventDefault(); if (dragFrom != null) moveCard(dragFrom, current().length); });
+  grid.appendChild(add);
+  renderCatalog();
+}
+
+let dragFrom = null;
+function clearDropMarks(){ document.querySelectorAll(".drop-before,.drop-after,.drop-end").forEach(n => n.classList.remove("drop-before","drop-after","drop-end")); }
+function moveCard(from, to){
+  const arr = current();
+  const [m] = arr.splice(from, 1);
+  if (from < to) to -= 1;              // removing the card shifts everything after it left by one
+  arr.splice(Math.max(0, Math.min(to, arr.length)), 0, m);
+  dragFrom = null; render();
+}
+
+function renderCatalog(){
+  $("#cats").innerHTML = [["all","All"],...Object.entries(CATS)].map(([k,v])=>`<button data-cat="${k}" class="${k===activeCat?'on':''}">${v}</button>`).join("");
+  $("#cats").querySelectorAll("button").forEach(b => b.onclick = () => { activeCat = b.dataset.cat; renderCatalog(); });
+  const q = $("#search").value.trim().toLowerCase();
+  const onBoard = new Set(current().map(x=>x[0]));
+  let html = "";
+  Object.entries(CATS).forEach(([ck,cl]) => {
+    if (activeCat!=="all" && activeCat!==ck) return;
+    if (ck==="custom"){
+      const hit = !q || ("chart build custom my own "+TEMPLATES.map(t=>t.label).join(" ")).toLowerCase().includes(q);
+      if (!hit) return;
+      html += `<div class="catlabel">${cl}</div>
+        <div class="ci" style="background:#fbfaf6"><div class="grow"><div class="t1">\u{1f4ca} Chart builder</div>
+        <div class="t2">Pick what to show (sales, orders, pounds, samples\u2026), for whom (a customer, supplier, rep or item), when, and how. "This week for GMI", "Galdisa vs last year", whatever you want.</div>
+        <div class="for">${TEMPLATES.map((t,i)=>`<span style="cursor:pointer" data-tpl="${i}">\uff0b ${t.label}</span>`).join("")}</div></div>
+        <button class="btn sm primary" data-build="1">Build</button></div>`;
+      return;
+    }
+    const items = Object.entries(W).filter(([id,w]) => w.cat===ck && (!q || (w.title+" "+w.desc+" "+cl).toLowerCase().includes(q)));
+    if (!items.length) return;
+    html += `<div class="catlabel">${cl}</div>`;
+    items.forEach(([id,w]) => {
+      const locked = w.restricted && !ROLE_CAN_SEE_MONEY[role];
+      const added = onBoard.has(id);
+      html += `<div class="ci"><div class="grow"><div class="t1">${w.title}</div><div class="t2">${w.desc}</div>
+        <div class="for">${w.for.map(f=>`<span>${f}</span>`).join("")}</div>${locked?'<div class="lock">\u{1f512} Owner and accounting only</div>':''}</div>
+        ${locked?'':added?'<span class="chip green">On board</span>':`<button class="btn sm primary" data-add="${id}">Add</button>`}</div>`;
+    });
+  });
+  $("#catalog").innerHTML = html || "<p class='muted'>No cards match.</p>";
+  const bb = $("#catalog").querySelector("[data-build]"); if (bb) bb.onclick = () => openBuilder(null);
+  $("#catalog").querySelectorAll("[data-tpl]").forEach(b => b.onclick = () => openBuilder(null, TEMPLATES[+b.dataset.tpl].cfg));
+  $("#catalog").querySelectorAll("[data-add]").forEach(b => b.onclick = () => {
+    current().push([b.dataset.add, W[b.dataset.add].size]); render();
+  });
+}
+
+function setEditing(on){ editing = on; document.body.classList.toggle("editing", on); if(!on) closeDrawer(); render(); }
+function openDrawer(){ $("#drawer").classList.add("open"); $("#scrim").classList.add("open"); renderCatalog(); }
+function closeDrawer(){ $("#drawer").classList.remove("open"); $("#scrim").classList.remove("open"); }
+
+// ---------- chart builder ----------
+let bIdx = null, bCfg = null;
+function seg(el, map, key, disabled = {}){
+  el.innerHTML = Object.entries(map).map(([k,v])=>`<button data-k="${k}" class="${bCfg[key]===k?'on':''}" ${disabled[k]?'disabled title="Owner and accounting only"':''}>${typeof v==='string'?v:v.l}${disabled[k]?' \u{1f512}':''}</button>`).join("");
+  el.querySelectorAll("button").forEach(b => b.onclick = () => { bCfg[key] = b.dataset.k; drawBuilder(); });
+}
+function drawBuilder(){
+  const lockMoney = !ROLE_CAN_SEE_MONEY[role];
+  seg($("#fMeasure"), MEASURES, "measure", lockMoney ? {commission:true} : {});
+  seg($("#fRange"), RANGES, "range");
+  seg($("#fGroup"), GROUPS, "group");
+  seg($("#fType"), TYPES, "type");
+  seg($("#fCompare"), COMPARE, "compare");
+  $("#fFilter").innerHTML = Object.entries(FILTERS).map(([k,v])=>`<option value="${k}" ${bCfg.filter===k?'selected':''}>${v}</option>`).join("");
+  const vals = VALUES[bCfg.filter] || [];
+  $("#fValue").style.display = vals.length ? "" : "none";
+  if (vals.length && !vals.includes(bCfg.value)) bCfg.value = vals[0];
+  $("#fValue").innerHTML = vals.map(v=>`<option ${v===bCfg.value?'selected':''}>${esc(v)}</option>`).join("");
+  $("#fTitle").placeholder = autoTitle(bCfg);
+  $("#mTpl").innerHTML = TEMPLATES.map((t,i)=>`<button class="btn sm" data-i="${i}">${t.label}</button>`).join("");
+  $("#mTpl").querySelectorAll("button").forEach(b => b.onclick = () => { bCfg = {...TEMPLATES[+b.dataset.i].cfg}; $("#fTitle").value = bCfg.title || ""; drawBuilder(); });
+  $("#mSentence").textContent = "\u201c" + sentence(bCfg) + "\u201d";
+  const w = customWidget({...bCfg, title: $("#fTitle").value.trim()});
+  $("#mPreview").innerHTML = `<section class="w"><div class="wh"><span class="wt">${esc(w.title)}</span><span class="cat">Build your own</span></div><div class="wb">${w.render()}</div></section>`;
+}
+function openBuilder(idx, tpl){
+  bIdx = idx;
+  const existing = idx != null ? current()[idx][2] : null;
+  bCfg = {...(existing || tpl || TEMPLATES[0].cfg)};
+  $("#fTitle").value = bCfg.title || "";
+  $("#mTitle").textContent = idx != null ? "Change this chart" : "Build a chart";
+  $("#mSave").textContent = idx != null ? "Save changes" : "Add to my dashboard";
+  closeDrawer(); $("#modal").classList.add("open"); drawBuilder();
+}
+$("#fFilter").onchange = e => { bCfg.filter = e.target.value; bCfg.value = (VALUES[bCfg.filter]||[""])[0]; drawBuilder(); };
+$("#fValue").onchange = e => { bCfg.value = e.target.value; drawBuilder(); };
+$("#fTitle").oninput = drawBuilder;
+$("#mCancel").onclick = () => $("#modal").classList.remove("open");
+$("#modal").onclick = e => { if (e.target.id === "modal") $("#modal").classList.remove("open"); };
+$("#mSave").onclick = () => {
+  const cfg = {...bCfg, title: $("#fTitle").value.trim()};
+  if (bIdx != null) current()[bIdx][2] = cfg; else current().push(["custom", cfg.type==="number" ? "S" : "M", cfg]);
+  $("#modal").classList.remove("open"); render();
+};
+
+$("#editBtn").onclick = () => setEditing(true);
+$("#doneBtn").onclick = () => setEditing(false);
+$("#addBtn").onclick = openDrawer;
+$("#closeDrawer").onclick = closeDrawer;
+$("#scrim").onclick = closeDrawer;
+$("#search").oninput = renderCatalog;
+$("#resetBtn").onclick = () => { delete layout[role]; render(); };
+$("#role").onchange = e => { role = e.target.value; render(); };
+render();
+</script>
+</body>
+</html>
