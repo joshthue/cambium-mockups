@@ -31,11 +31,17 @@
   .badge{display:inline-block;font-size:10px;font-weight:800;color:var(--gold);border:1px solid #e3cd9a;border-radius:999px;padding:1px 7px;margin-left:6px;vertical-align:middle}
   .foot{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid var(--line);padding-top:12px}
   .card .upd{color:var(--muted, #6B7257);font-weight:500}
+  .jump{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap}
+  .jump a{color:#f4f1e9;opacity:.85;text-decoration:none;font-size:12.5px;padding:4px 9px;border-radius:6px}
+  .jump a:hover{opacity:1;background:rgba(255,255,255,.14)}
+  h2{scroll-margin-top:12px}
+  .card .upd{display:block;margin-top:2px;white-space:nowrap;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:11.5px}
 </style>
 </head>
 <body>
   <div class="topbar"><div class="inner">
     <div class="brand">Gehrke Company <span>· Cambium — Mockups</span></div>
+    <nav class="jump"><a href="#home">Home &amp; dashboards</a><a href="#pipeline">Pipeline &amp; Projections</a><a href="#kap">Key Account Plans</a><a href="#projects">Projects</a><a href="#items">Items</a><a href="#samples">Samples</a><a href="#contracts">Contracts</a><a href="#emails">Emails &amp; reports</a></nav>
   </div></div>
 
   <div class="wrap">
@@ -43,7 +49,15 @@
     <div class="sub">Interactive design mockups for features in flight. These are visual references with illustrative
       data — not the live app. Grouped by area.</div>
 
-    <h2>Pipeline &amp; Projections</h2>
+    <h2 id="home">Home &amp; dashboards</h2>
+    <div class="grid">
+      <a class="card" href="dashboard-builder.html">
+        <div class="t">Home dashboard builder <span class="badge">interactive</span></div>
+        <div class="d">The customizable Home screen: cards per role (Sales, Owner, Order desk, Accounting), drag to arrange, S/M/L sizes, add a card or build a chart.</div>
+        <div class="f">dashboard-builder.html<span class="upd"> · Updated Nov 12, 2026</span></div></a>
+    </div>
+
+    <h2 id="pipeline">Pipeline &amp; Projections</h2>
     <div class="grid">
       <a class="card" href="pipeline-projections.html">
         <div class="t">Pipeline Projections <span class="badge">interactive</span></div>
@@ -51,7 +65,7 @@
         <div class="f">pipeline-projections.html<span class="upd"> · Updated Nov 6, 2026</span></div></a>
     </div>
 
-    <h2>Key Account Plans</h2>
+    <h2 id="kap">Key Account Plans</h2>
     <div class="grid">
       <a class="card" href="key-account-plans.html">
         <div class="t">Key Account Plans <span class="badge">interactive</span></div>
@@ -59,7 +73,7 @@
         <div class="f">key-account-plans.html<span class="upd"> · Updated Nov 13, 2026</span></div></a>
     </div>
 
-    <h2>Projects</h2>
+    <h2 id="projects">Projects</h2>
     <div class="grid">
       <a class="card" href="projects-dashboard.html">
         <div class="t">Projects dashboard</div>
@@ -71,7 +85,15 @@
         <div class="f">project-stages-playbook.html<span class="upd"> · Updated Oct 19, 2026</span></div></a>
     </div>
 
-    <h2>Samples</h2>
+    <h2 id="items">Items</h2>
+    <div class="grid">
+      <a class="card" href="item-library.html">
+        <div class="t">Item Library <span class="badge">interactive</span></div>
+        <div class="d">Every known item from every supplier, with what you carry, what's been sampled, and what's not in Cambium yet.</div>
+        <div class="f">item-library.html<span class="upd"> · Updated Nov 12, 2026</span></div></a>
+    </div>
+
+    <h2 id="samples">Samples</h2>
     <div class="grid">
       <a class="card" href="sample-detail.html">
         <div class="t">Sample detail — full screen</div>
@@ -95,12 +117,24 @@
         <div class="f">new-sample-add-customer.html<span class="upd"> · Not published yet</span></div></a>
     </div>
 
-    <h2>Contracts</h2>
+    <h2 id="contracts">Contracts</h2>
     <div class="grid">
       <a class="card" href="contract-tiered-pricing.html">
         <div class="t">Contract tiered pricing</div>
         <div class="d">Per-item tiered price breaks on a contract.</div>
         <div class="f">contract-tiered-pricing.html<span class="upd"> · Updated Oct 15, 2026</span></div></a>
+    </div>
+
+    <h2 id="emails">Emails &amp; reports</h2>
+    <div class="grid">
+      <a class="card" href="samples-rep-weekly.html">
+        <div class="t">Samples weekly email (rep)</div>
+        <div class="d">The weekly samples email each rep receives: what went out, what's due, what converted.</div>
+        <div class="f">samples-rep-weekly.html<span class="upd"> · Updated Nov 12, 2026</span></div></a>
+      <a class="card" href="samples-team-rollup.html">
+        <div class="t">Samples weekly email (team rollup)</div>
+        <div class="d">The team-wide version for the owner: samples by rep, customer and supplier.</div>
+        <div class="f">samples-team-rollup.html<span class="upd"> · Updated Nov 12, 2026</span></div></a>
     </div>
 
     <div class="foot">Cambium · Birch &amp; Gran — internal design mockups. Illustrative data only.</div>
