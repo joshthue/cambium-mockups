@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cambium — Key Account Plans (mockup)</title>
+<style>
+  :root{
+    --moss:#3B4A2A; --moss-2:#55693c; --gold:#A3823F; --cream:#F4F1E9; --bg:#ECE8DD;
+    --ink:#20261A; --muted:#6B7257; --line:#D9D4C4; --card:#FFFFFF; --red:#A2402E; --green:#2F6B3A; --amber:#B7791F;
+    --tint:#eef0e8; --r:10px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+  button{font:inherit;cursor:pointer}
+  .top{background:var(--moss);color:var(--cream);display:flex;align-items:center;gap:18px;padding:10px 22px;position:sticky;top:0;z-index:20}
+  .brand{font-family:Georgia,serif;font-weight:700;letter-spacing:3px;font-size:17px}
+  .nav{display:flex;gap:4px;opacity:.9}
+  .nav span{padding:5px 10px;border-radius:6px;font-size:13px}
+  .nav span.on{background:rgba(255,255,255,.16);opacity:1}
+  .spacer{flex:1}
+  .mock{background:var(--gold);color:#fff;font-size:11px;font-weight:700;letter-spacing:.5px;padding:3px 8px;border-radius:999px}
+  .wrap{max-width:1240px;margin:0 auto;padding:22px}
+  .head{display:flex;align-items:flex-end;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+  .head h1{font-family:Georgia,serif;font-size:26px;margin:0}
+  .sub{color:var(--muted)}
+  .btn{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:7px 12px;color:var(--ink)}
+  .btn:hover{border-color:var(--moss)}
+  .btn.primary{background:var(--moss);color:var(--cream);border-color:var(--moss)}
+  .btn.sm{padding:4px 9px;font-size:12.5px}
+  .btn.edward{background:#f6f1e3;border-color:#e2d3a6;color:#6d5418}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r)}
+  .chip{display:inline-flex;align-items:center;white-space:nowrap;border-radius:999px;padding:2px 8px;font-size:11.5px;font-weight:600;background:#efece2;color:var(--muted)}
+  .chip.green{background:#e3efe3;color:var(--green)} .chip.amber{background:#fbf0d9;color:#8a5a12} .chip.red{background:#f6e2dd;color:var(--red)}
+  .up{color:var(--green);font-weight:650} .dn{color:var(--red);font-weight:650}
+  table{width:100%;border-collapse:collapse}
+  th{font-size:11.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);font-weight:600}
+  td{padding:11px 12px;border-bottom:1px solid #eee9db;vertical-align:middle}
+  tr.click{cursor:pointer} tr.click:hover td{background:#faf8f2}
+  .t1{font-weight:600} .t2{font-size:12.5px;color:var(--muted)}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px}
+  .kpi .v{font-size:22px;font-weight:700;font-family:Georgia,serif}
+  .kpi .l{font-size:12px;color:var(--muted)}
+  .hidden{display:none!important}
+  .back{color:var(--moss);font-weight:600;background:none;border:0;padding:0;margin-bottom:10px}
+  .plan{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:16px;align-items:start}
+  .sec{margin-bottom:14px}
+  .sec .sh{display:flex;align-items:center;gap:8px;padding:12px 16px 8px;border-bottom:1px solid #eee9db}
+  .sec .sh h3{margin:0;font-size:15px}
+  .sec .sh .hint{font-size:12px;color:var(--muted)}
+  .sec .sb{padding:12px 16px 14px}
+  .auto{font-size:10.5px;letter-spacing:.5px;text-transform:uppercase;color:var(--moss-2);background:var(--tint);border-radius:999px;padding:1px 7px;font-weight:700}
+  .yours{font-size:10.5px;letter-spacing:.5px;text-transform:uppercase;color:#6d5418;background:#f6f1e3;border-radius:999px;padding:1px 7px;font-weight:700}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .mini{background:#faf8f2;border:1px solid #eee9db;border-radius:8px;padding:10px 12px}
+  .mini .v{font-size:18px;font-weight:700}
+  .bar{height:6px;border-radius:999px;background:#e6e1d2;overflow:hidden;margin-top:6px}
+  .bar i{display:block;height:100%;background:var(--moss-2)}
+  .goal{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px dashed #e6e1d2}
+  .goal:last-child{border-bottom:0}
+  .goal .num{width:22px;height:22px;border-radius:50%;background:var(--moss);color:#fff;font-size:12px;display:grid;place-items:center;flex:none;margin-top:1px}
+  .people{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .person{border:1px solid #eee9db;border-radius:8px;padding:10px}
+  .strength{display:flex;gap:3px;margin-top:6px}
+  .strength i{width:14px;height:5px;border-radius:2px;background:#e6e1d2}
+  .strength i.on{background:var(--green)}
+  .act{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f0ece0}
+  .act:last-child{border-bottom:0}
+  .act input{accent-color:var(--moss)}
+  .sugg{border:1px dashed #e2d3a6;background:#fffcf3;border-radius:8px;padding:10px 12px;margin-top:8px}
+  .sugg .why{font-size:12px;color:#8a6d2b;margin-top:4px}
+  .side .card{margin-bottom:14px}
+  .side h4{margin:0 0 6px;font-size:13.5px}
+  .tl{font-size:12.5px;padding:6px 0;border-bottom:1px solid #f0ece0}
+  .tl:last-child{border-bottom:0}
+  textarea{width:100%;font:inherit;border:1px solid var(--line);border-radius:8px;padding:8px;min-height:70px;resize:vertical}
+  .note{font-size:12px;color:var(--muted);margin-top:18px;line-height:1.5}
+  .spark{display:flex;align-items:flex-end;gap:2px;height:28px}
+  .spark i{flex:1;background:var(--moss-2);border-radius:1px;opacity:.75}
+  .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--moss);color:var(--cream);padding:8px 14px;border-radius:8px;font-size:13px;opacity:0;transition:opacity .2s}
+  .toast.show{opacity:1}
+  @media (max-width:980px){.plan{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}.people{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="brand">CAMBIUM</div>
+  <div class="nav"><span>Home</span><span>Edward</span><span>Orders</span><span class="on">Accounts</span><span>Projects</span><span>Samples</span><span>Reports</span></div>
+  <div class="spacer"></div>
+  <span class="mock">MOCKUP</span>
+</div>
+
+<div class="wrap">
+  <!-- ================= LIST ================= -->
+  <section id="list">
+    <div class="head">
+      <div>
+        <h1>Key Account Plans</h1>
+        <div class="sub">One living plan per key account. The numbers fill themselves in; you write the strategy.</div>
+      </div>
+      <div class="spacer"></div>
+      <button class="btn">Show: My accounts ▾</button>
+      <button class="btn primary">+ New plan</button>
+    </div>
+
+    <div class="kpis">
+      <div class="kpi"><div class="v">8</div><div class="l">key accounts you own</div></div>
+      <div class="kpi"><div class="v">5</div><div class="l">plans current</div></div>
+      <div class="kpi"><div class="v" style="color:var(--amber)">2</div><div class="l">reviews due this month</div></div>
+      <div class="kpi"><div class="v" style="color:var(--red)">1</div><div class="l">account with no plan</div></div>
+    </div>
+
+    <div class="card">
+      <table>
+        <thead><tr><th>Account</th><th>Plan</th><th>Last 12 months</th><th>Open projects</th><th>Goal progress</th><th>Next review</th><th></th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <p class="note">Key accounts are the customers a rep marks as key (or the top accounts by commission, as a starting suggestion). Sales, trend, projects and samples come straight from Cambium. Goals, people notes and actions are what the rep writes. Mockup with fictional accounts and illustrative numbers.</p>
+  </section>
+
+  <!-- ================= PLAN ================= -->
+  <section id="planview" class="hidden">
+    <button class="back" onclick="showList()">‹ All key accounts</button>
+    <div class="head">
+      <div>
+        <h1 id="pName">Northfield Cereal Co.</h1>
+        <div class="sub" id="pSub">Plan owner: Brad Nelson · FY2027 plan · last reviewed Aug 12</div>
+      </div>
+      <div class="spacer"></div>
+      <span class="chip green" id="pStatus">Current</span>
+      <button class="btn edward" onclick="draft()">✦ Refresh with Edward</button>
+      <button class="btn" onclick="toast('Shared as a PDF with Dom')">Share</button>
+      <button class="btn primary" onclick="reviewed()">Mark reviewed</button>
+    </div>
+
+    <div class="plan">
+      <div>
+        <!-- 1. Snapshot (auto) -->
+        <div class="card sec">
+          <div class="sh"><h3>Where the account stands</h3><span class="auto">Filled in by Cambium</span><span class="spacer"></span><span class="hint">updated this morning</span></div>
+          <div class="sb">
+            <div class="grid2" style="grid-template-columns:repeat(4,1fr)">
+              <div class="mini"><div class="t2">Sales, last 12 months</div><div class="v">$1.84M</div><div class="up">▲ 12% vs prior year</div></div>
+              <div class="mini"><div class="t2">Commission, 12 months</div><div class="v">$41.6K</div><div class="t2">2.3% average</div></div>
+              <div class="mini"><div class="t2">Orders, 12 months</div><div class="v">64</div><div class="t2">about 1 a week</div></div>
+              <div class="mini"><div class="t2">Monthly sales</div><div class="spark" id="spark"></div></div>
+            </div>
+            <div class="grid2" style="margin-top:10px">
+              <div class="mini">
+                <div class="t1" style="font-size:13px">What they buy from us</div>
+                <div class="t2" style="margin-top:4px">Dried fruit (Sun-Maid) $820K · Nuts (Galdisa) $510K · Fruit powders (Tree Top) $290K · Spices (SupHerb) $220K</div>
+              </div>
+              <div class="mini">
+                <div class="t1" style="font-size:13px">In flight</div>
+                <div class="t2" style="margin-top:4px">4 open projects ($640K estimated) · 9 samples out · 2 contracts renew in Q1 (raisins, almonds)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Goals (yours) -->
+        <div class="card sec">
+          <div class="sh"><h3>Goals for FY2027</h3><span class="yours">You write this</span><span class="spacer"></span><button class="btn sm">+ Goal</button></div>
+          <div class="sb" id="goals"></div>
+        </div>
+
+        <!-- 3. People -->
+        <div class="card sec">
+          <div class="sh"><h3>Who's who</h3><span class="yours">You write this</span><span class="spacer"></span><span class="hint">contacts come from Cambium; strength and notes are yours</span></div>
+          <div class="sb"><div class="people" id="people"></div></div>
+        </div>
+
+        <!-- 4. Opportunities -->
+        <div class="card sec">
+          <div class="sh"><h3>Opportunities</h3><span class="auto">Projects linked automatically</span></div>
+          <div class="sb" id="opps"></div>
+        </div>
+
+        <!-- 5. Risks -->
+        <div class="card sec">
+          <div class="sh"><h3>Risks to watch</h3><span class="hint">Cambium flags some; add your own</span></div>
+          <div class="sb" id="risks"></div>
+        </div>
+
+        <!-- 6. Actions -->
+        <div class="card sec">
+          <div class="sh"><h3>Action plan</h3><span class="hint">each action shows up on the owner's Home under "Needs you today" when it's due</span><span class="spacer"></span><button class="btn sm">+ Action</button></div>
+          <div class="sb" id="acts"></div>
+        </div>
+      </div>
+
+      <!-- side -->
+      <div class="side">
+        <div class="card" style="padding:14px">
+          <h4>✦ Edward's take</h4>
+          <div class="t2" id="edward">Sales are up 12%, mostly from the new granola line. Two things stand out: raisin and almond contracts both renew in Q1, and the Lakeville plant hasn't ordered in 9 weeks (it usually orders every 3). Worth a call before the renewal talks.</div>
+          <div class="sugg hidden" id="draftBox">
+            <div class="t1" style="font-size:13px">Suggested goal</div>
+            <div>Lock the FY2027 raisin and almond contracts before Jan 31, at or above this year's volume (1.2M lbs).</div>
+            <div class="why">Why: both contracts expire Mar 31; last year they were signed in late Feb, after a 3-week gap in orders.</div>
+            <div style="margin-top:8px;display:flex;gap:6px"><button class="btn sm primary" onclick="acceptGoal()">Add to goals</button><button class="btn sm" onclick="document.getElementById('draftBox').classList.add('hidden')">Dismiss</button></div>
+          </div>
+        </div>
+        <div class="card" style="padding:14px">
+          <h4>Review rhythm</h4>
+          <div class="t2">Quarterly · next review <b>Nov 20</b> with Dom</div>
+          <div class="bar"><i style="width:75%"></i></div>
+          <div class="t2" style="margin-top:4px">75% of the way to the next review</div>
+        </div>
+        <div class="card" style="padding:14px">
+          <h4>Plan history</h4>
+          <div id="hist"></div>
+        </div>
+        <div class="card" style="padding:14px">
+          <h4>Quick note</h4>
+          <textarea placeholder="Anything from today's call worth keeping in the plan?"></textarea>
+          <button class="btn sm primary" style="margin-top:6px" onclick="toast('Note added to plan history')">Save note</button>
+        </div>
+      </div>
+    </div>
+    <p class="note">How a plan gets built: <b>1.</b> Cambium fills in the snapshot, products, projects, samples, contracts and contacts. <b>2.</b> Edward drafts goals, risks and actions from that history; the rep accepts, edits or dismisses each one. <b>3.</b> The rep adds what only they know (relationships, strategy). <b>4.</b> Actions land on the owner's Home when due; the plan is reviewed on a set rhythm and every change is kept in its history. Mockup with fictional data.</p>
+  </section>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const ACCOUNTS = [
+  {n:"Northfield Cereal Co.", plan:"Current", rev:"Nov 20", sales:"$1.84M", tr:12, proj:4, goal:62},
+  {n:"Prairie Bakeries", plan:"Review due", rev:"Nov 18", sales:"$1.12M", tr:-4, proj:2, goal:40},
+  {n:"Cascade Dressings", plan:"Draft", rev:"—", sales:"$760K", tr:7, proj:3, goal:null},
+  {n:"Summit Trail Bars", plan:"Current", rev:"Jan 14", sales:"$690K", tr:22, proj:5, goal:81},
+  {n:"Harbor Snack Works", plan:"No plan yet", rev:"—", sales:"$540K", tr:-15, proj:1, goal:null},
+  {n:"Bluestem Granola", plan:"Current", rev:"Feb 2", sales:"$410K", tr:3, proj:2, goal:55},
+  {n:"Red Cedar Foods", plan:"Review due", rev:"Nov 25", sales:"$380K", tr:-2, proj:0, goal:30},
+  {n:"Lakeshore Confections", plan:"Current", rev:"Mar 9", sales:"$290K", tr:9, proj:1, goal:70},
+];
+const CLS = {"Current":"green","Review due":"amber","Draft":"","No plan yet":"red"};
+const esc = s => String(s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+function renderList(){
+  document.getElementById('rows').innerHTML = ACCOUNTS.map((a,i)=>`
+    <tr class="click" onclick="openPlan(${i})">
+      <td><div class="t1">${esc(a.n)}</div></td>
+      <td><span class="chip ${CLS[a.plan]}">${a.plan}</span></td>
+      <td>${a.sales} <span class="${a.tr>=0?'up':'dn'}">${a.tr>=0?'▲':'▼'} ${Math.abs(a.tr)}%</span></td>
+      <td>${a.proj}</td>
+      <td style="min-width:120px">${a.goal==null?'<span class="t2">—</span>':`<div class="t2">${a.goal}%</div><div class="bar"><i style="width:${a.goal}%"></i></div>`}</td>
+      <td>${a.rev}</td>
+      <td style="text-align:right">${a.plan==='No plan yet'||a.plan==='Draft'?'<button class="btn sm edward" onclick="event.stopPropagation();openPlan('+i+',true)">✦ Draft with Edward</button>':''}</td>
+    </tr>`).join('');
+}
+
+let GOALS = [
+  {t:"Grow the account to $2.0M (from $1.84M)", m:"$1.84M of $2.0M", p:92},
+  {t:"Win the oat-cluster inclusion project at the Lakeville plant", m:"Stage: Samples sent", p:50},
+  {t:"Add a fourth supplier line (fruit powders beyond Tree Top)", m:"2 samples out", p:30},
+];
+const PEOPLE = [
+  {n:"Dana Whitfield", r:"Senior Buyer · decides", s:4, last:"Nov 6 · call"},
+  {n:"Theo Lindqvist", r:"R&D Manager · influences", s:3, last:"Oct 22 · samples"},
+  {n:"Priya Raman", r:"Plant Purchasing, Lakeville", s:2, last:"Sep 2 · email"},
+  {n:"Caleb Ostrowski", r:"Quality · approves new items", s:1, last:"never"},
+  {n:"Maren Holloway", r:"VP Procurement · executive", s:2, last:"Jun 18 · visit"},
+];
+const OPPS = [
+  {t:"Oat-cluster inclusion (Lakeville)", s:"Samples sent", v:"$310K", p:"Urgent"},
+  {t:"Reduced-sugar cranberry swap", s:"Qualified lead", v:"$180K", p:"Important"},
+  {t:"Cinnamon 2027 contract", s:"In negotiations", v:"$95K", p:"Urgent"},
+  {t:"Freeze-dried strawberry trial", s:"Initial contact", v:"$55K", p:"Important"},
+];
+const RISKS = [
+  {t:"Raisin and almond contracts renew Mar 31; last year they signed late and orders paused 3 weeks.", c:"red", a:"Cambium"},
+  {t:"Lakeville plant hasn't ordered in 9 weeks (usually every 3).", c:"amber", a:"Cambium"},
+  {t:"New procurement VP is consolidating suppliers in 2027.", c:"amber", a:"Brad"},
+];
+let ACTS = [
+  {t:"Call Dana about the raisin and almond renewals", o:"Brad", d:"Nov 18", done:false},
+  {t:"Follow up with Theo on the oat-cluster samples", o:"Brad", d:"Nov 20", done:false},
+  {t:"Get Quality (Caleb) the spec sheets for the cranberry swap", o:"Patty", d:"Nov 22", done:false},
+  {t:"Visit Lakeville plant", o:"Brad", d:"Dec 3", done:false},
+  {t:"Send FY2027 pricing outlook", o:"Brad", d:"Oct 30", done:true},
+];
+const HIST = [
+  ["Nov 6","Brad logged a call with Dana (renewals coming)"],
+  ["Oct 22","Goal 2 moved to Samples sent"],
+  ["Aug 12","Quarterly review with Dom, goals confirmed"],
+  ["Jul 1","Plan created (drafted by Edward, edited by Brad)"],
+];
+
+function renderPlan(){
+  document.getElementById('spark').innerHTML = [62,70,58,81,77,90,84,95,88,101,97,110].map(v=>`<i style="height:${v/110*100}%"></i>`).join('');
+  document.getElementById('goals').innerHTML = GOALS.map((g,i)=>`
+    <div class="goal"><div class="num">${i+1}</div><div style="flex:1"><div class="t1">${esc(g.t)}</div><div class="t2">${esc(g.m)}</div><div class="bar"><i style="width:${g.p}%"></i></div></div></div>`).join('');
+  document.getElementById('people').innerHTML = PEOPLE.map(p=>`
+    <div class="person"><div class="t1">${p.n}</div><div class="t2">${p.r}</div>
+    <div class="strength">${[1,2,3,4].map(k=>`<i class="${k<=p.s?'on':''}"></i>`).join('')}</div>
+    <div class="t2" style="margin-top:4px">Last touch: ${p.last}</div></div>`).join('');
+  document.getElementById('opps').innerHTML = `<table><thead><tr><th>Project</th><th>Stage</th><th>Est. value</th><th>Priority</th></tr></thead><tbody>${
+    OPPS.map(o=>`<tr><td class="t1">${o.t}</td><td><span class="chip">${o.s}</span></td><td>${o.v}</td><td><span class="chip ${o.p==='Urgent'?'red':'amber'}">${o.p}</span></td></tr>`).join('')}</tbody></table>`;
+  document.getElementById('risks').innerHTML = RISKS.map(r=>`
+    <div class="act"><span class="chip ${r.c}">${r.c==='red'?'High':'Watch'}</span><div style="flex:1">${r.t}</div><span class="t2">${r.a==='Cambium'?'flagged by Cambium':'added by '+r.a}</span></div>`).join('');
+  document.getElementById('acts').innerHTML = ACTS.map((a,i)=>`
+    <div class="act"><input type="checkbox" ${a.done?'checked':''} onchange="ACTS[${i}].done=this.checked;renderPlan()">
+    <div style="flex:1;${a.done?'text-decoration:line-through;color:#9a9a8a':''}">${a.t}</div>
+    <span class="t2">${a.o}</span><span class="chip ${a.done?'green':''}">${a.done?'Done':'Due '+a.d}</span></div>`).join('');
+  document.getElementById('hist').innerHTML = HIST.map(h=>`<div class="tl"><b>${h[0]}</b> · ${h[1]}</div>`).join('');
+}
+
+function openPlan(i, drafting){
+  const a = ACCOUNTS[i];
+  document.getElementById('pName').textContent = a.n;
+  document.getElementById('pStatus').textContent = drafting ? 'Draft' : a.plan;
+  document.getElementById('pStatus').className = 'chip ' + (drafting ? '' : CLS[a.plan]);
+  document.getElementById('list').classList.add('hidden');
+  document.getElementById('planview').classList.remove('hidden');
+  renderPlan();
+  window.scrollTo(0,0);
+  if (drafting) draft();
+}
+function showList(){ document.getElementById('planview').classList.add('hidden'); document.getElementById('list').classList.remove('hidden'); }
+function draft(){
+  const b = document.getElementById('draftBox');
+  b.classList.remove('hidden');
+  toast('Edward read 64 orders, 9 samples and 4 projects and suggested a goal');
+}
+function acceptGoal(){
+  GOALS.push({t:"Lock the FY2027 raisin and almond contracts before Jan 31", m:"Suggested by Edward · accepted by Brad", p:0});
+  HIST.unshift(["Today","Goal added from Edward's suggestion"]);
+  document.getElementById('draftBox').classList.add('hidden');
+  renderPlan(); toast('Goal added');
+}
+function reviewed(){
+  HIST.unshift(["Today","Marked reviewed; next review set for Feb 20"]);
+  const s = document.getElementById('pStatus'); s.textContent='Current'; s.className='chip green';
+  renderPlan(); toast('Reviewed. Next review Feb 20');
+}
+function toast(m){ const t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200); }
+renderList();
+</script>
+</body>
+</html>
