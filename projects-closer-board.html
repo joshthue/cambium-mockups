@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cambium — Projects Journey + Closer (concept)</title>
+<style>
+  :root{
+    --ink:#18181b;--ink2:#3f3f46;--muted:#71717a;--line:#e4e4e7;--bg:#fafafa;--card:#fff;
+    --moss:#3b4a2a;--gold:#a3823f;--goldwash:#f7efdd;--goldline:#e7d4a4;
+    --green:#2f6b3a;--greenwash:#e6efe2;--amber:#a16207;--amberwash:#fbf3e3;--blue:#3f6f82;
+    --shadow:0 2px 4px rgba(55,55,55,.08),0 1px 1px rgba(0,0,0,.12);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.45}
+  .wrap{max-width:1180px;margin:0 auto;padding:22px 24px 60px}
+  h1{font-size:21px;margin:0 0 2px}
+  .lead{color:var(--ink2);margin:0 0 14px;max-width:760px}
+  .lead b{color:var(--ink)}
+
+  .key{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin:0 0 18px;font-size:12.5px;color:var(--ink2)}
+  .key .it{display:inline-flex;align-items:center;gap:7px}
+  .sw{width:11px;height:11px;border-radius:3px;display:inline-block}
+  .sw.owner{background:var(--moss)} .sw.closer{background:var(--gold)}
+  .gatekey{display:inline-flex;align-items:center;gap:6px;color:var(--amber);font-weight:600}
+  .diamond{width:9px;height:9px;background:var(--amber);transform:rotate(45deg);display:inline-block}
+
+  .board{display:flex;gap:12px;overflow-x:auto;padding:4px 2px 14px}
+  .col{flex:0 0 236px;background:#f4f4f5;border:1px solid var(--line);border-radius:11px;padding:10px 10px 12px}
+  .col.cz{background:#fbf7ec;border-color:var(--goldline)}
+  .colhead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:2px 2px 10px}
+  .colhead .nm{font-weight:700;font-size:13px;letter-spacing:-.1px}
+  .colhead .ct{font-size:12px;color:var(--muted);font-weight:600;background:#fff;border:1px solid var(--line);border-radius:999px;padding:0 8px;min-width:22px;text-align:center}
+  .col.cz .colhead .nm{color:#6f5a2a}
+  .czlabel{display:flex;align-items:center;gap:6px;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;color:var(--gold);margin:-2px 2px 9px}
+
+  .kc{background:#fff;border:1px solid var(--line);border-radius:10px;padding:11px 12px;box-shadow:var(--shadow);margin-bottom:9px}
+  .kc:last-child{margin-bottom:0}
+  .kc .tt{font-weight:700;font-size:13.5px;line-height:1.25;letter-spacing:-.1px}
+  .kc .cu{color:var(--ink2);font-size:12px;margin-top:2px}
+  .kc .rw{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:9px}
+  .val{font-weight:700;font-size:13px}
+  .tag{font-size:10px;font-weight:700;padding:1px 7px;border-radius:999px;letter-spacing:.02em}
+  .tag.imp{background:var(--amberwash);color:var(--amber)}
+  .tag.urg{background:#f6e2dd;color:#b4472a}
+  .tag.won{background:var(--greenwash);color:var(--green)}
+  .due{font-size:11.5px;color:var(--muted);margin-top:8px;display:flex;align-items:center;gap:5px}
+
+  /* closer badge on a card */
+  .closer{display:flex;align-items:center;gap:8px;margin-top:10px;padding:7px 8px;border-radius:8px;border:1px solid var(--goldline);background:var(--goldwash)}
+  .closer.active{border-color:#c9d3bb;background:#eef2e7}
+  .closer.done{border-color:#cfe2cc;background:var(--greenwash)}
+  .av{width:22px;height:22px;border-radius:50%;background:var(--moss);color:#fff;font-size:10px;font-weight:700;display:grid;place-items:center;flex:none}
+  .closer.active .av{background:var(--moss)} .closer.done .av{background:var(--green)}
+  .closer .ct2{line-height:1.25}
+  .closer .ct2 .l{font-size:11px;font-weight:700;color:#6f5a2a}
+  .closer.active .ct2 .l{color:var(--moss)} .closer.done .ct2 .l{color:var(--green)}
+  .closer .ct2 .s{font-size:10.5px;color:var(--muted)}
+  .score{margin-left:auto;font-size:13px;font-weight:800;color:#6f5a2a}
+  .closer.active .score{color:var(--moss)} .closer.done .score{color:var(--green)}
+
+  /* the gate between Samples Sent and Pre-purchase */
+  .gate{flex:0 0 72px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;padding:8px 4px;text-align:center}
+  .gate .dia{width:16px;height:16px;background:var(--amber);transform:rotate(45deg);border-radius:3px}
+  .gate .gl{font-size:10.5px;font-weight:700;color:var(--amber);line-height:1.3}
+  .gate .gs{font-size:10px;color:var(--muted);line-height:1.3}
+  .gate .arrow{color:var(--gold);font-size:16px;line-height:1}
+
+  /* the "not yet" chip on a pre-gate card */
+  .notyet{display:flex;align-items:center;gap:7px;margin-top:10px;padding:6px 8px;border-radius:8px;border:1px dashed var(--line);background:#fafafa;color:var(--muted)}
+  .notyet .meter{flex:1;height:5px;border-radius:999px;background:var(--line);overflow:hidden}
+  .notyet .meter i{display:block;height:100%;background:var(--amber);width:90%}
+  .notyet .lab{font-size:10.5px;font-weight:600;white-space:nowrap}
+
+  .foot{color:var(--muted);font-size:11.5px;margin-top:22px;border-top:1px solid var(--line);padding-top:12px;max-width:900px}
+  .foot b{color:var(--ink2)}
+</style>
+<style id="cm-nav-css">#cm-nav{all:initial;display:flex;align-items:center;gap:10px;box-sizing:border-box;width:100%;height:38px;padding:0 16px;background:#2c3820;color:#f4f1e9;font:500 13px/1 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;position:relative;z-index:10000}#cm-nav a{all:unset;cursor:pointer;color:#f4f1e9;opacity:.85;padding:6px 9px;border-radius:6px;font:inherit}#cm-nav a:hover{opacity:1;background:rgba(255,255,255,.14)}#cm-nav .cm-home{font-weight:700;opacity:1}#cm-nav .cm-sep{opacity:.45}#cm-nav .cm-cur{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#cm-nav .cm-sp{flex:1}#cm-nav .cm-dis{opacity:.3;padding:6px 9px}@media print{#cm-nav{display:none}}</style>
+<link rel="stylesheet" href="cambium-mock.css" id="cm-shared">
+</head>
+<body>
+<!-- cm-nav --><nav id="cm-nav"><a class="cm-home" href="index.html">Cambium mockups</a><span class="cm-sep">›</span><span class="cm-cur">Projects — Closer board</span><span class="cm-sp"></span><a href="projects-dashboard.html" title="Projects dashboard">‹ Previous</a><a href="project-closer-view.html" title="Project detail — closer view">Next ›</a></nav><!-- /cm-nav -->
+<!-- cm-app --><div class="cm-app"><div class="cm-in"><span class="cm-brand">Gehrke Company</span><a class="cm-pill"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>Home</a><a class="cm-pill"><svg viewBox="0 0 24 24"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/><path d="M12 5v13"/></svg>Edward</a><a class="cm-pill"><svg viewBox="0 0 24 24"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>Orders</a><a class="cm-pill on"><svg viewBox="0 0 24 24"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/><path d="M8 10v4M12 10v2M16 10v6"/></svg>Projects</a><a class="cm-pill"><svg viewBox="0 0 24 24"><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><path d="M8.5 2h7M7 16h10"/></svg>Samples</a><a class="cm-pill"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-3"/></svg>Reports</a><a class="cm-pill"><svg viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>Setup</a><div class="cm-right"><div class="who"><span class="av" style="width:28px;height:28px;border-radius:999px;background:#e4e8dc;color:#3b4a2a;display:grid;place-items:center;font-size:11px;font-weight:600">DF</span>Dom Fragomeni · Closer</div><div class="concept">CONCEPT</div></div></div></div><!-- /cm-app -->
+
+<div class="wrap">
+  <h1>Projects — Journey</h1>
+  <p class="lead">The owner rep carries a project from <b>Initial Contact</b> through <b>Samples Sent</b>. A readiness score
+  decides when the deal is ripe; once it clears the gate, the <b>closer (Dom)</b> is pulled in to land it — and inherits the
+  whole history, not a summary.</p>
+
+  <div class="key">
+    <span class="it"><span class="sw owner"></span> Owner rep carries</span>
+    <span class="it"><span class="sw closer"></span> Closer · Dom</span>
+    <span class="gatekey"><span class="diamond"></span> Gate: readiness score &ge; 60</span>
+  </div>
+
+  <div class="board">
+
+    <div class="col">
+      <div class="colhead"><span class="nm">Initial Contact</span><span class="ct">6</span></div>
+      <div class="kc">
+        <div class="tt">Bob's Red Mill – Savory Project</div>
+        <div class="cu">Bob's Red Mill Natural Foods Inc</div>
+        <div class="rw"><span class="val" style="color:#b9beae">—</span><span class="tag imp">Important</span></div>
+        <div class="due">&#128197; New Product · Nov 12, 2026</div>
+      </div>
+      <div class="kc">
+        <div class="tt">Organic FavaBean Protein – Burcon</div>
+        <div class="cu">One Degree Organic Foods Inc</div>
+        <div class="rw"><span class="val">$620,000</span><span class="tag imp">Important</span></div>
+        <div class="due">&#128197; New Product · Nov 16, 2026</div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="colhead"><span class="nm">Qualified Lead</span><span class="ct">8</span></div>
+      <div class="kc">
+        <div class="tt">WD Vinegar 12% for Litehouse – MizKan</div>
+        <div class="cu">Litehouse Inc.</div>
+        <div class="rw"><span class="val">$200,000</span><span class="tag urg">Urgent</span></div>
+        <div class="due">&#128197; Quote Business · Nov 6, 2026</div>
+      </div>
+      <div class="kc">
+        <div class="tt">Brown &amp; Haley – Almond Opportunity</div>
+        <div class="cu">Brown &amp; Haley</div>
+        <div class="rw"><span class="val" style="color:#b9beae">—</span><span class="tag urg">Urgent</span></div>
+        <div class="due">&#128197; Qualify Principal's Products · Nov 17, 2026</div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="colhead"><span class="nm">Samples Sent</span><span class="ct">6</span></div>
+      <div class="kc">
+        <div class="tt">Replace Freeze Dry with MicroDried – Attune</div>
+        <div class="cu">Attune Foods, LLC</div>
+        <div class="rw"><span class="val" style="color:#b9beae">—</span><span class="tag urg">Urgent</span></div>
+        <div class="notyet"><span class="lab">Readiness 54</span><span class="meter"><i></i></span><span class="lab">of 60</span></div>
+      </div>
+      <div class="kc">
+        <div class="tt">IMind Brain Food – Snacktev</div>
+        <div class="cu">Snacktev</div>
+        <div class="rw"><span class="val">$34,000</span><span class="tag imp">Important</span></div>
+        <div class="due">&#128197; New Product · Nov 6, 2026</div>
+      </div>
+    </div>
+
+    <div class="gate">
+      <div class="dia"></div>
+      <div class="gl">Readiness &ge; 60</div>
+      <div class="arrow">&#10140;</div>
+      <div class="gs">Dom enters</div>
+    </div>
+
+    <div class="col cz">
+      <div class="czlabel"><span>&#9679;</span> Closer · Dom</div>
+      <div class="colhead"><span class="nm">Pre-purchase phase</span><span class="ct">1</span></div>
+      <div class="kc">
+        <div class="tt">Source Organic Cranberries – Hummingbird</div>
+        <div class="cu">Hummingbird Wholesale</div>
+        <div class="rw"><span class="val">$158,000</span><span class="tag urg">Urgent</span></div>
+        <div class="closer">
+          <span class="av">DF</span>
+          <span class="ct2"><div class="l">Ready for closer</div><div class="s">Dom notified · owner Julie</div></span>
+          <span class="score">72</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="col cz">
+      <div class="czlabel"><span>&#9679;</span> Closer · Dom</div>
+      <div class="colhead"><span class="nm">In Negotiations</span><span class="ct">1</span></div>
+      <div class="kc">
+        <div class="tt">Rikki Foods 1/8" IQF Ginger Contract 2027</div>
+        <div class="cu">Rikki Gourmet Foods</div>
+        <div class="rw"><span class="val">$15,000</span><span class="tag urg">Urgent</span></div>
+        <div class="closer active">
+          <span class="av">DF</span>
+          <span class="ct2"><div class="l">Closer active</div><div class="s">Dom leading · owner Katie</div></span>
+          <span class="score">81</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="col cz">
+      <div class="czlabel"><span>&#9679;</span> Closer · Dom</div>
+      <div class="colhead"><span class="nm">Sale / No Sale</span><span class="ct">1</span></div>
+      <div class="kc">
+        <div class="tt">Almond Flour for Bob's Red Mill 2027</div>
+        <div class="cu">Bob's Red Mill Natural Foods Inc</div>
+        <div class="rw"><span class="val">$1,482,000</span><span class="tag won">Won</span></div>
+        <div class="closer done">
+          <span class="av">DF</span>
+          <span class="ct2"><div class="l">Closed by Dom</div><div class="s">Nov 6, 2026 · owner Patty</div></span>
+          <span class="score">&#10003;</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="colhead"><span class="nm">Housekeeping</span><span class="ct">0</span></div>
+      <div style="color:var(--muted);font-size:12px;padding:8px 4px">No projects</div>
+    </div>
+
+  </div>
+
+  <div class="foot">
+    Concept mockup for discussion — stage columns and project names mirror the live board; the <b>closer</b> layer is proposed.
+    A project crosses the gate the moment its readiness score reaches 60, which flags Dom and pins him to the card with full
+    read access to every sample, note and stage change behind it. Two overrides bypass the score entirely: the owner asks for
+    Dom, or a manager assigns him.
+  </div>
+</div>
+</body>
+</html>
