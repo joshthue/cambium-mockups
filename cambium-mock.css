@@ -1,0 +1,185 @@
+/* ==========================================================================
+   cambium-mock.css: the ONE shared look for every Cambium mockup (13 Nov 2026).
+   Josh: "each one is different enough you'd think a different designer made it."
+   This file makes every mockup look like the live Cambium app, using the same
+   tokens as frontend/theme.css + brand.css: zinc neutrals, Moss #3B4A2A
+   primary, gold #A3823F ring, Inter, 14px base, 8px radius, Retool shadows.
+
+   It is linked LAST in every mockup's <head>, so it wins the cascade. It works
+   by (1) remapping each mockup's own color variables onto the app tokens, and
+   (2) normalising the shared pieces: page, type, app top bar, cards, buttons,
+   tables. New mockups: link this file and use the --cm-* tokens directly.
+   ========================================================================== */
+
+:root {
+  /* ---- app tokens (light theme, Moss palette) ---- */
+  --cm-bg: #fafafa;            /* --background 0 0% 98% */
+  --cm-card: #ffffff;
+  --cm-fg: #18181b;            /* --foreground */
+  --cm-body: #3f3f46;          /* --body-foreground */
+  --cm-muted-fg: #71717a;      /* --muted-foreground */
+  --cm-muted: #f4f4f5;         /* --muted / --secondary */
+  --cm-border: #e4e4e7;        /* --border */
+  --cm-primary: #3b4a2a;       /* Moss */
+  --cm-primary-hover: #2a351e;
+  --cm-tint: #e4e8dc;          /* --brand-tint */
+  --cm-tint-fg: #3b4a2a;
+  --cm-gold: #a3823f;          /* --ring / --gold */
+  --cm-success: #2f6b3a;
+  --cm-success-bg: #e6efe2;
+  --cm-warning: #a16207;
+  --cm-warning-bg: #fbf3e3;
+  --cm-danger: #b4472a;
+  --cm-danger-bg: #f6e2dd;
+  --cm-info: #3f6f82;
+  --cm-radius: 8px;
+  --cm-shadow-sm: 0 2px 4px rgba(55,55,55,.08), 0 1px 1px rgba(0,0,0,.12);
+  --cm-shadow-md: 0 6px 12px rgba(55,55,55,.08), 0 2px 6px rgba(0,0,0,.12);
+  --cm-font: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --cm-mono: "JetBrains Mono", SFMono-Regular, ui-monospace, Menlo, Consolas, monospace;
+
+  /* ---- remap every mockup's private palette onto the app tokens ---- */
+  --bg: var(--cm-bg);          --cream: var(--cm-bg);
+  --card: var(--cm-card);      --panel: var(--cm-card);
+  --ink: var(--cm-fg);         --ink2: var(--cm-body);
+  --muted: var(--cm-muted-fg);
+  --line: var(--cm-border);    --line2: var(--cm-border);
+  --soft: var(--cm-muted);     --field: var(--cm-muted);   --field-border: var(--cm-border);
+  --moss: var(--cm-primary);   --moss-2: #4a5c35;
+  --tint: var(--cm-tint);
+  --gold: var(--cm-gold);
+  --green: var(--cm-success);  --green2: var(--cm-success);  --green-ink: var(--cm-success);
+  --green-tint: var(--cm-success-bg); --greenwash: var(--cm-success-bg);
+  --win: var(--cm-success);    --ok-ink: var(--cm-success);  --ok-bg: var(--cm-success-bg);
+  --hi: var(--cm-success);     --hi-bg: var(--cm-success-bg);
+  --amber: var(--cm-warning);  --amber-tint: var(--cm-warning-bg); --amberwash: var(--cm-warning-bg);
+  --amber-bg: var(--cm-warning-bg); --amber-ink: var(--cm-warning);
+  --med: var(--cm-warning);    --med-bg: var(--cm-warning-bg);
+  --red: var(--cm-danger);     --clay: var(--cm-danger);
+  --lo: var(--cm-danger);      --lo-bg: var(--cm-danger-bg);
+  --sky: var(--cm-info);       --blue: var(--cm-info);    --slate: var(--cm-muted-fg);
+  --r: var(--cm-radius);
+  --shadow: var(--cm-shadow-sm);
+}
+
+/* ---- page + type ---- */
+html, body { background: var(--cm-bg) !important; }
+body {
+  font-family: var(--cm-font) !important;
+  color: var(--cm-fg);
+  -webkit-font-smoothing: antialiased;
+}
+/* One typeface everywhere: several mockups set Georgia / Helvetica on headings, KPI numbers, tables. */
+body *:not(code):not(pre):not(kbd):not(.mono):not(.f) { font-family: var(--cm-font) !important; }
+h1 { font-size: 22px !important; font-weight: 650 !important; letter-spacing: -0.01em !important; color: var(--cm-fg); }
+code, pre, kbd, .mono { font-family: var(--cm-mono) !important; }
+
+/* ---- the app's top nav (every mockup that shows one) ----
+   Live app: white bar, 1px bottom border, brokerage name in Moss, pill links,
+   active pill = Moss with white text. */
+body > .top, body > .topbar, .topbar {
+  background: var(--cm-card) !important;
+  color: var(--cm-fg) !important;
+  border-bottom: 1px solid var(--cm-border) !important;
+  box-shadow: none !important;
+}
+body > .top .brand, .topbar .brand {
+  color: var(--cm-primary) !important;
+  font-size: 17px !important; font-weight: 650 !important; letter-spacing: -0.01em !important;
+}
+.topbar .brand span { color: var(--cm-muted-fg) !important; opacity: 1 !important; font-weight: 500 !important; }
+body > .top .nav { opacity: 1 !important; }
+body > .top .nav span, .topbar .topnav a {
+  color: var(--cm-fg) !important; opacity: 1 !important;
+  font-size: 14px !important; font-weight: 500 !important;
+  padding: 6px 12px !important; border-radius: 6px !important; background: transparent !important;
+}
+body > .top .nav span:hover, .topbar .topnav a:hover { background: var(--cm-tint) !important; color: var(--cm-tint-fg) !important; }
+body > .top .nav span.on, .topbar .topnav a.on { background: var(--cm-primary) !important; color: #fff !important; }
+.topbar .who { color: var(--cm-muted-fg) !important; }
+body > .top .viewas { color: var(--cm-muted-fg) !important; }
+body > .top .viewas select {
+  background: var(--cm-card) !important; color: var(--cm-fg) !important;
+  border: 1px solid var(--cm-border) !important; border-radius: 6px !important;
+}
+.mock, .concept {
+  background: var(--cm-warning-bg) !important; color: var(--cm-warning) !important;
+  border: 1px solid #ecd9ad !important; border-radius: 999px !important;
+  font-family: var(--cm-font) !important; font-weight: 600 !important; letter-spacing: .02em !important;
+}
+
+/* ---- THE app bar: one identical copy on every app-screen mockup (app-header.py writes it).
+   Mirrors App.tsx: h-[52px] px-6, brokerage name text-lg semibold Moss, pills
+   rounded-md px-3 py-1.5 text-sm font-medium with a 16px icon; active = Moss. */
+.cm-app { background: var(--cm-card); border-bottom: 1px solid var(--cm-border); font-family: var(--cm-font); }
+.cm-app .cm-in { display: flex; align-items: center; gap: 8px; height: 52px; padding: 0 24px; overflow-x: auto; scrollbar-width: none; }
+.cm-app .cm-brand { flex: none; padding: 0 12px 0 4px; font-size: 18px; font-weight: 600; letter-spacing: -0.01em; color: var(--cm-primary); white-space: nowrap; }
+.cm-app .cm-pill {
+  flex: none; display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px;
+  font-size: 14px; font-weight: 500; line-height: 20px; color: var(--cm-fg) !important; text-decoration: none !important; cursor: pointer; white-space: nowrap;
+}
+.cm-app .cm-pill svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.cm-app .cm-pill:hover { background: var(--cm-tint); color: var(--cm-tint-fg) !important; }
+.cm-app .cm-pill.on { background: var(--cm-primary); color: #fff !important; }
+.cm-app .cm-pill.proposed:not(.on) { outline: 1px dashed var(--cm-gold); outline-offset: -1px; }
+.cm-app .cm-right { margin-left: auto; flex: none; display: flex; align-items: center; gap: 12px; padding-left: 12px;
+  font-size: 13px; color: var(--cm-muted-fg); white-space: nowrap; }
+.cm-app .who { display: flex; align-items: center; gap: 8px; color: var(--cm-muted-fg); font-size: 13px; }
+.cm-app .av { width: 28px; height: 28px; border-radius: 999px; background: var(--cm-tint); color: var(--cm-tint-fg);
+  display: grid; place-items: center; font-size: 11px; font-weight: 600; }
+.cm-app .viewas { display: flex; align-items: center; gap: 8px; color: var(--cm-muted-fg); }
+.cm-app .viewas select { font: 500 13px var(--cm-font); color: var(--cm-fg); background: var(--cm-card);
+  border: 1px solid var(--cm-border); border-radius: 6px; padding: 5px 8px; }
+.cm-app .mock, .cm-app .concept { padding: 3px 10px; font-size: 11px; }
+@media (max-width: 1000px) {
+  .cm-app .cm-in { padding: 0 12px; gap: 4px; }
+  .cm-app .cm-pill { padding: 6px 8px; }
+  .cm-app .cm-pill svg { display: none; }
+}
+
+/* ---- surfaces ---- */
+.card, .panel, .w, .kpi, .tile, .sheet {
+  border-color: var(--cm-border) !important;
+  border-radius: var(--cm-radius) !important;
+  box-shadow: var(--cm-shadow-sm) !important;
+}
+
+/* ---- buttons ---- */
+.btn, button.btn {
+  font-family: var(--cm-font) !important;
+  border-radius: 6px !important; border-color: var(--cm-border) !important;
+}
+.btn.primary, .btn-primary, button.primary {
+  background: var(--cm-primary) !important; border-color: var(--cm-primary) !important; color: #fff !important;
+}
+.btn.primary:hover, .btn-primary:hover { background: var(--cm-primary-hover) !important; }
+
+/* ---- tables ---- */
+th { color: var(--cm-muted-fg); }
+
+/* ---- the mockup viewer strip (not part of the app) ----
+   Slim neutral bar above every mockup: home, page name, previous/next. Kept
+   visually separate from the app's own nav so nobody mistakes it for product. */
+#cm-nav {
+  background: var(--cm-muted) !important; color: var(--cm-muted-fg) !important;
+  border-bottom: 1px solid var(--cm-border) !important; height: 34px !important;
+  font: 500 12.5px/1 var(--cm-font) !important;
+}
+#cm-nav a { color: var(--cm-muted-fg) !important; opacity: 1 !important; }
+#cm-nav a:hover { background: var(--cm-border) !important; color: var(--cm-fg) !important; }
+#cm-nav .cm-home { color: var(--cm-primary) !important; font-weight: 650 !important; }
+#cm-nav .cm-cur { color: var(--cm-fg) !important; }
+#cm-nav .cm-sep { opacity: .6 !important; }
+
+/* ---- the printable playbook: same family on screen ---- */
+@media screen {
+  body:has(> .page) { padding: 0 0 26px !important; }      /* let the viewer strip run edge to edge */
+  body > .page { margin: 26px auto 0 !important; }
+  @media (max-width: 800px) { body > .page { margin: 16px 12px 0 !important; } }
+  .page { border-color: var(--cm-border) !important; border-radius: var(--cm-radius) !important; box-shadow: var(--cm-shadow-sm) !important; }
+}
+
+/* ---- page-specific leftovers ---- */
+.topbar .jump a { color: var(--cm-fg) !important; opacity: .8 !important; }
+.topbar .jump a:hover { background: var(--cm-tint) !important; color: var(--cm-tint-fg) !important; opacity: 1 !important; }
+.mocknav .home { display: none !important; }   /* pipeline: the shared strip already links home */
