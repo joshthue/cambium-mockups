@@ -71,7 +71,8 @@ body {
 }
 /* One typeface everywhere: several mockups set Georgia / Helvetica on headings, KPI numbers, tables. */
 body *:not(code):not(pre):not(kbd):not(.mono):not(.f) { font-family: var(--cm-font) !important; }
-h1 { font-size: 22px !important; font-weight: 650 !important; letter-spacing: -0.01em !important; color: var(--cm-fg); }
+/* PageHeader in the app: h1 text-lg font-semibold leading-7 */
+h1 { font-size: 20px !important; line-height: 28px !important; font-weight: 600 !important; letter-spacing: -0.01em !important; color: var(--cm-fg); margin-top: 0 !important; }
 code, pre, kbd, .mono { font-family: var(--cm-mono) !important; }
 
 /* ---- the app's top nav (every mockup that shows one) ----
@@ -112,7 +113,19 @@ body > .top .viewas select {
    Mirrors App.tsx: h-[52px] px-6, brokerage name text-lg semibold Moss, pills
    rounded-md px-3 py-1.5 text-sm font-medium with a 16px icon; active = Moss. */
 .cm-app { background: var(--cm-card); border-bottom: 1px solid var(--cm-border); font-family: var(--cm-font); }
-.cm-app .cm-in { display: flex; align-items: center; gap: 8px; height: 52px; padding: 0 24px; overflow-x: auto; scrollbar-width: none; }
+.cm-app .cm-in { display: flex; align-items: center; gap: 8px; height: 52px; padding: 0 24px; overflow-x: auto; scrollbar-width: none;
+  max-width: var(--cm-container); margin: 0 auto; box-sizing: border-box; }
+
+/* ---- page width: the app's .wos-container (brand.css: 72rem, centered, px-6).
+   The bar above and the page below share it, so their left edges line up. */
+:root { --cm-container: 72rem; }
+@media screen {
+  body > .wrap, .cm-app ~ .wrap, .subnav .in, .mocknav .inner {
+    max-width: var(--cm-container) !important; margin-left: auto !important; margin-right: auto !important;
+    padding-left: 24px !important; padding-right: 24px !important; box-sizing: border-box !important;
+  }
+  body > .wrap, .cm-app ~ .wrap { padding-top: 24px !important; }
+}
 .cm-app .cm-brand { flex: none; padding: 0 12px 0 4px; font-size: 18px; font-weight: 600; letter-spacing: -0.01em; color: var(--cm-primary); white-space: nowrap; }
 .cm-app .cm-pill {
   flex: none; display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px;
@@ -178,6 +191,21 @@ th { color: var(--cm-muted-fg); }
   @media (max-width: 800px) { body > .page { margin: 16px 12px 0 !important; } }
   .page { border-color: var(--cm-border) !important; border-radius: var(--cm-radius) !important; box-shadow: var(--cm-shadow-sm) !important; }
 }
+
+/* ---- the "this is a mockup" note: one style everywhere ---- */
+.ribbon, .mocknav .hint {
+  display: flex !important; align-items: center; gap: 8px; flex-wrap: wrap;
+  background: var(--cm-warning-bg) !important; color: var(--cm-warning) !important;
+  border: 1px dashed #dcc07f !important; border-radius: var(--cm-radius) !important; box-shadow: none !important;
+  font: 500 13px/1.45 var(--cm-font) !important; text-align: left !important; justify-content: flex-start !important;
+  padding: 8px 12px !important; margin: 0 0 16px !important;
+}
+.ribbon b, .mocknav .hint b { color: inherit !important; }
+.mocknav { background: transparent !important; border: 0 !important; box-shadow: none !important; padding: 20px 0 0 !important; }
+.mocknav .inner { display: block !important; }
+.mocknav .lbl { display: none !important; }       /* the page title right below says the same thing */
+.mocknav .hint { margin: 0 !important; width: 100%; box-sizing: border-box; }
+.mocknav + .wrap { padding-top: 16px !important; }
 
 /* ---- page-specific leftovers ---- */
 .topbar .jump a { color: var(--cm-fg) !important; opacity: .8 !important; }
