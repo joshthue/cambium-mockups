@@ -1,0 +1,56 @@
+--- a/frontend/pages/samples/SampleCatchup.tsx   (live Retool source, read 2026-11-26)
++++ b/frontend/pages/samples/SampleCatchup.tsx   (STAGED: clear ticks after a multi-row change)
+@@ // Samples -> Catch-up grid header comment (after the 19 Nov scroll-box note)
+ // The grid is its own scroll box, one screen tall, with a sticky header (Brad,
+ // 19 Nov 2026: he couldn't reach the right-hand columns because the sideways
+ // scrollbar sat under 500 rows). Now the sideways scrollbar is always on screen.
++//
++// Ticks clear after every multi-row change (Brad, 26 Nov 2026: if he forgot to
++// untick, his NEXT change also landed on every row from the previous one).
+
+@@ // ---- multi-row edits ----
+   const sameCustomerIds = (r: Row): number[] =>
+     targetIds(r).filter((id) => {
+       const x = rows.find((y) => y.sample_id === id)
+       return x != null && x.customer_id === r.customer_id
+     })
++  // A write that went out to the ticked rows clears the ticks once it lands, so
++  // the next change starts from a clean slate. Writes to rows that were never
++  // ticked (e.g. the "N more rows say X — link them too?" offer) leave the
++  // selection alone.
++  const clearSelIfUsed = (ids: number[]) => {
++    if (ids.length > 1 && ids.every((id) => sel.has(id))) setSel(new Set())
++  }
+   const cellPatch = (
+     r: Row,
+     patch: Parameters<typeof applyPatch>[1],
+     optimistic: (x: Row) => Row,
+     ids: number[] = targetIds(r)
+   ) => {
+     void applyPatch(ids, patch, optimistic).then((res) => {
+-      if (res && ids.length > 1) toast.success(`Updated ${res.updated} samples`)
++      if (res && ids.length > 1) {
++        toast.success(`Updated ${res.updated} samples`)
++        clearSelIfUsed(ids)
++      }
+     })
+   }
+
+@@ const addNewCustomer = (r: Row) => {
+     })).then((res) => {
+       if (!res) return
+-      if (ids.length > 1) { toast.success(`Updated ${res.updated} samples`); return }
++      if (ids.length > 1) { toast.success(`Updated ${res.updated} samples`); clearSelIfUsed(ids); return }
+       const cid = res.company_id
+
+@@ const applyBulk = async () => {   (end of function)
+     const res = await applyPatch(ids, patch, combined)
+     if (res) {
+       const parts = [(patch.sample_category_id || patch.new_category_name) && 'category', patch.application && 'application',
+         (patch.customer_id || patch.new_company_name) && 'customer', patch.supplier_id && 'supplier', patch.project_id && 'project']
+         .filter(Boolean).join(' + ')
+       toast.success(`Set ${parts} on ${res.updated} sample${res.updated === 1 ? '' : 's'}`)
++      setSel(new Set())
+     }
+     resetBulk()
+   }
